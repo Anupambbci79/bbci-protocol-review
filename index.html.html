@@ -1,0 +1,1386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Scientific Committee BBCI — Protocol Review</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:14px}
+body{font-family:'DM Sans',sans-serif;background:#f5f3ee;color:#1a1a18;min-height:100vh}
+
+/* ── URL BANNER ── */
+#url-banner{background:#2a2a28;color:#f5f3ee;padding:8px 20px;font-size:12px;display:none;align-items:center;gap:8px;flex-wrap:wrap}
+#url-banner input{flex:1;min-width:200px;max-width:500px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#f5f3ee;padding:4px 8px;border-radius:4px;font-size:12px;font-family:'DM Sans',sans-serif}
+#url-banner input::placeholder{color:rgba(255,255,255,.35)}
+#url-banner button{background:#c8b86a;color:#1a1a18;border:none;padding:4px 10px;border-radius:4px;font-size:12px;font-weight:600;cursor:pointer}
+#form-url-wrap{display:flex;align-items:center;gap:6px;font-size:11px;color:rgba(255,255,255,.5)}
+#form-url-wrap input{max-width:300px}
+
+/* ── LOGIN / REGISTER ── */
+#auth-screen{display:flex;align-items:center;justify-content:center;min-height:calc(100vh - 42px);padding:20px}
+.auth-card{background:#fff;border:1px solid #e0ddd5;border-radius:8px;width:420px;max-width:100%;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,.08)}
+.auth-header{background:#1a1a18;padding:24px 28px;border-bottom:3px solid #c8b86a}
+.auth-header h1{font-family:'DM Serif Display',serif;color:#f5f3ee;font-size:22px;font-weight:400}
+.auth-header p{color:#c8b86a;font-size:11px;letter-spacing:.12em;text-transform:uppercase;margin-top:4px}
+.auth-tabs{display:flex;background:#f5f3ee;border-bottom:1px solid #e0ddd5}
+.auth-tab{flex:1;padding:10px;text-align:center;font-size:13px;font-weight:500;cursor:pointer;border:none;background:transparent;color:#888;transition:all .2s}
+.auth-tab.active{color:#1a1a18;border-bottom:2px solid #c8b86a;background:#fff}
+.auth-body{padding:24px 28px}
+.auth-body label{display:block;font-size:11px;font-weight:600;color:#666;letter-spacing:.07em;text-transform:uppercase;margin-bottom:4px;margin-top:14px}
+.auth-body label:first-child{margin-top:0}
+.auth-body input,.auth-body select{width:100%;padding:9px 11px;border:1px solid #d0cdc5;border-radius:4px;font-family:'DM Sans',sans-serif;font-size:13px;color:#1a1a18;transition:border-color .2s}
+.auth-body input:focus,.auth-body select:focus{outline:none;border-color:#c8b86a;box-shadow:0 0 0 3px rgba(200,184,106,.12)}
+.auth-btn{width:100%;margin-top:18px;background:#1a1a18;color:#f5f3ee;border:none;padding:11px;border-radius:4px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:background .2s}
+.auth-btn:hover{background:#333}
+.auth-err{margin-top:10px;color:#c0392b;font-size:12px;text-align:center;min-height:16px}
+
+/* ── APP SHELL ── */
+#app{display:none}
+header{background:#1a1a18;color:#f5f3ee;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;border-bottom:3px solid #c8b86a}
+.hdr-left h2{font-family:'DM Serif Display',serif;font-size:19px;font-weight:400}
+.hdr-left p{font-size:11px;color:#c8b86a;letter-spacing:.1em;text-transform:uppercase;margin-top:2px}
+.hdr-right{display:flex;align-items:center;gap:10px}
+.user-pill{background:rgba(200,184,106,.15);border:1px solid rgba(200,184,106,.3);color:#c8b86a;padding:4px 12px;border-radius:20px;font-size:12px}
+.logout-btn{background:transparent;border:1px solid rgba(245,243,238,.2);color:rgba(245,243,238,.6);padding:4px 10px;border-radius:4px;font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif}
+.logout-btn:hover{color:#f5f3ee}
+
+/* ── NAV ── */
+nav{background:#1a1a18;padding:0 24px;display:flex;gap:0;border-bottom:1px solid rgba(200,184,106,.2);overflow-x:auto}
+.tab-btn{background:transparent;border:none;color:rgba(245,243,238,.45);padding:10px 16px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;cursor:pointer;border-bottom:2px solid transparent;transition:color .2s,border-color .2s;letter-spacing:.05em;text-transform:uppercase;white-space:nowrap}
+.tab-btn:hover{color:rgba(245,243,238,.8)}
+.tab-btn.active{color:#c8b86a;border-bottom-color:#c8b86a}
+
+/* ── MAIN ── */
+main{padding:20px 24px;max-width:1280px}
+.panel{display:none}.panel.active{display:block}
+
+/* ── STATUS COLOURS ── */
+.s-submitted {background:#e8f0fb;color:#1a5a9a}
+.s-forwarded {background:#eeedfe;color:#3c3489}
+.s-reviewing {background:#fdf0e0;color:#854f0b}
+.s-meeting   {background:#fbe8f5;color:#7a1a5a}
+.s-inmeeting {background:#fce8e8;color:#7a1a1a}
+.s-approved  {background:#e0f5e8;color:#1a7a3a}
+.s-revision  {background:#fff3cd;color:#856404}
+.s-rejected  {background:#f5e0e0;color:#7a1a1a}
+.s-closed    {background:#e8e5dd;color:#5a5a5a}
+
+/* ── STAT CARDS ── */
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:20px}
+.stat-card{background:#fff;border:1px solid #e0ddd5;border-radius:5px;padding:12px 14px;border-top:3px solid #1a1a18}
+.stat-card.s1{border-top-color:#1d9e75}.stat-card.s2{border-top-color:#534ab7}
+.stat-card.s3{border-top-color:#d48a2a}.stat-card.s4{border-top-color:#9a1a6a}
+.stat-card.s5{border-top-color:#6aaa6a}.stat-card.s6{border-top-color:#c8b86a}
+.stat-card.s7{border-top-color:#d46a4a}.stat-card.s8{border-top-color:#888}
+.stat-label{font-size:10px;color:#999;letter-spacing:.1em;text-transform:uppercase;margin-bottom:3px}
+.stat-value{font-family:'DM Serif Display',serif;font-size:26px;line-height:1;color:#1a1a18}
+
+/* ── TABLE ── */
+.tbl-wrap{background:#fff;border:1px solid #e0ddd5;border-radius:5px;overflow:hidden;margin-bottom:16px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead{background:#1a1a18;color:#f5f3ee}
+thead th{padding:8px 12px;text-align:left;font-weight:500;font-size:10px;letter-spacing:.08em;text-transform:uppercase}
+tbody tr{border-bottom:1px solid #f0ede6;transition:background .12s}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:#faf9f5}
+tbody td{padding:9px 12px;vertical-align:middle;color:#2a2a25}
+
+/* ── BADGE ── */
+.badge{display:inline-block;padding:2px 8px;border-radius:3px;font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase}
+
+/* ── PRIORITY DOT ── */
+.pdot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:4px}
+.ph{background:#d46a4a}.pm{background:#c8b86a}.pl{background:#6aaa6a}
+
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;gap:4px;padding:6px 12px;border-radius:4px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;cursor:pointer;border:none;transition:all .15s;white-space:nowrap}
+.btn-dark{background:#1a1a18;color:#f5f3ee}.btn-dark:hover{background:#333}
+.btn-gold{background:#c8b86a;color:#1a1a18}.btn-gold:hover{background:#b8a858}
+.btn-out{background:transparent;border:1px solid #d0cdc5;color:#444}.btn-out:hover{background:#f5f3ee}
+.btn-green{background:#1a7a3a;color:#fff}.btn-green:hover{background:#155a2a}
+.btn-red{background:#c0392b;color:#fff}.btn-red:hover{background:#a93226}
+.btn-sm{padding:3px 8px;font-size:11px}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+
+/* ── FORMS ── */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.fg-full{grid-column:1/-1}
+.fg{display:flex;flex-direction:column;gap:3px}
+.fg label{font-size:11px;font-weight:600;color:#666;letter-spacing:.07em;text-transform:uppercase}
+.fg input,.fg select,.fg textarea{font-family:'DM Sans',sans-serif;font-size:13px;padding:7px 10px;border:1px solid #d0cdc5;border-radius:4px;background:#fff;color:#1a1a18;transition:border-color .2s;width:100%}
+.fg input:focus,.fg select:focus,.fg textarea:focus{outline:none;border-color:#c8b86a;box-shadow:0 0 0 3px rgba(200,184,106,.12)}
+.fg textarea{resize:vertical;min-height:80px}
+
+/* ── CARDS ── */
+.card{background:#fff;border:1px solid #e0ddd5;border-radius:5px;padding:18px 20px;margin-bottom:16px}
+.card-title{font-family:'DM Serif Display',serif;font-size:16px;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid #f0ede6}
+.sec-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.sec-title{font-family:'DM Serif Display',serif;font-size:17px;font-weight:400}
+
+/* ── INFO BOX ── */
+.info-box{background:#faf9f5;border:1px solid #e8e5dd;border-left:3px solid #c8b86a;border-radius:4px;padding:10px 14px;font-size:13px;color:#555;margin-bottom:14px;line-height:1.6}
+.info-box.green{border-left-color:#6aaa6a}
+.info-box.red{border-left-color:#d46a4a}
+.info-box.blue{border-left-color:#534ab7}
+
+/* ── FILTER BAR ── */
+.filter-bar{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center}
+.filter-bar select,.filter-bar input{font-size:12px;padding:5px 8px;border:1px solid #d0cdc5;border-radius:4px;background:#fff;font-family:'DM Sans',sans-serif;color:#1a1a18}
+.filter-bar input{min-width:180px}
+
+/* ── MODAL ── */
+.modal-wrap{display:none;position:fixed;inset:0;background:rgba(26,26,24,.5);z-index:200;align-items:center;justify-content:center}
+.modal-wrap.open{display:flex}
+.modal{background:#fff;border-radius:7px;width:700px;max-width:96vw;max-height:92vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+.modal-hdr{background:#1a1a18;color:#f5f3ee;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;border-radius:7px 7px 0 0;border-bottom:2px solid #c8b86a;position:sticky;top:0;z-index:1}
+.modal-hdr h3{font-family:'DM Serif Display',serif;font-size:17px;font-weight:400}
+.modal-close{background:transparent;border:none;color:#f5f3ee;font-size:20px;cursor:pointer;opacity:.6;line-height:1}
+.modal-close:hover{opacity:1}
+.modal-body{padding:18px 20px}
+.modal-foot{padding:12px 20px;border-top:1px solid #f0ede6;display:flex;justify-content:flex-end;gap:8px;position:sticky;bottom:0;background:#fff}
+
+/* ── DECISION PILLS ── */
+.dpills{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.dpill{padding:7px 16px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:2px solid transparent;background:#f5f3ee;color:#444;transition:all .2s}
+.dpill:hover{border-color:#c8b86a}
+.dp-approved{background:#e0f5e8;border-color:#6aaa6a;color:#1a7a3a}
+.dp-revision{background:#fff3cd;border-color:#c8a200;color:#856404}
+.dp-deferred{background:#fdf0e0;border-color:#d48a2a;color:#854f0b}
+.dp-rejected{background:#f5e0e0;border-color:#aa4a4a;color:#7a1a1a}
+
+/* ── LETTER BOX ── */
+.letter-box{font-size:13px;line-height:1.8;white-space:pre-wrap;border:1px solid #e0ddd5;border-radius:4px;padding:16px 18px;background:#faf9f5;font-family:'DM Sans',sans-serif}
+
+/* ── COMMENT THREAD ── */
+.comment-thread{max-height:380px;overflow-y:auto;margin-bottom:14px}
+.comment-item{border:1px solid #f0ede6;border-radius:5px;padding:10px 12px;margin-bottom:8px;background:#faf9f5}
+.comment-item.meeting-comment{background:#fff8e8;border-color:#e8d88a}
+.comment-meta{font-size:11px;color:#888;margin-bottom:4px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.comment-text{font-size:13px;color:#333;line-height:1.6}
+
+/* ── TIMELINE ── */
+.timeline{padding:0 0 0 16px;border-left:2px solid #e0ddd5}
+.tl-item{position:relative;padding:0 0 14px 18px}
+.tl-dot{position:absolute;left:-8px;top:3px;width:12px;height:12px;border-radius:50%;background:#c8b86a;border:2px solid #fff}
+.tl-date{font-size:11px;color:#aaa;margin-bottom:2px}
+.tl-text{font-size:12px;color:#444}
+
+/* ── REVIEWER PROGRESS ── */
+.rev-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px;margin-bottom:16px}
+.rev-card{background:#fff;border:1px solid #e0ddd5;border-radius:5px;padding:10px 12px}
+.rev-name{font-weight:600;font-size:13px;margin-bottom:2px}
+.rev-sub{font-size:11px;color:#888}
+.rev-bar{margin-top:6px;height:3px;background:#e8e5dd;border-radius:2px}
+.rev-fill{height:100%;border-radius:2px;transition:width .5s}
+
+/* ── TOAST ── */
+#toast{position:fixed;bottom:20px;right:20px;background:#1a1a18;color:#f5f3ee;padding:10px 16px;border-radius:4px;border-left:3px solid #c8b86a;font-size:13px;opacity:0;pointer-events:none;transition:opacity .3s;z-index:999;max-width:300px}
+#toast.show{opacity:1}
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(200,184,106,.3);border-top-color:#c8b86a;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle}
+@keyframes spin{to{transform:rotate(360deg)}}
+.empty{text-align:center;padding:30px;color:#bbb;font-size:13px}
+
+@media(max-width:700px){
+  .form-grid{grid-template-columns:1fr}
+  main{padding:14px}header{padding:10px 14px}nav{padding:0 10px}
+  .stat-grid{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+</head>
+<body>
+
+<!-- URL BANNER -->
+<div id="url-banner">
+  <span style="font-weight:600;white-space:nowrap">Apps Script URL:</span>
+  <input id="script-url" type="text" placeholder="Paste your deployed Apps Script Web App URL…"/>
+  <button onclick="saveUrl()">Save</button>
+  <span id="ping-st" style="font-size:11px;margin-left:4px"></span>
+  <span style="margin-left:12px;white-space:nowrap">Form URL:</span>
+  <input id="form-url-input" type="text" placeholder="Paste Google Form URL for document upload…"/>
+  <button onclick="saveFormUrl()">Save</button>
+</div>
+
+<!-- AUTH SCREEN -->
+<div id="auth-screen">
+  <div class="auth-card">
+    <div class="auth-header">
+      <h1>Scientific Committee BBCI</h1>
+      <p>Protocol Review System</p>
+    </div>
+    <div class="auth-tabs">
+      <button class="auth-tab active" onclick="switchAuth('login')">Sign In</button>
+      <button class="auth-tab" onclick="switchAuth('register')">Register as Investigator</button>
+    </div>
+    <!-- LOGIN -->
+    <div class="auth-body" id="login-form">
+      <label>Email address</label>
+      <input type="email" id="l-email" placeholder="your@email.com" onkeydown="if(event.key==='Enter')login()"/>
+      <label>Password</label>
+      <input type="password" id="l-pass" placeholder="••••••••" onkeydown="if(event.key==='Enter')login()"/>
+      <button class="auth-btn" onclick="login()" id="login-btn">Sign in</button>
+      <div class="auth-err" id="login-err"></div>
+    </div>
+    <!-- REGISTER -->
+    <div class="auth-body" id="register-form" style="display:none">
+      <label>Full name *</label>
+      <input type="text" id="r-name" placeholder="Dr. / Prof. Full Name"/>
+      <label>Email address *</label>
+      <input type="email" id="r-email" placeholder="your@institution.edu"/>
+      <label>Institution / Department</label>
+      <input type="text" id="r-inst" placeholder="e.g. Oncology, BBCI"/>
+      <label>Password * (min. 6 characters)</label>
+      <input type="password" id="r-pass" placeholder="Create a password"/>
+      <label>Confirm password *</label>
+      <input type="password" id="r-pass2" placeholder="Repeat password"/>
+      <button class="auth-btn" onclick="register()" id="reg-btn">Create Account &amp; Sign In</button>
+      <div class="auth-err" id="reg-err"></div>
+    </div>
+  </div>
+</div>
+
+<!-- APP SHELL -->
+<div id="app">
+  <header>
+    <div class="hdr-left">
+      <h2>Scientific Committee BBCI</h2>
+      <p id="hdr-sub">Protocol Review System</p>
+    </div>
+    <div class="hdr-right">
+      <span class="user-pill" id="user-pill">—</span>
+      <button class="logout-btn" onclick="logout()">Sign out</button>
+    </div>
+  </header>
+  <nav id="main-nav"></nav>
+  <main>
+
+    <!-- ══ INVESTIGATOR: SUBMIT ══ -->
+    <div class="panel" id="tab-submit">
+      <div class="sec-hdr"><span class="sec-title">Submit new protocol</span></div>
+      <div class="info-box">Complete all required fields. You will receive a Protocol ID by email which you use to upload your supporting documents.</div>
+      <div class="card">
+        <div class="form-grid">
+          <div class="fg fg-full"><label>Protocol title *</label><input type="text" id="f-title" placeholder="Full title of the research protocol"/></div>
+          <div class="fg"><label>Principal Investigator *</label><input type="text" id="f-pi" placeholder="Full name of PI"/></div>
+          <div class="fg"><label>PI email *</label><input type="email" id="f-piemail" placeholder="pi@institution.edu"/></div>
+          <div class="fg"><label>Department</label><input type="text" id="f-dept" placeholder="e.g. Oncology"/></div>
+          <div class="fg"><label>Institution</label><input type="text" id="f-inst" placeholder="e.g. BBCI, Guwahati"/></div>
+          <div class="fg"><label>Research category</label>
+            <select id="f-cat">
+              <option value="">Select…</option>
+              <option>Clinical Trial — Phase I</option><option>Clinical Trial — Phase II</option>
+              <option>Clinical Trial — Phase III</option><option>Observational Study</option>
+              <option>Basic Science</option><option>Retrospective Study</option>
+              <option>Survey / Questionnaire</option><option>Other</option>
+            </select>
+          </div>
+          <div class="fg fg-full"><label>Brief description *</label><textarea id="f-desc" rows="4" placeholder="Summarise the objectives, methodology and expected outcomes…"></textarea></div>
+        </div>
+        <div style="margin-top:14px;display:flex;gap:8px;align-items:center">
+          <button class="btn btn-dark" onclick="submitProtocol()" id="submit-btn">Submit Protocol</button>
+          <span id="submit-st" style="font-size:12px;color:#888"></span>
+        </div>
+      </div>
+      <!-- Document upload section -->
+      <div class="card" id="doc-upload-section" style="display:none">
+        <div class="card-title">Step 2 — Upload supporting documents</div>
+        <div class="info-box blue">Your protocol has been submitted. Protocol ID: <strong id="new-proto-id"></strong><br/>Now upload your supporting documents using the form below.</div>
+        <div style="margin-bottom:10px;font-size:13px;color:#555">Upload each document separately using the Google Form:</div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn btn-gold" onclick="openDocForm()">📄 Upload Proforma</button>
+          <button class="btn btn-gold" onclick="openDocForm()">📄 Upload CRF</button>
+          <button class="btn btn-gold" onclick="openDocForm()">📄 Upload DMC Clearance</button>
+          <button class="btn btn-gold" onclick="openDocForm()">📄 Upload Covering Letter</button>
+        </div>
+        <div style="margin-top:10px;font-size:12px;color:#888">All uploads go to a secure Google Drive folder named after your Protocol ID.</div>
+      </div>
+    </div>
+
+    <!-- ══ INVESTIGATOR: MY PROTOCOLS ══ -->
+    <div class="panel" id="tab-mystudies">
+      <div class="sec-hdr">
+        <span class="sec-title">My protocols</span>
+        <button class="btn btn-out btn-sm" onclick="loadInvestigatorData()">↻ Refresh</button>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Protocol ID</th><th>Title</th><th>Submitted</th><th>Status</th><th>Decision</th><th>Action</th></tr></thead>
+          <tbody id="my-tbody"><tr><td colspan="6" class="empty">Loading…</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══ ADMIN: DASHBOARD ══ -->
+    <div class="panel" id="tab-dashboard">
+      <div class="stat-grid" id="stat-grid">
+        <div class="stat-card s1"><div class="stat-label">Total</div><div class="stat-value" id="st-total">—</div></div>
+        <div class="stat-card s2"><div class="stat-label">Sent for Review</div><div class="stat-value" id="st-forwarded">—</div></div>
+        <div class="stat-card s3"><div class="stat-label">Under Review</div><div class="stat-value" id="st-reviewing">—</div></div>
+        <div class="stat-card s4"><div class="stat-label">Awaiting Meeting</div><div class="stat-value" id="st-meeting">—</div></div>
+        <div class="stat-card s5"><div class="stat-label">Approved</div><div class="stat-value" id="st-approved">—</div></div>
+        <div class="stat-card s6"><div class="stat-label">Needs Revision</div><div class="stat-value" id="st-revision">—</div></div>
+        <div class="stat-card s7"><div class="stat-label">Rejected</div><div class="stat-value" id="st-rejected">—</div></div>
+        <div class="stat-card s8"><div class="stat-label">Closed</div><div class="stat-value" id="st-closed">—</div></div>
+      </div>
+      <div class="sec-hdr">
+        <span class="sec-title">Active protocols</span>
+        <button class="btn btn-out btn-sm" onclick="loadAdminData()">↻ Refresh</button>
+      </div>
+      <div class="filter-bar">
+        <select id="f-status" onchange="renderAdminTable()">
+          <option value="">All statuses</option>
+          <option>Submitted</option><option>Sent for Review</option>
+          <option>Under Review</option><option>Awaiting Meeting</option>
+          <option>In Meeting</option><option>Approved</option>
+          <option>Needs Revision</option><option>Rejected</option>
+        </select>
+        <input type="text" id="f-q" placeholder="Search title / PI / ID…" oninput="renderAdminTable()"/>
+      </div>
+      <div class="rev-grid" id="rev-progress-grid"></div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>ID</th><th>Title</th><th>Investigator</th><th>Status</th><th>Reviewers</th><th>Pre-review</th><th>Actions</th></tr></thead>
+          <tbody id="admin-tbody"><tr><td colspan="7" class="empty">Loading…</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══ ADMIN: ALL PROTOCOLS ══ -->
+    <div class="panel" id="tab-allprotocols">
+      <div class="sec-hdr">
+        <span class="sec-title">All protocols</span>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-out btn-sm" id="show-closed-btn" onclick="toggleClosed()">Show closed</button>
+          <button class="btn btn-out btn-sm" onclick="loadAdminData()">↻ Refresh</button>
+        </div>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>ID</th><th>Title</th><th>PI</th><th>Category</th><th>Status</th><th>Submitted</th><th>Deadline</th><th>Decision</th><th>Actions</th></tr></thead>
+          <tbody id="all-tbody"><tr><td colspan="9" class="empty">Loading…</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══ ADMIN: REVIEWERS ══ -->
+    <div class="panel" id="tab-reviewers">
+      <div class="sec-hdr">
+        <span class="sec-title">Reviewer accounts</span>
+        <button class="btn btn-dark btn-sm" onclick="openModal('add-reviewer-modal')">+ Add reviewer</button>
+      </div>
+      <div class="info-box">Adding a reviewer creates their login account automatically. Their default password will be their email prefix followed by <strong>@Change1</strong>. Login details are emailed to them.</div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Name</th><th>Email</th><th>Institution</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody id="reviewers-tbody"><tr><td colspan="5" class="empty">Loading…</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══ ADMIN: AUDIT TRAIL ══ -->
+    <div class="panel" id="tab-audit">
+      <div class="sec-hdr">
+        <span class="sec-title">Audit trail</span>
+        <button class="btn btn-out btn-sm" onclick="loadAudit()">↻ Refresh</button>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Timestamp</th><th>Protocol</th><th>User</th><th>Role</th><th>Action</th><th>Details</th></tr></thead>
+          <tbody id="audit-tbody"><tr><td colspan="6" class="empty">Loading…</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══ REVIEWER: MY PROTOCOLS ══ -->
+    <div class="panel" id="tab-reviewer-protos">
+      <div class="sec-hdr">
+        <span class="sec-title">My assigned protocols</span>
+        <button class="btn btn-out btn-sm" onclick="loadReviewerData()">↻ Refresh</button>
+      </div>
+      <div class="info-box">You can only see protocols assigned to you. Add at least one comment before forwarding to meeting.</div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Protocol ID</th><th>Title</th><th>Investigator</th><th>Status</th><th>Deadline</th><th>Comments</th><th>Actions</th></tr></thead>
+          <tbody id="reviewer-tbody"><tr><td colspan="7" class="empty">Loading…</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══ MEETING MODE ══ -->
+    <div class="panel" id="tab-meeting">
+      <div class="sec-hdr"><span class="sec-title">Committee meeting mode</span></div>
+      <div class="info-box blue">Only protocols forwarded by at least one reviewer appear here. All reviewers can add live comments during the meeting.</div>
+      <div class="card">
+        <div class="card-title">Select protocol for discussion</div>
+        <div class="fg" style="max-width:460px;margin-bottom:14px">
+          <label>Protocol</label>
+          <select id="meet-sel" onchange="loadMeetingProtocol()"><option value="">— Select —</option></select>
+        </div>
+        <div id="meet-detail" style="display:none">
+          <div style="background:#f5f3ee;border:1px solid #e0ddd5;border-radius:4px;padding:12px 14px;margin-bottom:14px">
+            <div style="font-weight:600;font-size:14px;margin-bottom:3px" id="meet-title">—</div>
+            <div style="font-size:12px;color:#666" id="meet-meta">—</div>
+            <div style="font-size:12px;color:#888;margin-top:4px" id="meet-desc">—</div>
+          </div>
+          <!-- Pre-review comments summary -->
+          <div class="card-title" style="font-size:14px">Pre-meeting reviewer comments</div>
+          <div id="meet-comments" class="comment-thread" style="max-height:220px"></div>
+          <!-- Live meeting notes -->
+          <div class="card-title" style="font-size:14px;margin-top:14px">Live meeting notes</div>
+          <div id="meet-notes-list" class="comment-thread" style="max-height:180px"></div>
+          <div class="fg" style="margin-bottom:12px">
+            <label>Add meeting note / comment</label>
+            <textarea id="meet-note-input" rows="3" placeholder="Type meeting discussion point or recommendation…"></textarea>
+          </div>
+          <div style="display:flex;gap:8px;margin-bottom:16px">
+            <input type="date" id="meet-date" style="padding:6px 10px;border:1px solid #d0cdc5;border-radius:4px;font-size:13px;font-family:'DM Sans',sans-serif"/>
+            <button class="btn btn-out" onclick="saveMeetingNote()">Add Note</button>
+          </div>
+          <!-- Decision (admin only) -->
+          <div id="decision-section" style="display:none">
+            <div class="card-title" style="font-size:14px">Committee decision</div>
+            <div class="dpills">
+              <div class="dpill" onclick="pickDecision('Approved')">✓ Approved</div>
+              <div class="dpill" onclick="pickDecision('Needs Revision')">✎ Needs revision</div>
+              <div class="dpill" onclick="pickDecision('Deferred')">⏸ Deferred</div>
+              <div class="dpill" onclick="pickDecision('Rejected')">✕ Rejected</div>
+            </div>
+            <div class="fg fg-full" style="margin-bottom:12px">
+              <label>Rationale / recommendations *</label>
+              <textarea id="meet-rationale" rows="4" placeholder="Summarise the committee's decision and specific recommendations for the investigator…"></textarea>
+            </div>
+            <div style="display:flex;gap:8px">
+              <button class="btn btn-dark" onclick="saveDecision()">Save decision</button>
+              <button class="btn btn-gold" onclick="generateAndSendEmail()">Generate &amp; send decision email</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Letter preview -->
+      <div class="card" id="letter-card" style="display:none">
+        <div class="card-title">Decision letter preview</div>
+        <div class="letter-box" id="letter-body"></div>
+        <div style="margin-top:10px;display:flex;gap:8px">
+          <button class="btn btn-dark" onclick="copyLetter()">Copy letter</button>
+          <button class="btn btn-out" onclick="printLetter()">Print / PDF</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ SHARED: MY ACCOUNT ══ -->
+    <div class="panel" id="tab-account">
+      <div class="sec-hdr"><span class="sec-title">My account</span></div>
+      <div class="card" style="max-width:380px">
+        <div class="card-title">Change password</div>
+        <div class="fg" style="margin-bottom:10px"><label>New password</label><input type="password" id="np1" placeholder="Min. 6 characters"/></div>
+        <div class="fg" style="margin-bottom:14px"><label>Confirm password</label><input type="password" id="np2" placeholder="Repeat password"/></div>
+        <button class="btn btn-dark" onclick="changePassword()">Update password</button>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ══ MODALS ══ -->
+
+<!-- Protocol Detail Modal -->
+<div class="modal-wrap" id="proto-modal">
+  <div class="modal">
+    <div class="modal-hdr"><h3 id="pm-title">Protocol Detail</h3><button class="modal-close" onclick="closeModal('proto-modal')">×</button></div>
+    <div class="modal-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px" id="pm-meta"></div>
+      <div style="margin-bottom:12px"><div style="font-size:11px;color:#aaa;letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px">Description</div><div style="font-size:13px;line-height:1.7;color:#333" id="pm-desc">—</div></div>
+      <div style="margin-bottom:14px"><div style="font-size:11px;color:#aaa;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px">Activity timeline</div><div class="timeline" id="pm-timeline"></div></div>
+      <div id="pm-admin-actions"></div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-out" onclick="closeModal('proto-modal')">Close</button></div>
+  </div>
+</div>
+
+<!-- Assign Reviewers Modal -->
+<div class="modal-wrap" id="assign-modal">
+  <div class="modal">
+    <div class="modal-hdr"><h3>Assign reviewers</h3><button class="modal-close" onclick="closeModal('assign-modal')">×</button></div>
+    <div class="modal-body">
+      <div style="background:#f5f3ee;border:1px solid #e0ddd5;border-radius:4px;padding:10px 12px;margin-bottom:14px;font-size:13px">
+        <strong id="am-id">—</strong> — <span id="am-title" style="color:#666"></span>
+      </div>
+      <div class="fg" style="margin-bottom:12px"><label>Select reviewers (multiple allowed)</label>
+        <div id="reviewer-checkboxes" style="border:1px solid #d0cdc5;border-radius:4px;padding:10px;max-height:200px;overflow-y:auto;background:#fff"></div>
+      </div>
+      <div class="form-grid">
+        <div class="fg"><label>Priority</label>
+          <select id="am-prio"><option value="Medium">Medium</option><option value="High">High</option><option value="Low">Low</option></select>
+        </div>
+        <div class="fg"><label>Review deadline</label><input type="date" id="am-deadline"/></div>
+        <div class="fg fg-full"><label>Admin notes</label><textarea id="am-notes" rows="2" placeholder="Internal notes for the committee file…"></textarea></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-out" onclick="closeModal('assign-modal')">Cancel</button>
+      <button class="btn btn-dark" onclick="saveAssignment()">Assign &amp; notify reviewers</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Reviewer Modal -->
+<div class="modal-wrap" id="add-reviewer-modal">
+  <div class="modal">
+    <div class="modal-hdr"><h3>Add reviewer account</h3><button class="modal-close" onclick="closeModal('add-reviewer-modal')">×</button></div>
+    <div class="modal-body">
+      <div class="info-box">A login account is created automatically. Default password: email prefix + <strong>@Change1</strong>. Login details are emailed to the reviewer.</div>
+      <div class="form-grid">
+        <div class="fg"><label>Full name *</label><input type="text" id="ar-name" placeholder="Dr. Jane Smith"/></div>
+        <div class="fg"><label>Email *</label><input type="email" id="ar-email" placeholder="jsmith@institution.edu"/></div>
+        <div class="fg fg-full"><label>Institution / Specialty</label><input type="text" id="ar-inst" placeholder="e.g. Oncology, BBCI"/></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-out" onclick="closeModal('add-reviewer-modal')">Cancel</button>
+      <button class="btn btn-dark" onclick="saveNewReviewer()">Add reviewer</button>
+    </div>
+  </div>
+</div>
+
+<!-- Comment Modal -->
+<div class="modal-wrap" id="comment-modal">
+  <div class="modal">
+    <div class="modal-hdr"><h3 id="cm-title">Review comments</h3><button class="modal-close" onclick="closeModal('comment-modal')">×</button></div>
+    <div class="modal-body">
+      <div style="background:#f5f3ee;border:1px solid #e0ddd5;border-radius:4px;padding:10px 12px;margin-bottom:14px;font-size:13px">
+        <strong id="cm-id">—</strong> — <span id="cm-proto-title" style="color:#666"></span>
+      </div>
+      <div class="comment-thread" id="cm-thread"></div>
+      <div class="card-title" style="font-size:14px">Add comment</div>
+      <div class="form-grid">
+        <div class="fg"><label>Comment type</label>
+          <select id="cm-type">
+            <option value="General">General comment</option>
+            <option value="Methodology">Methodology</option>
+            <option value="Ethics">Ethics concern</option>
+            <option value="Statistics">Statistics</option>
+            <option value="Safety">Safety concern</option>
+            <option value="Recommendation">Recommendation</option>
+          </select>
+        </div>
+        <div class="fg" style="align-self:end">
+          <div style="font-size:11px;color:#888;margin-bottom:4px">Comments are saved immediately</div>
+        </div>
+        <div class="fg fg-full"><label>Comment *</label><textarea id="cm-text" rows="4" placeholder="Enter your detailed review comment…"></textarea></div>
+      </div>
+      <div style="margin-top:12px;display:flex;gap:8px">
+        <button class="btn btn-dark" onclick="addComment(false)">Save comment</button>
+        <button class="btn btn-gold" id="forward-btn" onclick="forwardToMeeting()" title="Must have at least one comment">Forward to meeting</button>
+      </div>
+      <div id="cm-fwd-status" style="margin-top:8px;font-size:12px;color:#888"></div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-out" onclick="closeModal('comment-modal')">Close</button></div>
+  </div>
+</div>
+
+<!-- Resubmit Modal -->
+<div class="modal-wrap" id="resubmit-modal">
+  <div class="modal">
+    <div class="modal-hdr"><h3>Resubmit revised protocol</h3><button class="modal-close" onclick="closeModal('resubmit-modal')">×</button></div>
+    <div class="modal-body">
+      <div class="info-box red">Please address all committee recommendations before resubmitting. Upload your revised documents using the document upload form after resubmission.</div>
+      <div class="fg" style="margin-bottom:12px"><label>Protocol ID</label><input type="text" id="rs-id" readonly style="background:#f5f3ee"/></div>
+      <div class="fg"><label>Updated description / changes made</label><textarea id="rs-desc" rows="4" placeholder="Briefly describe the changes made in response to committee recommendations…"></textarea></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-out" onclick="closeModal('resubmit-modal')">Cancel</button>
+      <button class="btn btn-dark" onclick="resubmitProtocol()">Resubmit protocol</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════
+var S = {
+  url      : localStorage.getItem('bbci_url')||'https://script.google.com/macros/s/AKfycbz_kWPxsc4yPRBQ1iOjOy1UxUN8TsH7Nki0ReUWd3xN7yiwknVMUj_NZSsNGjrXOn_bjA/exec',
+  formUrl  : localStorage.getItem('bbci_form_url')||'https://docs.google.com/forms/d/e/1FAIpQLSd3lhMxvcB3H_XZ5FdTkoTEXFKbz-6tt-iYYcDlCAdT8HU_gg/viewform',
+  token    : localStorage.getItem('bbci_token')||'',
+  role     : localStorage.getItem('bbci_role')||'',
+  name     : localStorage.getItem('bbci_name')||'',
+  email    : localStorage.getItem('bbci_email')||'',
+  protocols: [],
+  reviewers: [],
+  decision : '',
+  activeProto: null,
+  showClosed : false,
+};
+
+var STATUS_CSS = {
+  'Submitted'      :'s-submitted',
+  'Sent for Review':'s-forwarded',
+  'Under Review'   :'s-reviewing',
+  'Awaiting Meeting':'s-meeting',
+  'In Meeting'     :'s-inmeeting',
+  'Approved'       :'s-approved',
+  'Needs Revision' :'s-revision',
+  'Rejected'       :'s-rejected',
+  'Closed'         :'s-closed',
+};
+
+// ═══════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════
+window.onload = function() {
+  if (S.url)     document.getElementById('script-url').value     = S.url;
+  if (S.formUrl) document.getElementById('form-url-input').value = S.formUrl;
+  if (S.token && S.role) showApp();
+  var today = new Date().toISOString().split('T')[0];
+  var mDate = document.getElementById('meet-date');
+  if (mDate) mDate.value = today;
+  // Auto-ping and hide banner if URLs are hardcoded
+  if (S.url && S.url.indexOf('script.google.com') >= 0) {
+    pingServer();
+  }
+};
+
+// ═══════════════════════════════════════════════════
+//  URL MANAGEMENT
+// ═══════════════════════════════════════════════════
+function saveUrl() {
+  var url = document.getElementById('script-url').value.trim();
+  if (!url) { toast('Please paste the Apps Script URL.'); return; }
+  S.url = url; localStorage.setItem('bbci_url', url);
+  pingServer();
+}
+function saveFormUrl() {
+  var url = document.getElementById('form-url-input').value.trim();
+  S.formUrl = url; localStorage.setItem('bbci_form_url', url);
+  toast('Document upload form URL saved.');
+}
+async function pingServer() {
+  var el = document.getElementById('ping-st');
+  el.textContent = 'Checking…';
+  try {
+    var r = await api({action:'ping'});
+    el.textContent = r.success ? '✓ Connected' : '✗ Error';
+    el.style.color = r.success ? '#6aaa6a' : '#d46a4a';
+  } catch(e) { el.textContent = '✗ Unreachable'; el.style.color='#d46a4a'; }
+}
+
+// ═══════════════════════════════════════════════════
+//  AUTH
+// ═══════════════════════════════════════════════════
+function switchAuth(tab) {
+  document.getElementById('login-form').style.display    = tab==='login'    ? 'block':'none';
+  document.getElementById('register-form').style.display = tab==='register' ? 'block':'none';
+  document.querySelectorAll('.auth-tab').forEach(function(b,i){
+    b.classList.toggle('active', (i===0&&tab==='login')||(i===1&&tab==='register'));
+  });
+}
+
+async function login() {
+  var email = v('l-email'), pass = v('l-pass'), err = document.getElementById('login-err');
+  err.textContent = '';
+  if (!email||!pass) { err.textContent='Please enter email and password.'; return; }
+  if (!S.url) { err.textContent='Please paste the Apps Script URL in the banner above.'; return; }
+  var btn = document.getElementById('login-btn');
+  btn.innerHTML = '<span class="spinner"></span> Signing in…'; btn.disabled=true;
+  try {
+    var r = await api({action:'login',email:email,password:pass});
+    if (r.success) {
+      S.token=r.data.token; S.role=r.data.role; S.name=r.data.name; S.email=r.data.email;
+      localStorage.setItem('bbci_token',S.token); localStorage.setItem('bbci_role',S.role);
+      localStorage.setItem('bbci_name',S.name);   localStorage.setItem('bbci_email',S.email);
+      showApp();
+    } else { err.textContent = r.error||'Login failed.'; }
+  } catch(e) { err.textContent='Cannot reach server. Check the Apps Script URL.'; }
+  btn.innerHTML='Sign in'; btn.disabled=false;
+}
+
+async function register() {
+  var name=v('r-name'),email=v('r-email'),pass=v('r-pass'),pass2=v('r-pass2');
+  var err=document.getElementById('reg-err'); err.textContent='';
+  if (!name||!email||!pass) { err.textContent='Name, email and password are required.'; return; }
+  if (pass!==pass2) { err.textContent='Passwords do not match.'; return; }
+  if (pass.length<6) { err.textContent='Password must be at least 6 characters.'; return; }
+  var btn=document.getElementById('reg-btn');
+  btn.innerHTML='<span class="spinner"></span> Creating account…'; btn.disabled=true;
+  try {
+    var r = await api({action:'register',name:name,email:email,
+      password:pass,institution:v('r-inst')});
+    if (r.success) {
+      S.token=r.data.token; S.role=r.data.role; S.name=r.data.name; S.email=r.data.email;
+      localStorage.setItem('bbci_token',S.token); localStorage.setItem('bbci_role',S.role);
+      localStorage.setItem('bbci_name',S.name);   localStorage.setItem('bbci_email',S.email);
+      showApp();
+    } else { err.textContent = r.error||'Registration failed.'; }
+  } catch(e) { err.textContent='Cannot reach server.'; }
+  btn.innerHTML='Create Account & Sign In'; btn.disabled=false;
+}
+
+function logout() {
+  ['bbci_token','bbci_role','bbci_name','bbci_email'].forEach(function(k){localStorage.removeItem(k);});
+  S.token=S.role=S.name=S.email='';
+  document.getElementById('app').style.display='none';
+  document.getElementById('auth-screen').style.display='flex';
+  document.getElementById('l-pass').value='';
+}
+
+// ═══════════════════════════════════════════════════
+//  SHOW APP
+// ═══════════════════════════════════════════════════
+function showApp() {
+  document.getElementById('auth-screen').style.display='none';
+  document.getElementById('app').style.display='block';
+
+  var roleLabel = {admin:'Admin / Chairman',reviewer:'Lead Reviewer',investigator:'Investigator'};
+  document.getElementById('user-pill').textContent = (roleLabel[S.role]||S.role)+' — '+S.name;
+  document.getElementById('hdr-sub').textContent = roleLabel[S.role]||S.role;
+
+  var navDef = {
+    admin       : [['dashboard','Dashboard'],['allprotocols','All Protocols'],['reviewers','Reviewers'],['meeting','Meeting'],['audit','Audit Trail'],['account','My Account']],
+    reviewer    : [['reviewer-protos','My Protocols'],['meeting','Meeting'],['account','My Account']],
+    investigator: [['submit','Submit Protocol'],['mystudies','My Protocols'],['account','My Account']],
+  };
+  var tabs = navDef[S.role]||[];
+  document.getElementById('main-nav').innerHTML = tabs.map(function(t){
+    return '<button class="tab-btn" onclick="showTab(\''+t[0]+'\')" data-tab="'+t[0]+'">'+t[1]+'</button>';
+  }).join('');
+
+  showTab(tabs[0][0]);
+  if (S.role==='admin')    loadAdminData();
+  if (S.role==='reviewer') loadReviewerData();
+  if (S.role==='investigator') loadInvestigatorData();
+}
+
+// ═══════════════════════════════════════════════════
+//  TABS
+// ═══════════════════════════════════════════════════
+function showTab(tab) {
+  document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('active');});
+  document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active');});
+  var panel = document.getElementById('tab-'+tab);
+  var btn   = document.querySelector('[data-tab="'+tab+'"]');
+  if (panel) panel.classList.add('active');
+  if (btn)   btn.classList.add('active');
+}
+
+// ═══════════════════════════════════════════════════
+//  INVESTIGATOR
+// ═══════════════════════════════════════════════════
+async function submitProtocol() {
+  var title=v('f-title'),pi=v('f-pi'),piEmail=v('f-piemail'),desc=v('f-desc');
+  if (!title||!pi||!piEmail||!desc) { toast('Please fill in all required fields.'); return; }
+  var btn=document.getElementById('submit-btn'), st=document.getElementById('submit-st');
+  btn.innerHTML='<span class="spinner"></span> Submitting…'; btn.disabled=true;
+  var r = await api({action:'submitProtocol',token:S.token,title:title,pi:pi,piEmail:piEmail,
+    department:v('f-dept'),institution:v('f-inst'),category:v('f-cat'),description:desc});
+  if (r.success) {
+    document.getElementById('new-proto-id').textContent = r.data.protocolID;
+    document.getElementById('doc-upload-section').style.display = 'block';
+    st.textContent = '✓ Submitted! Reference: '+r.data.protocolID;
+    st.style.color = '#1a7a3a';
+    ['f-title','f-pi','f-piemail','f-dept','f-inst','f-desc'].forEach(function(id){document.getElementById(id).value='';});
+    document.getElementById('f-cat').value='';
+    toast('Protocol submitted! Reference: '+r.data.protocolID);
+    loadInvestigatorData();
+  } else { toast('Error: '+r.error); }
+  btn.innerHTML='Submit Protocol'; btn.disabled=false;
+}
+
+function openDocForm() {
+  if (S.formUrl) { window.open(S.formUrl,'_blank'); }
+  else { toast('Please paste the Google Form URL in the top banner first.'); }
+}
+
+async function loadInvestigatorData() {
+  var r = await api({action:'getMyProtocols',token:S.token});
+  if (r.success) { S.protocols=r.data; renderMyStudies(); }
+}
+
+function renderMyStudies() {
+  var tbody = document.getElementById('my-tbody');
+  if (!S.protocols.length) { tbody.innerHTML='<tr><td colspan="6" class="empty">No protocols submitted yet.</td></tr>'; return; }
+  tbody.innerHTML = S.protocols.map(function(p){
+    var canResubmit = p.Status==='Needs Revision';
+    return '<tr>'+
+      '<td style="font-size:11px;font-weight:600;color:#888">'+esc(p.ProtocolID)+'</td>'+
+      '<td style="font-weight:500">'+esc(p.Title)+'</td>'+
+      '<td style="font-size:12px;color:#888">'+esc(p.SubmissionDate)+'</td>'+
+      '<td><span class="badge '+statusCss(p.Status)+'">'+esc(p.Status)+'</span></td>'+
+      '<td style="font-size:12px">'+esc(p.Decision||'—')+'</td>'+
+      '<td>'+
+        (canResubmit ? '<button class="btn btn-gold btn-sm" onclick="openResubmit(\''+esc(p.ProtocolID)+'\')">Resubmit</button>' : '')+
+        ' <button class="btn btn-out btn-sm" onclick="viewProtoTimeline(\''+esc(p.ProtocolID)+'\')">Track</button>'+
+      '</td></tr>';
+  }).join('');
+}
+
+async function viewProtoTimeline(id) {
+  var r = await api({action:'getProtocol',token:S.token,protocolID:id});
+  if (!r.success) { toast('Error: '+r.error); return; }
+  var p = r.data;
+  document.getElementById('pm-title').textContent = p.ProtocolID+' — '+p.Title;
+  document.getElementById('pm-desc').textContent  = p.Description||'—';
+  document.getElementById('pm-admin-actions').innerHTML = '';
+  var meta = [
+    ['Status',badgeHtml(p.Status)],['Submitted',p.SubmissionDate],
+    ['PI',p.PI],['Category',p.Category],
+    ['Decision',p.Decision||'—'],['Letter sent',p.LetterSentDate||'—'],
+  ];
+  document.getElementById('pm-meta').innerHTML = meta.map(function(m){
+    return '<div><div style="font-size:10px;color:#aaa;letter-spacing:.08em;text-transform:uppercase;margin-bottom:3px">'+esc(m[0])+'</div>'+
+           '<div style="font-size:13px;color:#222">'+m[1]+'</div></div>';
+  }).join('');
+  var events = buildTimeline(p);
+  document.getElementById('pm-timeline').innerHTML = events.map(function(e){
+    return '<div class="tl-item"><div class="tl-dot"></div><div class="tl-date">'+esc(e.date)+'</div><div class="tl-text">'+esc(e.text)+'</div></div>';
+  }).join('');
+  openModal('proto-modal');
+}
+
+function buildTimeline(p) {
+  var events = [];
+  if (p.SubmissionDate) events.push({date:p.SubmissionDate,text:'Protocol submitted'});
+  if (p.AssignedReviewers) events.push({date:p.ReviewDeadline||'—',text:'Assigned to reviewers: '+p.AssignedReviewers});
+  if (p.ForwardedDate) events.push({date:p.ForwardedDate,text:'Forwarded to committee meeting by '+p.ForwardedBy});
+  if (p.MeetingDate) events.push({date:p.MeetingDate,text:'Reviewed at committee meeting'});
+  if (p.Decision) events.push({date:p.MeetingDate||'—',text:'Decision: '+p.Decision});
+  if (p.LetterSentDate) events.push({date:p.LetterSentDate,text:'Decision letter sent'});
+  if (!events.length) events.push({date:'—',text:'No activity recorded yet'});
+  return events;
+}
+
+function openResubmit(id) {
+  document.getElementById('rs-id').value = id;
+  document.getElementById('rs-desc').value = '';
+  openModal('resubmit-modal');
+}
+
+async function resubmitProtocol() {
+  var id = v('rs-id'), desc = v('rs-desc');
+  var r = await api({action:'resubmitProtocol',token:S.token,protocolID:id,description:desc});
+  if (r.success) {
+    closeModal('resubmit-modal');
+    toast('Protocol resubmitted. Upload your revised documents using the document form.');
+    loadInvestigatorData();
+    document.getElementById('doc-upload-section').style.display='block';
+    document.getElementById('new-proto-id').textContent = id;
+  } else toast('Error: '+r.error);
+}
+
+// ═══════════════════════════════════════════════════
+//  ADMIN DATA
+// ═══════════════════════════════════════════════════
+async function loadAdminData() {
+  var [pr, rv, st] = await Promise.all([
+    api({action:'getAllProtocols',token:S.token}),
+    api({action:'getReviewers',token:S.token}),
+    api({action:'getStats',token:S.token}),
+  ]);
+  if (pr.success) S.protocols = pr.data;
+  if (rv.success) S.reviewers = rv.data;
+  if (st.success) updateStats(st.data);
+  renderAdminTable();
+  renderAllTable();
+  renderReviewersTable();
+  populateMeetingSelect();
+  renderReviewerProgress();
+}
+
+function updateStats(s) {
+  var map = {total:'st-total',forwarded:'st-forwarded',reviewing:'st-reviewing',
+    meeting:'st-meeting',approved:'st-approved',revision:'st-revision',
+    rejected:'st-rejected',closed:'st-closed'};
+  for (var k in map) { setEl(map[k], s[k]!==undefined?s[k]:'0'); }
+}
+
+function renderAdminTable() {
+  var status = document.getElementById('f-status') ? document.getElementById('f-status').value : '';
+  var q      = (document.getElementById('f-q') ? document.getElementById('f-q').value : '').toLowerCase();
+  var data   = S.protocols.filter(function(p){
+    if (p.TrackClosed==='TRUE') return false;
+    if (status && p.Status!==status) return false;
+    if (q && !(p.Title||'').toLowerCase().includes(q) && !(p.PrincipalInvestigator||'').toLowerCase().includes(q) && !(p.PI||'').toLowerCase().includes(q)) return false;
+    return true;
+  });
+  var tbody = document.getElementById('admin-tbody');
+  if (!data.length) { tbody.innerHTML='<tr><td colspan="7" class="empty">No protocols match.</td></tr>'; return; }
+  tbody.innerHTML = data.map(function(p){
+    var revStatus = p.ReviewerStatus==='Submitted'
+      ? '<span style="color:#1a7a3a;font-size:11px">✓ Ready</span>'
+      : (p.AssignedReviewers ? '<span style="color:#c8b86a;font-size:11px">Pending</span>' : '<span style="color:#bbb;font-size:11px">—</span>');
+    return '<tr>'+
+      '<td style="font-size:11px;font-weight:600;color:#888">'+esc(p.ProtocolID)+'</td>'+
+      '<td style="font-weight:500;max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="'+esc(p.Title)+'">'+esc(p.Title)+'</td>'+
+      '<td style="font-size:12px;color:#666">'+esc(p.Investigator||p.PrincipalInvestigator)+'</td>'+
+      '<td>'+badgeHtml(p.Status)+'</td>'+
+      '<td style="font-size:12px">'+esc(p.AssignedReviewers||'—')+'</td>'+
+      '<td>'+revStatus+'</td>'+
+      '<td style="white-space:nowrap">'+
+        '<button class="btn btn-out btn-sm" style="margin-right:3px" onclick="openAssign(\''+esc(p.ProtocolID)+'\',\''+esc(p.Title)+'\')">Assign</button>'+
+        '<button class="btn btn-gold btn-sm" onclick="openMeetingFor(\''+esc(p.ProtocolID)+'\')">Meeting</button>'+
+        ' <button class="btn btn-out btn-sm" onclick="viewProtoAdmin(\''+esc(p.ProtocolID)+'\')">View</button>'+
+      '</td></tr>';
+  }).join('');
+}
+
+function renderAllTable() {
+  var data = S.showClosed
+    ? S.protocols
+    : S.protocols.filter(function(p){ return p.TrackClosed!=='TRUE'; });
+  var tbody = document.getElementById('all-tbody');
+  if (!data.length) { tbody.innerHTML='<tr><td colspan="9" class="empty">No protocols.</td></tr>'; return; }
+  tbody.innerHTML = data.map(function(p){
+    var isClosed = p.TrackClosed==='TRUE';
+    return '<tr style="'+(isClosed?'opacity:.55':'')+'">'+
+      '<td style="font-size:11px;font-weight:600;color:#888">'+esc(p.ProtocolID)+'</td>'+
+      '<td style="font-weight:500">'+esc(p.Title)+'</td>'+
+      '<td style="font-size:12px">'+esc(p.PI)+'</td>'+
+      '<td style="font-size:12px;color:#888">'+esc(p.Category||'—')+'</td>'+
+      '<td>'+badgeHtml(p.Status)+'</td>'+
+      '<td style="font-size:12px;color:#888">'+esc(p.SubmissionDate)+'</td>'+
+      '<td style="font-size:12px;color:'+(isOverdue(p.ReviewDeadline)?'#d46a4a':'#888')+'">'+esc(p.ReviewDeadline||'—')+'</td>'+
+      '<td style="font-size:12px">'+esc(p.Decision||'—')+'</td>'+
+      '<td style="white-space:nowrap">'+
+        (!isClosed && p.Status==='Approved'
+          ? '<button class="btn btn-green btn-sm" onclick="closeTrack(\''+esc(p.ProtocolID)+'\')">Close track</button>'
+          : (isClosed ? '<span style="font-size:11px;color:#888">Closed</span>' : ''))+
+      '</td></tr>';
+  }).join('');
+}
+
+function toggleClosed() {
+  S.showClosed = !S.showClosed;
+  document.getElementById('show-closed-btn').textContent = S.showClosed ? 'Hide closed' : 'Show closed';
+  renderAllTable();
+}
+
+function renderReviewerProgress() {
+  var map = {};
+  S.protocols.filter(function(p){return p.TrackClosed!=='TRUE';}).forEach(function(p){
+    if (!p.AssignedReviewers) return;
+    p.AssignedReviewers.split(',').forEach(function(n){
+      n = n.trim();
+      if (!n) return;
+      if (!map[n]) map[n]={total:0,fwd:0};
+      map[n].total++;
+      if (p.ForwardedToMeeting==='TRUE') map[n].fwd++;
+    });
+  });
+  var names=Object.keys(map);
+  var grid=document.getElementById('rev-progress-grid');
+  if (!names.length) { grid.innerHTML=''; return; }
+  grid.innerHTML = names.map(function(n){
+    var r=map[n], pct=r.total?Math.round(r.fwd/r.total*100):0;
+    var col=pct===100?'#6aaa6a':pct>=50?'#c8b86a':'#d46a4a';
+    return '<div class="rev-card"><div class="rev-name">'+esc(n)+'</div>'+
+      '<div class="rev-sub">'+r.fwd+'/'+r.total+' forwarded to meeting</div>'+
+      '<div class="rev-bar"><div class="rev-fill" style="width:'+pct+'%;background:'+col+'"></div></div></div>';
+  }).join('');
+}
+
+function renderReviewersTable() {
+  var tbody = document.getElementById('reviewers-tbody');
+  if (!S.reviewers.length) { tbody.innerHTML='<tr><td colspan="5" class="empty">No reviewers added yet.</td></tr>'; return; }
+  tbody.innerHTML = S.reviewers.map(function(r){
+    var active=r.Active==='TRUE';
+    return '<tr>'+
+      '<td style="font-weight:500">'+esc(r.Name)+'</td>'+
+      '<td style="font-size:12px;color:#666">'+esc(r.Email)+'</td>'+
+      '<td style="font-size:12px;color:#888">'+esc(r.Institution||r.Specialty||'—')+'</td>'+
+      '<td><span class="badge '+(active?'s-approved':'s-rejected')+'">'+(active?'Active':'Inactive')+'</span></td>'+
+      '<td><button class="btn btn-out btn-sm" onclick="toggleReviewer(\''+esc(r.Email)+'\','+!active+')">'+
+        (active?'Deactivate':'Activate')+'</button></td></tr>';
+  }).join('');
+}
+
+async function viewProtoAdmin(id) {
+  var r = await api({action:'getProtocol',token:S.token,protocolID:id});
+  if (!r.success) { toast(r.error); return; }
+  var p = r.data;
+  document.getElementById('pm-title').textContent = p.ProtocolID+' — '+p.Title;
+  document.getElementById('pm-desc').textContent  = p.Description||'—';
+  var meta = [
+    ['Status',badgeHtml(p.Status)],['Priority',p.Priority||'—'],
+    ['Investigator',p.Investigator],['PI',p.PI],
+    ['PI Email',p.PIEmail],['Department',p.Department],
+    ['Submitted',p.SubmissionDate],['Reviewers',p.AssignedReviewers||'None assigned'],
+    ['Decision',p.Decision||'—'],['Rationale',p.Rationale||'—'],
+  ];
+  document.getElementById('pm-meta').innerHTML = meta.map(function(m){
+    return '<div><div style="font-size:10px;color:#aaa;text-transform:uppercase;letter-spacing:.07em;margin-bottom:3px">'+esc(m[0])+'</div>'+
+           '<div style="font-size:13px;color:#222">'+m[1]+'</div></div>';
+  }).join('');
+  document.getElementById('pm-timeline').innerHTML = buildTimeline(p).map(function(e){
+    return '<div class="tl-item"><div class="tl-dot"></div><div class="tl-date">'+esc(e.date)+'</div><div class="tl-text">'+esc(e.text)+'</div></div>';
+  }).join('');
+  // Admin actions
+  var actions = '';
+  if (p.Status!=='Closed' && (p.Status==='Awaiting Meeting'||p.Status==='In Meeting'||p.Status==='Under Review'||p.Status==='Sent for Review')) {
+    actions += '<button class="btn btn-red btn-sm" onclick="adminForward(\''+esc(id)+'\');closeModal(\'proto-modal\')" style="margin-right:6px">Force-forward to meeting</button>';
+  }
+  if (p.Status==='Approved' && p.TrackClosed!=='TRUE') {
+    actions += '<button class="btn btn-green btn-sm" onclick="closeTrack(\''+esc(id)+'\');closeModal(\'proto-modal\')">Close track</button>';
+  }
+  if (p.DrivefolderURL) {
+    actions += ' <a href="'+esc(p.DrivefolderURL)+'" target="_blank" class="btn btn-out btn-sm">Open Drive folder</a>';
+  }
+  document.getElementById('pm-admin-actions').innerHTML = actions
+    ? '<div style="margin-top:14px;padding-top:12px;border-top:1px solid #f0ede6;display:flex;gap:8px;flex-wrap:wrap">'+actions+'</div>'
+    : '';
+  openModal('proto-modal');
+}
+
+// ═══════════════════════════════════════════════════
+//  ASSIGN REVIEWERS
+// ═══════════════════════════════════════════════════
+function openAssign(id, title) {
+  S.activeProto = id;
+  document.getElementById('am-id').textContent    = id;
+  document.getElementById('am-title').textContent = title;
+  document.getElementById('am-notes').value = '';
+  var cbs = document.getElementById('reviewer-checkboxes');
+  var active = S.reviewers.filter(function(r){return r.Active==='TRUE';});
+  if (!active.length) {
+    cbs.innerHTML = '<div style="color:#888;font-size:13px;padding:8px">No reviewers added yet. Add reviewers first.</div>';
+  } else {
+    cbs.innerHTML = active.map(function(r){
+      return '<label style="display:flex;align-items:center;gap:8px;padding:6px 0;font-size:13px;cursor:pointer;border-bottom:1px solid #f5f3ee">'+
+        '<input type="checkbox" value="'+esc(r.Email)+'" data-name="'+esc(r.Name)+'"/>'+
+        '<span><strong>'+esc(r.Name)+'</strong> <span style="color:#888;font-size:11px">'+esc(r.Email)+'</span></span></label>';
+    }).join('');
+  }
+  openModal('assign-modal');
+}
+
+async function saveAssignment() {
+  var checkboxes = document.querySelectorAll('#reviewer-checkboxes input[type=checkbox]:checked');
+  if (!checkboxes.length) { toast('Please select at least one reviewer.'); return; }
+  var reviewers = Array.from(checkboxes).map(function(cb){
+    return {email:cb.value, name:cb.getAttribute('data-name')};
+  });
+  var r = await api({action:'assignReviewers',token:S.token,
+    protocolID:S.activeProto, reviewers:reviewers,
+    deadline:v('am-deadline'), priority:v('am-prio'), notes:v('am-notes')});
+  if (r.success) {
+    closeModal('assign-modal');
+    toast('Reviewers assigned and notified by email.');
+    loadAdminData();
+  } else toast('Error: '+r.error);
+}
+
+async function saveNewReviewer() {
+  var name=v('ar-name'), email=v('ar-email');
+  if (!name||!email) { toast('Name and email are required.'); return; }
+  var r = await api({action:'addReviewerUser',token:S.token,
+    name:name,email:email,institution:v('ar-inst')});
+  if (r.success) {
+    closeModal('add-reviewer-modal');
+    toast(r.data.message);
+    loadAdminData();
+  } else toast('Error: '+r.error);
+}
+
+async function toggleReviewer(email, makeActive) {
+  var r = await api({action:'toggleUser',token:S.token,email:email,active:makeActive});
+  if (r.success) { toast('Reviewer updated.'); loadAdminData(); }
+  else toast('Error: '+r.error);
+}
+
+async function adminForward(id) {
+  var r = await api({action:'adminForward',token:S.token,protocolID:id});
+  if (r.success) { toast('Protocol force-forwarded to meeting.'); loadAdminData(); }
+  else toast('Error: '+r.error);
+}
+
+async function closeTrack(id) {
+  if (!confirm('Close track for '+id+'? It will be removed from the active list.')) return;
+  var r = await api({action:'closeTrack',token:S.token,protocolID:id});
+  if (r.success) { toast('Track closed.'); loadAdminData(); }
+  else toast('Error: '+r.error);
+}
+
+// ═══════════════════════════════════════════════════
+//  REVIEWER
+// ═══════════════════════════════════════════════════
+async function loadReviewerData() {
+  var r = await api({action:'getMyProtocols',token:S.token});
+  if (r.success) { S.protocols=r.data; renderReviewerTable(); populateMeetingSelect(); }
+}
+
+function renderReviewerTable() {
+  var tbody = document.getElementById('reviewer-tbody');
+  if (!S.protocols.length) { tbody.innerHTML='<tr><td colspan="7" class="empty">No protocols assigned to you yet.</td></tr>'; return; }
+  tbody.innerHTML = S.protocols.map(function(p){
+    var fwdStatus = p.ForwardedToMeeting==='TRUE'
+      ? '<span style="color:#1a7a3a;font-size:11px">✓ Forwarded</span>'
+      : '<span style="color:#c8b86a;font-size:11px">Not yet</span>';
+    return '<tr>'+
+      '<td style="font-size:11px;font-weight:600;color:#888">'+esc(p.ProtocolID)+'</td>'+
+      '<td style="font-weight:500">'+esc(p.Title)+'</td>'+
+      '<td style="font-size:12px;color:#666">'+esc(p.Investigator||p.PrincipalInvestigator)+'</td>'+
+      '<td>'+badgeHtml(p.Status)+'</td>'+
+      '<td style="font-size:12px;color:'+(isOverdue(p.ReviewDeadline)?'#d46a4a':'#888')+'">'+esc(p.ReviewDeadline||'—')+'</td>'+
+      '<td>'+fwdStatus+'</td>'+
+      '<td><button class="btn btn-gold btn-sm" onclick="openCommentModal(\''+esc(p.ProtocolID)+'\',\''+esc(p.Title)+'\')">Review</button></td></tr>';
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════════
+//  COMMENTS
+// ═══════════════════════════════════════════════════
+async function openCommentModal(id, title) {
+  S.activeProto = id;
+  document.getElementById('cm-id').textContent          = id;
+  document.getElementById('cm-proto-title').textContent = title;
+  document.getElementById('cm-title').textContent       = 'Review — '+id;
+  document.getElementById('cm-text').value='';
+  document.getElementById('cm-fwd-status').textContent='';
+  openModal('comment-modal');
+  await loadComments(id);
+}
+
+async function loadComments(id) {
+  var r = await api({action:'getComments',token:S.token,protocolID:id});
+  if (!r.success) return;
+  var thread = document.getElementById('cm-thread');
+  if (!r.data.length) {
+    thread.innerHTML='<div class="empty" style="padding:16px">No comments yet. Be the first to review.</div>';
+    document.getElementById('forward-btn').disabled = true;
+    return;
+  }
+  thread.innerHTML = r.data.map(function(c){
+    return '<div class="comment-item'+(c.MeetingComment==='TRUE'?' meeting-comment':'')+'">'+
+      '<div class="comment-meta">'+
+        '<strong>'+esc(c.ReviewerName)+'</strong>'+
+        '<span class="badge s-reviewing">'+esc(c.CommentType)+'</span>'+
+        (c.MeetingComment==='TRUE'?'<span class="badge s-inmeeting">Meeting</span>':'')+
+        '<span>'+esc(c.CommentDate)+'</span>'+
+      '</div>'+
+      '<div class="comment-text">'+esc(c.CommentText)+'</div></div>';
+  }).join('');
+  // Enable forward button only if reviewer has own comment
+  var myComments = r.data.filter(function(c){return c.ReviewerEmail===S.email;});
+  document.getElementById('forward-btn').disabled = myComments.length===0;
+  if (myComments.length===0) {
+    document.getElementById('cm-fwd-status').textContent = 'Add at least one comment to enable forwarding to meeting.';
+  }
+}
+
+async function addComment(isMeeting) {
+  var text = v('cm-text');
+  if (!text.trim()) { toast('Please enter a comment.'); return; }
+  var r = await api({action:'addComment',token:S.token,
+    protocolID:S.activeProto, commentText:text,
+    commentType:v('cm-type'), meetingComment:isMeeting});
+  if (r.success) {
+    document.getElementById('cm-text').value='';
+    toast('Comment saved.');
+    loadComments(S.activeProto);
+    if (S.role==='admin') loadAdminData(); else loadReviewerData();
+  } else toast('Error: '+r.error);
+}
+
+async function forwardToMeeting() {
+  var r = await api({action:'forwardToMeeting',token:S.token,protocolID:S.activeProto});
+  if (r.success) {
+    closeModal('comment-modal');
+    toast('Protocol forwarded to meeting!');
+    if (S.role==='admin') loadAdminData(); else loadReviewerData();
+  } else toast('Error: '+r.error);
+}
+
+// ═══════════════════════════════════════════════════
+//  MEETING MODE
+// ═══════════════════════════════════════════════════
+async function populateMeetingSelect() {
+  var r = await api({action:'getMeetingProtos',token:S.token});
+  var sel = document.getElementById('meet-sel');
+  if (!r.success||!r.data.length) {
+    sel.innerHTML='<option value="">No protocols awaiting meeting</option>';
+    return;
+  }
+  sel.innerHTML='<option value="">— Select protocol —</option>'+
+    r.data.map(function(p){
+      return '<option value="'+esc(p.ProtocolID)+'">'+esc(p.ProtocolID)+' — '+esc(p.Title)+'</option>';
+    }).join('');
+}
+
+function openMeetingFor(id) {
+  showTab('meeting');
+  populateMeetingSelect().then(function(){
+    document.getElementById('meet-sel').value = id;
+    loadMeetingProtocol();
+  });
+}
+
+async function loadMeetingProtocol() {
+  var id = v('meet-sel');
+  var detail = document.getElementById('meet-detail');
+  if (!id) { detail.style.display='none'; document.getElementById('letter-card').style.display='none'; return; }
+  var r = await api({action:'getProtocol',token:S.token,protocolID:id});
+  if (!r.success) return;
+  var p = r.data;
+  document.getElementById('meet-title').textContent = p.Title;
+  document.getElementById('meet-meta').textContent  = 'Investigator: '+p.Investigator+' | PI: '+p.PI+' | Reviewers: '+(p.AssignedReviewers||'—');
+  document.getElementById('meet-desc').textContent  = p.Description||'';
+  document.getElementById('meet-rationale').value   = p.Rationale||'';
+  S.decision = p.Decision||''; updateDecisionPills();
+  if (p.MeetingDate) document.getElementById('meet-date').value = p.MeetingDate;
+  detail.style.display='block';
+  document.getElementById('letter-card').style.display='none';
+  document.getElementById('decision-section').style.display = S.role==='admin'?'block':'none';
+  // Load pre-review comments
+  var cr = await api({action:'getComments',token:S.token,protocolID:id});
+  var preMeetingComments = cr.success ? cr.data.filter(function(c){return c.MeetingComment!=='TRUE';}) : [];
+  var meetCmnts          = cr.success ? cr.data.filter(function(c){return c.MeetingComment==='TRUE';}) : [];
+  document.getElementById('meet-comments').innerHTML = preMeetingComments.length
+    ? preMeetingComments.map(commentHtml).join('')
+    : '<div class="empty" style="padding:12px">No pre-meeting comments.</div>';
+  // Load meeting notes
+  var nr = await api({action:'getMeetingNotes',token:S.token,protocolID:id});
+  var notes = nr.success ? nr.data : [];
+  document.getElementById('meet-notes-list').innerHTML = (notes.length||meetCmnts.length)
+    ? [...notes.map(function(n){
+        return '<div class="comment-item meeting-comment"><div class="comment-meta"><strong>'+esc(n.ReviewerName)+'</strong><span>'+esc(n.Timestamp)+'</span></div><div class="comment-text">'+esc(n.NoteText)+'</div></div>';
+      }), ...meetCmnts.map(commentHtml)].join('')
+    : '<div class="empty" style="padding:12px">No meeting notes yet.</div>';
+}
+
+function commentHtml(c) {
+  return '<div class="comment-item'+(c.MeetingComment==='TRUE'?' meeting-comment':'')+'">'+
+    '<div class="comment-meta"><strong>'+esc(c.ReviewerName)+'</strong>'+
+    '<span class="badge s-reviewing">'+esc(c.CommentType)+'</span>'+
+    '<span>'+esc(c.CommentDate)+'</span></div>'+
+    '<div class="comment-text">'+esc(c.CommentText)+'</div></div>';
+}
+
+async function saveMeetingNote() {
+  var text = v('meet-note-input');
+  if (!text.trim()) { toast('Please enter a note.'); return; }
+  var id = v('meet-sel');
+  var r = await api({action:'addMeetingNote',token:S.token,
+    protocolID:id, noteText:text, meetingDate:v('meet-date')});
+  if (r.success) {
+    document.getElementById('meet-note-input').value='';
+    toast('Note saved.');
+    loadMeetingProtocol();
+  } else toast('Error: '+r.error);
+}
+
+function pickDecision(d) { S.decision=d; updateDecisionPills(); }
+function updateDecisionPills() {
+  var map={'Approved':'dp-approved','Needs Revision':'dp-revision','Deferred':'dp-deferred','Rejected':'dp-rejected'};
+  document.querySelectorAll('.dpill').forEach(function(el){
+    el.className='dpill';
+    var t=el.textContent.replace(/^[✓✎⏸✕] /,'').trim();
+    if (t===S.decision && map[S.decision]) el.classList.add(map[S.decision]);
+  });
+}
+
+async function saveDecision() {
+  var id = v('meet-sel');
+  if (!id||!S.decision) { toast('Select a protocol and a decision.'); return; }
+  var r = await api({action:'saveDecision',token:S.token,
+    protocolID:id, decision:S.decision,
+    rationale:v('meet-rationale'), meetingDate:v('meet-date')});
+  if (r.success) { toast('Decision saved: '+S.decision); loadAdminData(); }
+  else toast('Error: '+r.error);
+}
+
+async function generateAndSendEmail() {
+  var id = v('meet-sel');
+  if (!id||!S.decision) { toast('Please save a decision first.'); return; }
+  // Save decision first
+  await api({action:'saveDecision',token:S.token,protocolID:id,
+    decision:S.decision,rationale:v('meet-rationale'),meetingDate:v('meet-date')});
+  // Then send email
+  var r = await api({action:'sendDecisionEmail',token:S.token,protocolID:id});
+  if (r.success) {
+    document.getElementById('letter-body').textContent = r.data.letter||'';
+    document.getElementById('letter-card').style.display='block';
+    toast('Email sent to: '+(r.data.sentTo||[]).join(', '));
+    loadAdminData();
+  } else toast('Error: '+r.error);
+}
+
+function copyLetter() {
+  navigator.clipboard.writeText(document.getElementById('letter-body').textContent)
+    .then(function(){toast('Letter copied!');});
+}
+function printLetter() {
+  var w=window.open('','_blank');
+  w.document.write('<html><head><title>Decision Letter</title><style>body{font-family:Georgia,serif;font-size:14px;line-height:1.8;max-width:680px;margin:48px auto;color:#111;white-space:pre-wrap}</style></head><body>'+
+    document.getElementById('letter-body').textContent.replace(/</g,'&lt;')+'</body></html>');
+  w.document.close(); w.print();
+}
+
+// ═══════════════════════════════════════════════════
+//  AUDIT
+// ═══════════════════════════════════════════════════
+async function loadAudit() {
+  var r = await api({action:'getAudit',token:S.token});
+  if (!r.success) return;
+  var tbody = document.getElementById('audit-tbody');
+  if (!r.data.length) { tbody.innerHTML='<tr><td colspan="6" class="empty">No audit records.</td></tr>'; return; }
+  tbody.innerHTML = r.data.map(function(a){
+    return '<tr>'+
+      '<td style="font-size:11px;color:#888;white-space:nowrap">'+esc(a.Timestamp)+'</td>'+
+      '<td style="font-size:11px;font-weight:600;color:#888">'+esc(a.ProtocolID||'—')+'</td>'+
+      '<td style="font-size:12px">'+esc(a.UserEmail)+'</td>'+
+      '<td><span class="badge s-reviewing">'+esc(a.UserRole)+'</span></td>'+
+      '<td style="font-size:12px;font-weight:600">'+esc(a.Action)+'</td>'+
+      '<td style="font-size:12px;color:#666">'+esc(a.Details)+'</td></tr>';
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════════
+//  CHANGE PASSWORD
+// ═══════════════════════════════════════════════════
+async function changePassword() {
+  var p1=v('np1'),p2=v('np2');
+  if (!p1||p1.length<6) { toast('Minimum 6 characters.'); return; }
+  if (p1!==p2) { toast('Passwords do not match.'); return; }
+  var r = await api({action:'changePassword',token:S.token,newPassword:p1});
+  if (r.success) { toast('Password changed successfully!'); document.getElementById('np1').value=''; document.getElementById('np2').value=''; }
+  else toast('Error: '+r.error);
+}
+
+// ═══════════════════════════════════════════════════
+//  API
+// ═══════════════════════════════════════════════════
+async function api(params) {
+  if (!S.url) return {success:false,error:'No Apps Script URL configured.'};
+  var url = S.url+'?payload='+encodeURIComponent(JSON.stringify(params));
+  try {
+    var resp = await fetch(url,{method:'GET',redirect:'follow'});
+    return resp.json();
+  } catch(e) { return {success:false,error:e.toString()}; }
+}
+
+// ═══════════════════════════════════════════════════
+//  HELPERS
+// ═══════════════════════════════════════════════════
+function v(id){ return (document.getElementById(id)||{}).value||''; }
+function setEl(id,val){ var el=document.getElementById(id); if(el) el.textContent=val; }
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function statusCss(st){ return STATUS_CSS[st]||'s-submitted'; }
+function badgeHtml(st){ return '<span class="badge '+statusCss(st)+'">'+esc(st||'—')+'</span>'; }
+function isOverdue(d){ return d && new Date(d)<new Date(); }
+function openModal(id){ document.getElementById(id).classList.add('open'); }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-wrap').forEach(function(el){
+  el.addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');});
+});
+var _tt;
+function toast(msg){
+  var el=document.getElementById('toast');
+  el.textContent=msg; el.classList.add('show');
+  clearTimeout(_tt); _tt=setTimeout(function(){el.classList.remove('show');},3500);
+}
+</script>
+</body>
+</html>
