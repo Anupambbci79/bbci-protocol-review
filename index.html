@@ -1549,13 +1549,27 @@ function fmtDate(d) {
 }
 
 // ═══════════════════════════════════════════════════
-//  API
+//  API — uses GET for small requests, POST for large
 // ═══════════════════════════════════════════════════
 async function api(params) {
   if (!S.url) return {success:false,error:'No Apps Script URL configured.'};
-  var url = S.url+'?payload='+encodeURIComponent(JSON.stringify(params));
+  var payload = JSON.stringify(params);
   try {
-    var resp = await fetch(url,{method:'GET',redirect:'follow'});
+    var resp;
+    if (payload.length > 2000) {
+      // Large payload — use POST via form submission to avoid URL length limit
+      var formData = new FormData();
+      formData.append('payload', payload);
+      resp = await fetch(S.url, {
+        method: 'POST',
+        body: formData,
+        redirect: 'follow'
+      });
+    } else {
+      // Small payload — use GET
+      var url = S.url+'?payload='+encodeURIComponent(payload);
+      resp = await fetch(url,{method:'GET',redirect:'follow'});
+    }
     return resp.json();
   } catch(e) { return {success:false,error:e.toString()}; }
 }
