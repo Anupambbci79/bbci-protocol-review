@@ -1249,6 +1249,8 @@ async function loadMeetingProtocol() {
   detail.style.display='block';
   document.getElementById('letter-card').style.display='none';
   document.getElementById('decision-section').style.display = S.role==='admin'?'block':'none';
+  document.getElementById('ai-review-section').style.display = S.role==='admin'?'block':'none';
+  if (S.role==='admin') loadExistingAIReview(id);
   // Load pre-review comments
   var cr = await api({action:'getComments',token:S.token,protocolID:id});
   var preMeetingComments = cr.success ? cr.data.filter(function(c){return c.MeetingComment!==true&&c.MeetingComment!=='TRUE';}) : [];
@@ -1361,6 +1363,146 @@ async function loadAudit() {
       '<td style="font-size:12px;font-weight:600">'+esc(a.Action)+'</td>'+
       '<td style="font-size:12px;color:#666">'+esc(a.Details)+'</td></tr>';
   }).join('');
+}
+
+// ═══════════════════════════════════════════════════
+//  AI REVIEW FUNCTIONS
+// ═══════════════════════════════════════════════════
+async function runAIScreening() {
+  var id = v('meet-sel');
+  if (!id) { toast('Please select a protocol first.'); return; }
+  var btn = document.getElementById('ai-screen-btn');
+  btn.innerHTML = '<span class="spinner"></span> Analysing…';
+  btn.disabled = true;
+  document.getElementById('ai-report-container').innerHTML =
+    '<div style="padding:20px;text-align:center;color:#888;font-size:13px">'+
+    '<span class="spinner"></span> AI is reviewing the protocol… this may take 20-30 seconds</div>';
+  var r = await api({action:'runAIScreening',token:S.token,protocolID:id});
+  if (r.success) {
+    renderAIScreeningReport(r.data.report);
+    toast('✓ AI screening complete!');
+  } else {
+    document.getElementById('ai-report-container').innerHTML =
+      '<div class="info-box red">AI screening failed: '+esc(r.error)+'</div>';
+    toast('Error: '+r.error);
+  }
+  btn.innerHTML = 'AI Screening';
+  btn.disabled = false;
+}
+
+function renderAIScreeningReport(report) {
+  var score = parseInt(report.completeness_score)||0;
+  var scoreClass = score>=75?'high':score>=50?'mid':'low';
+  var recClass = report.ai_recommendation&&report.ai_recommendation.indexOf('Proceed')>=0
+    ? 'ai-rec-proceed'
+    : report.ai_recommendation&&report.ai_recommendation.indexOf('clarification')>=0
+    ? 'ai-rec-clarify' : 'ai-rec-major';
+
+  var html = '<div class="ai-report">'+
+    '<div class="ai-report-title">'+
+      '<span class="ai-score '+scoreClass+'">'+score+'</span>'+
+      '<div><div style="font-size:14px;font-weight:600">AI Pre-screening Report</div>'+
+      '<div style="font-size:11px;color:#888">Completeness score: '+score+'/100</div></div>'+
+      '<span class="ai-recommendation '+recClass+'">'+esc(report.ai_recommendation||'—')+'</span>'+
+    '</div>'+
+    aiSection('Methodology assessment', report.methodology)+
+    aiSection('Statistical considerations', report.statistics)+
+    aiSection('Ethical considerations', report.ethics)+
+    aiSection('ICMR compliance', report.icmr_compliance)+
+    aiSection('Strengths', report.strengths)+
+    aiSection('Areas of concern', report.concerns)+
+    aiSection('Questions for the committee to ask the investigator', report.questions_for_reviewer)+
+    '<div class="ai-section"><div class="ai-section-label">Full narrative report</div>'+
+    '<div class="ai-section-text" style="background:#fff;border:1px solid #e8e5dd;border-radius:4px;padding:10px 12px">'+esc(report.full_report||'—')+'</div></div>'+
+    '</div>';
+  document.getElementById('ai-report-container').innerHTML = html;
+}
+
+function aiSection(label, text) {
+  if (!text) return '';
+  return '<div class="ai-section">'+
+    '<div class="ai-section-label">'+esc(label)+'</div>'+
+    '<div class="ai-section-text">'+esc(text)+'</div></div>';
+}
+
+async function runAISummary() {
+  var id = v('meet-sel');
+  if (!id) { toast('Please select a protocol first.'); return; }
+  var btn = document.getElementById('ai-summary-btn');
+  btn.innerHTML = '<span class="spinner"></span> Generating…';
+  btn.disabled = true;
+  var r = await api({action:'runAISummary',token:S.token,protocolID:id});
+  if (r.success) {
+    renderAISummary(r.data.summary);
+    toast('✓ AI summary generated!');
+  } else {
+    toast('Error: '+r.error);
+  }
+  btn.innerHTML = 'AI Summary';
+  btn.disabled = false;
+}
+
+function renderAISummary(summary) {
+  var existing = document.getElementById('ai-report-container').innerHTML;
+  var html = '<div class="ai-summary-box">'+
+    '<div style="font-family:serif;font-size:15px;margin-bottom:10px;color:#1a1a18">'+
+      'AI Consolidated Committee Summary</div>'+
+    aiSection('Overall assessment', summary.overall_assessment)+
+    aiSection('Key concerns raised by reviewers', summary.key_concerns)+
+    aiSection('AI committee recommendation', summary.committee_recommendation)+
+    aiSection('Follow-up required', summary.follow_up_required)+
+    aiSection('Suggested conditions', summary.suggested_conditions)+
+    '<div class="ai-section"><div class="ai-section-label">Draft rationale for decision letter</div>'+
+    '<div class="ai-draft-letter">'+esc(summary.suggested_rationale||'—')+'</div></div>'+
+    '<div class="ai-section"><div class="ai-section-label">Ready-to-use letter paragraph</div>'+
+    '<div class="ai-draft-letter">'+esc(summary.draft_letter_paragraph||'—')+'</div>'+
+    '<button class="btn btn-out btn-sm" style="margin-top:8px" onclick="copyAIDraft()">Copy to rationale field</button></div>'+
+    '</div>';
+  document.getElementById('ai-report-container').innerHTML = existing + html;
+  // Store draft for copy
+  window._aiDraft = summary.suggested_rationale || summary.draft_letter_paragraph || '';
+}
+
+function copyAIDraft() {
+  if (window._aiDraft) {
+    document.getElementById('meet-rationale').value = window._aiDraft;
+    toast('✓ AI draft copied to rationale field!');
+  }
+}
+
+async function loadExistingAIReview(protocolId) {
+  var r = await api({action:'getAIReview',token:S.token,protocolID:protocolId});
+  if (!r.success||!r.data.length) {
+    document.getElementById('ai-report-container').innerHTML =
+      '<div style="font-size:12px;color:#aaa;padding:8px">No AI review yet. Click "Run AI screening" to generate one.</div>';
+    return;
+  }
+  // Show most recent screening report
+  var screenings = r.data.filter(function(x){return x.ReviewType==='Screening';});
+  var summaries  = r.data.filter(function(x){return x.ReviewType==='Summary';});
+  if (screenings.length) {
+    try {
+      var rep = {
+        completeness_score: screenings[screenings.length-1].CompletenessScore,
+        methodology: screenings[screenings.length-1].Methodology,
+        statistics: screenings[screenings.length-1].Statistics,
+        ethics: screenings[screenings.length-1].Ethics,
+        strengths: screenings[screenings.length-1].Strengths,
+        concerns: screenings[screenings.length-1].Concerns,
+        questions_for_reviewer: screenings[screenings.length-1].QuestionsForReviewer,
+        ai_recommendation: screenings[screenings.length-1].AIRecommendation,
+        icmr_compliance: '',
+        full_report: screenings[screenings.length-1].FullReport
+      };
+      renderAIScreeningReport(rep);
+    } catch(e) {}
+  }
+  if (summaries.length) {
+    try {
+      var sum = JSON.parse(summaries[summaries.length-1].FullReport||'{}');
+      if (sum.overall_assessment) renderAISummary(sum);
+    } catch(e) {}
+  }
 }
 
 // ═══════════════════════════════════════════════════
