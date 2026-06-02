@@ -260,7 +260,7 @@ tbody td{padding:9px 12px;vertical-align:middle;color:#2a2a25}
     <!-- ══ INVESTIGATOR: SUBMIT ══ -->
     <div class="panel" id="tab-submit">
       <div class="sec-hdr"><span class="sec-title">Submit new protocol</span></div>
-      <div class="info-box">Complete all required fields. You will receive a Protocol ID by email which you use to upload your supporting documents.</div>
+      <div class="info-box">Complete all required fields. Your Protocol ID will be shown on screen after submission — use it to upload your supporting documents via the Google Form.</div>
       <div class="card">
         <div class="form-grid">
           <div class="fg fg-full"><label>Protocol title *</label><input type="text" id="f-title" placeholder="Full title of the research protocol"/></div>
@@ -289,13 +289,16 @@ tbody td{padding:9px 12px;vertical-align:middle;color:#2a2a25}
         <div class="card-title">Step 2 — Upload supporting documents</div>
         <div class="info-box blue">Your protocol has been submitted. Protocol ID: <strong id="new-proto-id"></strong><br/>Now upload your supporting documents using the form below.</div>
         <div style="margin-bottom:10px;font-size:13px;color:#555">Upload each document separately using the Google Form:</div>
-        <div style="display:flex;gap:10px;flex-wrap:wrap">
-          <button class="btn btn-gold" onclick="openDocForm()">📄 Upload Proforma</button>
-          <button class="btn btn-gold" onclick="openDocForm()">📄 Upload CRF</button>
-          <button class="btn btn-gold" onclick="openDocForm()">📄 Upload DMC Clearance</button>
-          <button class="btn btn-gold" onclick="openDocForm()">📄 Upload Covering Letter</button>
+        <div style="margin-bottom:12px">
+          <button class="btn btn-gold" style="font-size:13px;padding:8px 18px" onclick="openDocForm(document.getElementById('new-proto-id').textContent)">
+            📄 Open Document Upload Form
+          </button>
         </div>
-        <div style="margin-top:10px;font-size:12px;color:#888">All uploads go to a secure Google Drive folder named after your Protocol ID.</div>
+        <div style="font-size:12px;color:#888;line-height:1.8">
+          The form will open in a new tab.<br/>
+          Your Protocol ID <strong id="proto-id-reminder"></strong> is shown above — copy it into the form.<br/>
+          Submit once per document (Proforma, CRF, DMC Clearance, Covering Letter).
+        </div>
       </div>
     </div>
 
@@ -779,8 +782,10 @@ async function submitProtocol() {
     department:v('f-dept'),institution:v('f-inst'),category:v('f-cat'),description:desc});
   if (r.success) {
     document.getElementById('new-proto-id').textContent = r.data.protocolID;
+    var reminder = document.getElementById('proto-id-reminder');
+    if (reminder) reminder.textContent = r.data.protocolID;
     document.getElementById('doc-upload-section').style.display = 'block';
-    st.textContent = '✓ Submitted! Reference: '+r.data.protocolID;
+    st.textContent = '✓ Submitted! Your Protocol ID: '+r.data.protocolID;
     st.style.color = '#1a7a3a';
     ['f-title','f-pi','f-piemail','f-dept','f-inst','f-desc'].forEach(function(id){document.getElementById(id).value='';});
     document.getElementById('f-cat').value='';
@@ -790,9 +795,20 @@ async function submitProtocol() {
   btn.innerHTML='Submit Protocol'; btn.disabled=false;
 }
 
-function openDocForm() {
-  if (S.formUrl) { window.open(S.formUrl,'_blank'); }
-  else { toast('Please paste the Google Form URL in the top banner first.'); }
+function openDocForm(protoId) {
+  if (!S.formUrl) { toast('Document upload form URL not configured. Contact the committee.'); return; }
+  // Pre-fill Protocol ID in Google Form URL using entry parameter
+  // Google Forms pre-fill: append ?usp=pp_url&entry.XXXXX=VALUE
+  // Since we don't know the entry ID, just open with a helpful message
+  var url = S.formUrl;
+  if (protoId) {
+    // Try to pre-fill - works if form has entry parameters set up
+    url = S.formUrl + (S.formUrl.indexOf('?')>=0?'&':'?') + 'usp=pp_url';
+  }
+  window.open(url,'_blank');
+  if (protoId) {
+    toast('Form opened. Your Protocol ID is: '+protoId+' — copy it into the form.');
+  }
 }
 
 async function loadInvestigatorData() {
@@ -808,7 +824,7 @@ function renderMyStudies() {
     return '<tr>'+
       '<td style="font-size:11px;font-weight:600;color:#888">'+esc(p.ProtocolID)+'</td>'+
       '<td style="font-weight:500">'+esc(p.Title)+'</td>'+
-      '<td style="font-size:12px;color:#888">'+esc(p.SubmissionDate)+'</td>'+
+      '<td style="font-size:12px;color:#888">'+esc(fmtDate(p.SubmissionDate))+'</td>'+
       '<td><span class="badge '+statusCss(p.Status)+'">'+esc(p.Status)+'</span></td>'+
       '<td style="font-size:12px">'+esc(p.Decision||'—')+'</td>'+
       '<td>'+
@@ -836,7 +852,7 @@ async function viewProtoTimeline(id) {
   }).join('');
   var events = buildTimeline(p);
   document.getElementById('pm-timeline').innerHTML = events.map(function(e){
-    return '<div class="tl-item"><div class="tl-dot"></div><div class="tl-date">'+esc(e.date)+'</div><div class="tl-text">'+esc(e.text)+'</div></div>';
+    return '<div class="tl-item"><div class="tl-dot"></div><div class="tl-date">'+esc(fmtDate(e.date))+'</div><div class="tl-text">'+esc(e.text)+'</div></div>';
   }).join('');
   openModal('proto-modal');
 }
@@ -1225,7 +1241,7 @@ async function loadMeetingProtocol() {
   if (!r.success) return;
   var p = r.data;
   document.getElementById('meet-title').textContent = p.Title;
-  document.getElementById('meet-meta').textContent  = 'Investigator: '+p.Investigator+' | PI: '+p.PI+' | Reviewers: '+(p.AssignedReviewers||'—');
+  document.getElementById('meet-meta').textContent  = 'Investigator: '+p.Investigator+' | PI: '+p.PI+' | Submitted: '+fmtDate(p.SubmissionDate)+' | Reviewers: '+(p.AssignedReviewers||'—');
   document.getElementById('meet-desc').textContent  = p.Description||'';
   document.getElementById('meet-rationale').value   = p.Rationale||'';
   S.decision = p.Decision||''; updateDecisionPills();
@@ -1338,7 +1354,7 @@ async function loadAudit() {
   if (!r.data.length) { tbody.innerHTML='<tr><td colspan="6" class="empty">No audit records.</td></tr>'; return; }
   tbody.innerHTML = r.data.map(function(a){
     return '<tr>'+
-      '<td style="font-size:11px;color:#888;white-space:nowrap">'+esc(a.Timestamp)+'</td>'+
+      '<td style="font-size:11px;color:#888;white-space:nowrap">'+esc(a.Timestamp.replace('T',' ').replace('.000Z',''))+'</td>'+
       '<td style="font-size:11px;font-weight:600;color:#888">'+esc(a.ProtocolID||'—')+'</td>'+
       '<td style="font-size:12px">'+esc(a.UserEmail)+'</td>'+
       '<td><span class="badge s-reviewing">'+esc(a.UserRole)+'</span></td>'+
@@ -1357,6 +1373,18 @@ async function changePassword() {
   var r = await api({action:'changePassword',token:S.token,newPassword:p1});
   if (r.success) { toast('Password changed successfully!'); document.getElementById('np1').value=''; document.getElementById('np2').value=''; }
   else toast('Error: '+r.error);
+}
+
+// ═══════════════════════════════════════════════════
+//  DATE FORMATTER
+// ═══════════════════════════════════════════════════
+function fmtDate(d) {
+  if (!d) return '—';
+  var months = ['January','February','March','April','May','June',
+    'July','August','September','October','November','December'];
+  var dt = new Date(d);
+  if (isNaN(dt.getTime())) return d;
+  return dt.getDate()+' '+months[dt.getMonth()]+' '+dt.getFullYear();
 }
 
 // ═══════════════════════════════════════════════════
