@@ -1302,9 +1302,19 @@ async function generateAndSendEmail() {
   if (r.success) {
     document.getElementById('letter-body').textContent = r.data.letter||'';
     document.getElementById('letter-card').style.display='block';
-    toast('Email sent to: '+(r.data.sentTo||[]).join(', '));
+    var sentTo = (r.data.sentTo||[]).join(', ');
+    toast('✓ Decision email sent to: '+sentTo);
+    // Also show a visible alert so it cannot be missed
+    var alertDiv = document.getElementById('email-sent-alert');
+    if (!alertDiv) {
+      alertDiv = document.createElement('div');
+      alertDiv.id = 'email-sent-alert';
+      alertDiv.style.cssText = 'background:#e0f5e8;border:1px solid #6aaa6a;border-left:4px solid #1a7a3a;border-radius:4px;padding:12px 16px;margin-top:14px;font-size:13px;color:#1a7a3a;font-weight:500';
+      document.getElementById('letter-card').insertAdjacentElement('afterend', alertDiv);
+    }
+    alertDiv.innerHTML = '✓ Decision email sent successfully to: <strong>'+sentTo+'</strong>';
     loadAdminData();
-  } else toast('Error: '+r.error);
+  } else toast('✗ Error sending email: '+r.error);
 }
 
 function copyLetter() {
@@ -1376,10 +1386,10 @@ document.querySelectorAll('.modal-wrap').forEach(function(el){
   el.addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');});
 });
 var _tt;
-function toast(msg){
+function toast(msg, duration){
   var el=document.getElementById('toast');
   el.textContent=msg; el.classList.add('show');
-  clearTimeout(_tt); _tt=setTimeout(function(){el.classList.remove('show');},3500);
+  clearTimeout(_tt); _tt=setTimeout(function(){el.classList.remove('show');},duration||3500);
 }
 </script>
 </body>
