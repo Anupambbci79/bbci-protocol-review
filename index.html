@@ -277,7 +277,11 @@ tbody td{padding:9px 12px;vertical-align:middle;color:#2a2a25}
               <option>Survey / Questionnaire</option><option>Other</option>
             </select>
           </div>
-          <div class="fg fg-full"><label>Brief description *</label><textarea id="f-desc" rows="4" placeholder="Summarise the objectives, methodology and expected outcomes…"></textarea></div>
+          <div class="fg fg-full">
+            <label>Full protocol text * <span style="font-weight:400;color:#888;font-size:10px;text-transform:none;letter-spacing:0">(paste your complete protocol or detailed description)</span></label>
+            <textarea id="f-desc" rows="12" placeholder="Paste your complete protocol text here including:&#10;• Background and rationale&#10;• Primary and secondary objectives&#10;• Study design and methodology&#10;• Study population — inclusion/exclusion criteria&#10;• Sample size and power calculation&#10;• Intervention details&#10;• Outcome measures&#10;• Statistical analysis plan&#10;• Ethical considerations&#10;• Data safety monitoring plan&#10;&#10;The more detail you provide, the more thorough the scientific committee review will be."></textarea>
+            <div style="font-size:11px;color:#aaa;margin-top:3px">Maximum ~8000 words. For longer protocols paste the key sections.</div>
+          </div>
         </div>
         <div style="margin-top:14px;display:flex;gap:8px;align-items:center">
           <button class="btn btn-dark" onclick="submitProtocol()" id="submit-btn">Submit Protocol</button>
@@ -431,6 +435,21 @@ tbody td{padding:9px 12px;vertical-align:middle;color:#2a2a25}
           <!-- Pre-review comments summary -->
           <div class="card-title" style="font-size:14px">Pre-meeting reviewer comments</div>
           <div id="meet-comments" class="comment-thread" style="max-height:220px"></div>
+
+          <!-- AI Review Section -->
+          <div id="ai-review-section" style="display:none;margin-bottom:16px">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;padding-top:12px;border-top:1px solid #f0ede6">
+              <div style="font-family:'DM Serif Display',serif;font-size:15px;color:#1a1a18">AI Pre-screening report</div>
+              <div style="display:flex;gap:8px">
+                <button class="btn btn-dark btn-sm" onclick="runAIScreening()" id="ai-screen-btn">AI Screening</button>
+                <button class="btn btn-gold btn-sm" onclick="runAISummary()" id="ai-summary-btn">AI Summary</button>
+              </div>
+            </div>
+            <div id="ai-report-container">
+              <div style="font-size:12px;color:#aaa;padding:8px">No AI review yet. Click "AI Screening" to generate one.</div>
+            </div>
+          </div>
+
           <!-- Live meeting notes -->
           <div class="card-title" style="font-size:14px;margin-top:14px">Live meeting notes</div>
           <div id="meet-notes-list" class="comment-thread" style="max-height:180px"></div>
