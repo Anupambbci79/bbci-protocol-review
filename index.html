@@ -901,7 +901,7 @@ function renderAdminTable() {
   var status = document.getElementById('f-status') ? document.getElementById('f-status').value : '';
   var q      = (document.getElementById('f-q') ? document.getElementById('f-q').value : '').toLowerCase();
   var data   = S.protocols.filter(function(p){
-    if (p.TrackClosed==='TRUE') return false;
+    if (p.TrackClosed===true||p.TrackClosed==='TRUE') return false;
     if (status && p.Status!==status) return false;
     if (q && !(p.Title||'').toLowerCase().includes(q) && !(p.PrincipalInvestigator||'').toLowerCase().includes(q) && !(p.PI||'').toLowerCase().includes(q)) return false;
     return true;
@@ -930,11 +930,11 @@ function renderAdminTable() {
 function renderAllTable() {
   var data = S.showClosed
     ? S.protocols
-    : S.protocols.filter(function(p){ return p.TrackClosed!=='TRUE'; });
+    : S.protocols.filter(function(p){ return p.TrackClosed!==true&&p.TrackClosed!=='TRUE'; });
   var tbody = document.getElementById('all-tbody');
   if (!data.length) { tbody.innerHTML='<tr><td colspan="9" class="empty">No protocols.</td></tr>'; return; }
   tbody.innerHTML = data.map(function(p){
-    var isClosed = p.TrackClosed==='TRUE';
+    var isClosed = (p.TrackClosed===true||p.TrackClosed==='TRUE');
     return '<tr style="'+(isClosed?'opacity:.55':'')+'">'+
       '<td style="font-size:11px;font-weight:600;color:#888">'+esc(p.ProtocolID)+'</td>'+
       '<td style="font-weight:500">'+esc(p.Title)+'</td>'+
@@ -967,7 +967,7 @@ function renderReviewerProgress() {
       if (!n) return;
       if (!map[n]) map[n]={total:0,fwd:0};
       map[n].total++;
-      if (p.ForwardedToMeeting==='TRUE') map[n].fwd++;
+      if (p.ForwardedToMeeting===true||p.ForwardedToMeeting==='TRUE') map[n].fwd++;
     });
   });
   var names=Object.keys(map);
@@ -986,7 +986,7 @@ function renderReviewersTable() {
   var tbody = document.getElementById('reviewers-tbody');
   if (!S.reviewers.length) { tbody.innerHTML='<tr><td colspan="5" class="empty">No reviewers added yet.</td></tr>'; return; }
   tbody.innerHTML = S.reviewers.map(function(r){
-    var active=r.Active==='TRUE';
+    var active=(r.Active===true||r.Active==='TRUE'||r.Active==='true');
     return '<tr>'+
       '<td style="font-weight:500">'+esc(r.Name)+'</td>'+
       '<td style="font-size:12px;color:#666">'+esc(r.Email)+'</td>'+
@@ -1022,7 +1022,7 @@ async function viewProtoAdmin(id) {
   if (p.Status!=='Closed' && (p.Status==='Awaiting Meeting'||p.Status==='In Meeting'||p.Status==='Under Review'||p.Status==='Sent for Review')) {
     actions += '<button class="btn btn-red btn-sm" onclick="adminForward(\''+esc(id)+'\');closeModal(\'proto-modal\')" style="margin-right:6px">Force-forward to meeting</button>';
   }
-  if (p.Status==='Approved' && p.TrackClosed!=='TRUE') {
+  if (p.Status==='Approved' && p.TrackClosed!==true && p.TrackClosed!=='TRUE') {
     actions += '<button class="btn btn-green btn-sm" onclick="closeTrack(\''+esc(id)+'\');closeModal(\'proto-modal\')">Close track</button>';
   }
   if (p.DrivefolderURL) {
@@ -1043,7 +1043,7 @@ function openAssign(id, title) {
   document.getElementById('am-title').textContent = title;
   document.getElementById('am-notes').value = '';
   var cbs = document.getElementById('reviewer-checkboxes');
-  var active = S.reviewers.filter(function(r){return r.Active==='TRUE';});
+  var active = S.reviewers.filter(function(r){return r.Active===true||r.Active==='TRUE'||r.Active==='true';});
   if (!active.length) {
     cbs.innerHTML = '<div style="color:#888;font-size:13px;padding:8px">No reviewers added yet. Add reviewers first.</div>';
   } else {
@@ -1115,7 +1115,7 @@ function renderReviewerTable() {
   var tbody = document.getElementById('reviewer-tbody');
   if (!S.protocols.length) { tbody.innerHTML='<tr><td colspan="7" class="empty">No protocols assigned to you yet.</td></tr>'; return; }
   tbody.innerHTML = S.protocols.map(function(p){
-    var fwdStatus = p.ForwardedToMeeting==='TRUE'
+    var fwdStatus = (p.ForwardedToMeeting===true||p.ForwardedToMeeting==='TRUE')
       ? '<span style="color:#1a7a3a;font-size:11px">✓ Forwarded</span>'
       : '<span style="color:#c8b86a;font-size:11px">Not yet</span>';
     return '<tr>'+
@@ -1157,7 +1157,7 @@ async function loadComments(id) {
       '<div class="comment-meta">'+
         '<strong>'+esc(c.ReviewerName)+'</strong>'+
         '<span class="badge s-reviewing">'+esc(c.CommentType)+'</span>'+
-        (c.MeetingComment==='TRUE'?'<span class="badge s-inmeeting">Meeting</span>':'')+
+        ((c.MeetingComment===true||c.MeetingComment==='TRUE')?'<span class="badge s-inmeeting">Meeting</span>':'')+
         '<span>'+esc(c.CommentDate)+'</span>'+
       '</div>'+
       '<div class="comment-text">'+esc(c.CommentText)+'</div></div>';
@@ -1235,7 +1235,7 @@ async function loadMeetingProtocol() {
   document.getElementById('decision-section').style.display = S.role==='admin'?'block':'none';
   // Load pre-review comments
   var cr = await api({action:'getComments',token:S.token,protocolID:id});
-  var preMeetingComments = cr.success ? cr.data.filter(function(c){return c.MeetingComment!=='TRUE';}) : [];
+  var preMeetingComments = cr.success ? cr.data.filter(function(c){return c.MeetingComment!==true&&c.MeetingComment!=='TRUE';}) : [];
   var meetCmnts          = cr.success ? cr.data.filter(function(c){return c.MeetingComment==='TRUE';}) : [];
   document.getElementById('meet-comments').innerHTML = preMeetingComments.length
     ? preMeetingComments.map(commentHtml).join('')
