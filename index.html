@@ -1410,31 +1410,60 @@ async function runAIScreening() {
 }
 
 function renderAIScreeningReport(report) {
+  // If report came as raw JSON string (parsing failed on backend), try parsing here
+  if (report && report.full_report && report.full_report.indexOf('"completeness_score"') >= 0) {
+    try {
+      var clean = report.full_report.replace(/```json|```/g,'').trim();
+      // Find JSON object
+      var start = clean.indexOf('{');
+      var end   = clean.lastIndexOf('}');
+      if (start >= 0 && end >= 0) {
+        var parsed = JSON.parse(clean.substring(start, end+1));
+        report = parsed;
+      }
+    } catch(e) {}
+  }
+
   var score = parseInt(report.completeness_score)||0;
   var scoreClass = score>=75?'high':score>=50?'mid':'low';
-  var recClass = report.ai_recommendation&&report.ai_recommendation.indexOf('Proceed')>=0
-    ? 'ai-rec-proceed'
-    : report.ai_recommendation&&report.ai_recommendation.indexOf('clarification')>=0
-    ? 'ai-rec-clarify' : 'ai-rec-major';
+  var rec = report.ai_recommendation||'—';
+  var recClass = rec.indexOf('Proceed')>=0 ? 'ai-rec-proceed' :
+                 rec.indexOf('clarification')>=0 ? 'ai-rec-clarify' : 'ai-rec-major';
 
   var html = '<div class="ai-report">'+
-    '<div class="ai-report-title">'+
+    '<div class="ai-report-title" style="display:flex;align-items:center;gap:12px;margin-bottom:14px">'+
       '<span class="ai-score '+scoreClass+'">'+score+'</span>'+
-      '<div><div style="font-size:14px;font-weight:600">AI Pre-screening Report</div>'+
-      '<div style="font-size:11px;color:#888">Completeness score: '+score+'/100</div></div>'+
-      '<span class="ai-recommendation '+recClass+'">'+esc(report.ai_recommendation||'—')+'</span>'+
+      '<div style="flex:1">'+
+        '<div style="font-size:15px;font-weight:600;color:#1a1a18">AI Pre-screening Report</div>'+
+        '<div style="font-size:11px;color:#888;margin-top:2px">Completeness score: '+score+'/100 &nbsp;|&nbsp; Study: '+esc(report.study_design||'—')+'</div>'+
+      '</div>'+
+      '<span class="ai-recommendation '+recClass+'" style="text-align:right;max-width:200px;font-size:11px">'+esc(rec)+'</span>'+
+    '</div>'+
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">'+
+      miniSection('Primary objective', report.primary_objective)+
+      miniSection('Sample size', report.sample_size)+
     '</div>'+
     aiSection('Methodology assessment', report.methodology)+
     aiSection('Statistical considerations', report.statistics)+
     aiSection('Ethical considerations', report.ethics)+
-    aiSection('ICMR compliance', report.icmr_compliance)+
+    aiSection('ICMR 2017 compliance', report.icmr_compliance)+
     aiSection('Strengths', report.strengths)+
     aiSection('Areas of concern', report.concerns)+
-    aiSection('Questions for the committee to ask the investigator', report.questions_for_reviewer)+
-    '<div class="ai-section"><div class="ai-section-label">Full narrative report</div>'+
-    '<div class="ai-section-text" style="background:#fff;border:1px solid #e8e5dd;border-radius:4px;padding:10px 12px">'+esc(report.full_report||'—')+'</div></div>'+
+    aiSection('Missing elements', report.missing_elements)+
+    aiSection('Questions for the committee', report.questions_for_reviewer)+
+    (report.full_report && report.full_report.indexOf('"completeness_score"')<0 ?
+      '<div class="ai-section"><div class="ai-section-label">Full narrative report</div>'+
+      '<div class="ai-section-text" style="background:#fff;border:1px solid #e8e5dd;border-radius:4px;padding:10px 12px;line-height:1.7">'+esc(report.full_report)+'</div></div>'
+      : '')+
     '</div>';
   document.getElementById('ai-report-container').innerHTML = html;
+}
+
+function miniSection(label, text) {
+  if (!text) return '<div></div>';
+  return '<div style="background:#f5f3ee;border:1px solid #e8e5dd;border-radius:4px;padding:8px 10px">'+
+    '<div style="font-size:10px;font-weight:700;color:#534ab7;letter-spacing:.08em;text-transform:uppercase;margin-bottom:3px">'+esc(label)+'</div>'+
+    '<div style="font-size:12px;color:#333;line-height:1.5">'+esc(text)+'</div></div>';
 }
 
 function aiSection(label, text) {
