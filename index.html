@@ -1410,18 +1410,27 @@ async function runAIScreening() {
 }
 
 function renderAIScreeningReport(report) {
-  // If report came as raw JSON string (parsing failed on backend), try parsing here
-  if (report && report.full_report && report.full_report.indexOf('"completeness_score"') >= 0) {
+  // Try to parse JSON from full_report if structured fields are missing
+  if (!report.methodology || report.methodology === 'See full report below') {
+    var rawText = report.full_report || '';
+    // Try multiple parsing strategies
     try {
-      var clean = report.full_report.replace(/```json|```/g,'').trim();
-      // Find JSON object
+      var clean = rawText.replace(/```json|```/g,'').trim();
       var start = clean.indexOf('{');
       var end   = clean.lastIndexOf('}');
       if (start >= 0 && end >= 0) {
         var parsed = JSON.parse(clean.substring(start, end+1));
-        report = parsed;
+        if (parsed.methodology) report = parsed;
       }
-    } catch(e) {}
+    } catch(e1) {
+      // If JSON parsing fails, display raw text nicely
+      document.getElementById('ai-report-container').innerHTML =
+        '<div class="ai-report">' +
+        '<div style="font-size:14px;font-weight:600;margin-bottom:12px;color:#534ab7">AI Pre-screening Report</div>' +
+        '<div style="font-size:13px;line-height:1.8;color:#333;white-space:pre-wrap;background:#fff;border:1px solid #e0ddd5;border-radius:4px;padding:16px">' +
+        esc(rawText.replace(/\\n/g,'\n')) + '</div></div>';
+      return;
+    }
   }
 
   var score = parseInt(report.completeness_score)||0;
