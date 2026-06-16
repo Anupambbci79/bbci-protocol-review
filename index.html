@@ -9,7 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{font-size:14px}
+html{font-size:15.5px}
 body{font-family:'DM Sans',sans-serif;background:#f5f3ee;color:#1a1a18;min-height:100vh}
 
 /* ── URL BANNER ── */
@@ -76,18 +76,18 @@ main{padding:20px 24px;max-width:1280px}
 .stat-card.s3{border-top-color:#d48a2a}.stat-card.s4{border-top-color:#9a1a6a}
 .stat-card.s5{border-top-color:#6aaa6a}.stat-card.s6{border-top-color:#c8b86a}
 .stat-card.s7{border-top-color:#d46a4a}.stat-card.s8{border-top-color:#888}
-.stat-label{font-size:10px;color:#999;letter-spacing:.1em;text-transform:uppercase;margin-bottom:3px}
-.stat-value{font-family:'DM Serif Display',serif;font-size:26px;line-height:1;color:#1a1a18}
+.stat-label{font-size:11px;color:#999;letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}
+.stat-value{font-family:'DM Serif Display',serif;font-size:30px;line-height:1;color:#1a1a18}
 
 /* ── TABLE ── */
 .tbl-wrap{background:#fff;border:1px solid #e0ddd5;border-radius:5px;overflow:hidden;margin-bottom:16px}
-table{width:100%;border-collapse:collapse;font-size:13px}
+table{width:100%;border-collapse:collapse;font-size:14px}
 thead{background:#1a1a18;color:#f5f3ee}
-thead th{padding:8px 12px;text-align:left;font-weight:500;font-size:10px;letter-spacing:.08em;text-transform:uppercase}
+thead th{padding:9px 14px;text-align:left;font-weight:500;font-size:11px;letter-spacing:.08em;text-transform:uppercase}
 tbody tr{border-bottom:1px solid #f0ede6;transition:background .12s}
 tbody tr:last-child{border-bottom:none}
 tbody tr:hover{background:#faf9f5}
-tbody td{padding:9px 12px;vertical-align:middle;color:#2a2a25}
+tbody td{padding:11px 14px;vertical-align:middle;color:#2a2a25}
 
 /* ── BADGE ── */
 .badge{display:inline-block;padding:2px 8px;border-radius:3px;font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase}
@@ -110,16 +110,16 @@ tbody td{padding:9px 12px;vertical-align:middle;color:#2a2a25}
 .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .fg-full{grid-column:1/-1}
 .fg{display:flex;flex-direction:column;gap:3px}
-.fg label{font-size:11px;font-weight:600;color:#666;letter-spacing:.07em;text-transform:uppercase}
-.fg input,.fg select,.fg textarea{font-family:'DM Sans',sans-serif;font-size:13px;padding:7px 10px;border:1px solid #d0cdc5;border-radius:4px;background:#fff;color:#1a1a18;transition:border-color .2s;width:100%}
+.fg label{font-size:12px;font-weight:600;color:#666;letter-spacing:.07em;text-transform:uppercase}
+.fg input,.fg select,.fg textarea{font-family:'DM Sans',sans-serif;font-size:14px;padding:8px 12px;border:1px solid #d0cdc5;border-radius:4px;background:#fff;color:#1a1a18;transition:border-color .2s;width:100%}
 .fg input:focus,.fg select:focus,.fg textarea:focus{outline:none;border-color:#c8b86a;box-shadow:0 0 0 3px rgba(200,184,106,.12)}
 .fg textarea{resize:vertical;min-height:80px}
 
 /* ── CARDS ── */
 .card{background:#fff;border:1px solid #e0ddd5;border-radius:5px;padding:18px 20px;margin-bottom:16px}
-.card-title{font-family:'DM Serif Display',serif;font-size:16px;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid #f0ede6}
+.card-title{font-family:'DM Serif Display',serif;font-size:18px;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid #f0ede6}
 .sec-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
-.sec-title{font-family:'DM Serif Display',serif;font-size:17px;font-weight:400}
+.sec-title{font-family:'DM Serif Display',serif;font-size:20px;font-weight:400}
 
 /* ── INFO BOX ── */
 .info-box{background:#faf9f5;border:1px solid #e8e5dd;border-left:3px solid #c8b86a;border-radius:4px;padding:10px 14px;font-size:13px;color:#555;margin-bottom:14px;line-height:1.6}
@@ -159,8 +159,8 @@ tbody td{padding:9px 12px;vertical-align:middle;color:#2a2a25}
 .comment-thread{max-height:380px;overflow-y:auto;margin-bottom:14px}
 .comment-item{border:1px solid #f0ede6;border-radius:5px;padding:10px 12px;margin-bottom:8px;background:#faf9f5}
 .comment-item.meeting-comment{background:#fff8e8;border-color:#e8d88a}
-.comment-meta{font-size:11px;color:#888;margin-bottom:4px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.comment-text{font-size:13px;color:#333;line-height:1.6}
+.comment-meta{font-size:12px;color:#888;margin-bottom:5px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.comment-text{font-size:14px;color:#333;line-height:1.7}
 
 /* ── TIMELINE ── */
 .timeline{padding:0 0 0 16px;border-left:2px solid #e0ddd5}
@@ -1560,6 +1560,45 @@ async function loadExistingAIReview(protocolId) {
       if (sum.overall_assessment) renderAISummary(sum);
     } catch(e) {}
   }
+}
+
+// ═══════════════════════════════════════════════════
+//  FULL PROTOCOL VIEW
+// ═══════════════════════════════════════════════════
+async function openFullView(id) {
+  var r = await api({action:'getProtocol',token:S.token,protocolID:id});
+  if (!r.success) { toast('Error: '+r.error); return; }
+  var p = r.data;
+  document.getElementById('fv-title').textContent = p.ProtocolID+' — '+p.Title;
+  // Meta info
+  var meta = [
+    ['Investigator', p.Investigator||'—'],
+    ['PI', p.PI||'—'],
+    ['PI Email', p.PIEmail||'—'],
+    ['Department', p.Department||'—'],
+    ['Institution', p.Institution||'—'],
+    ['Category', p.Category||'—'],
+    ['Status', '<span class="badge '+statusCss(p.Status)+'">'+esc(p.Status)+'</span>'],
+    ['Submitted', fmtDate(p.SubmissionDate)||'—'],
+    ['Reviewer(s)', p.AssignedReviewers||'Not assigned'],
+  ];
+  document.getElementById('fv-meta').innerHTML = meta.map(function(m){
+    return '<div style="background:#f5f3ee;border:1px solid #e8e5dd;border-radius:4px;padding:8px 12px">'+
+      '<div style="font-size:10px;color:#aaa;text-transform:uppercase;letter-spacing:.07em;margin-bottom:3px">'+esc(m[0])+'</div>'+
+      '<div style="font-size:13px;color:#222;font-weight:500">'+m[1]+'</div></div>';
+  }).join('');
+  // Drive folder link
+  var driveHtml = '';
+  if (p.DrivefolderURL && p.DrivefolderURL.indexOf('http') >= 0) {
+    driveHtml = '<a href="'+esc(p.DrivefolderURL)+'" target="_blank" class="btn btn-out btn-sm" style="display:inline-flex;align-items:center;gap:6px">'+
+      '<span style="color:#4285f4">📁</span> Open Google Drive folder (Proforma, CRF, DMC Clearance, Covering Letter)</a>';
+  } else {
+    driveHtml = '<span style="font-size:13px;color:#aaa">No documents uploaded yet or Drive link not available.</span>';
+  }
+  document.getElementById('fv-drive-link').innerHTML = driveHtml;
+  // Full protocol text
+  document.getElementById('fv-text').textContent = p.Description || 'No protocol text available.';
+  openModal('fullview-modal');
 }
 
 // ═══════════════════════════════════════════════════
