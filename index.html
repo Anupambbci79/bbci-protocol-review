@@ -1288,8 +1288,8 @@ function renderReviewerTable() {
   if (!S.protocols.length) { tbody.innerHTML='<tr><td colspan="7" class="empty">No protocols assigned to you yet.</td></tr>'; return; }
   tbody.innerHTML=S.protocols.map(function(p){
     var driveBtn='';
-    if (p.DriveFolderUrl||p.DriveFolder||p.DocumentsUrl) {
-      var url=p.DriveFolderUrl||p.DriveFolder||p.DocumentsUrl;
+    if (p.DriveFolderURL||p.DriveFolderUrl||p.DriveFolder||p.DocumentsUrl) {
+      var url=p.DriveFolderURL||p.DriveFolderUrl||p.DriveFolder||p.DocumentsUrl;
       driveBtn='<a href="'+esc(url)+'" target="_blank" class="btn btn-out btn-sm" style="margin-right:3px;text-decoration:none">📁 Docs</a>';
     } else {
       // Link to the shared Drive folder search (admin sets folder per protocol)
@@ -1303,7 +1303,7 @@ function renderReviewerTable() {
       '<td>'+ddlBadge(p.ReviewDeadline)+'</td>'+
       '<td style="font-size:12px;text-align:center">'+esc(p.CommentCount||'0')+'</td>'+
       '<td style="white-space:nowrap">'+driveBtn+
-        '<button class="btn btn-dark btn-sm" onclick="openComments(\''+esc(p.ProtocolID)+'\',\''+esc(p.Title)+'\',\''+esc(p.DriveFolderUrl||p.DriveFolder||p.DocumentsUrl||'')+'\')">Review</button>'+
+        '<button class="btn btn-dark btn-sm" onclick="openComments(\''+esc(p.ProtocolID)+'\',\''+esc(p.Title)+'\',\''+esc(p.DriveFolderURL||p.DriveFolderUrl||p.DriveFolder||'')+'\')">Review</button>'+
       '</td></tr>';
   }).join('');
 }
@@ -1566,7 +1566,6 @@ async function runAIScreeningInModal() {
   // Always run a fresh PROTOCOL-ONLY screening — never use cached summary
   var r=await api({action:'runAIScreening',token:S.token,protocolID:id});
   if (r.success) {
-    // Verify we got a protocol screening (not a summary)
     var data=r.data;
     if (data&&(data.reportType==='AI Summary'||data.consolidatedAssessment&&!data.completenessScore)) {
       // Got a summary by mistake — show warning and the data anyway
