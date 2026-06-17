@@ -639,13 +639,26 @@ tbody td{padding:11px 14px;vertical-align:middle;color:#2a2a25}
 
 <!-- Comment Modal -->
 <div class="modal-wrap" id="comment-modal">
-  <div class="modal">
+  <div class="modal" style="width:780px">
     <div class="modal-hdr"><h3 id="cm-title">Review comments</h3><button class="modal-close" onclick="closeModal('comment-modal')">×</button></div>
     <div class="modal-body">
+      <!-- Protocol header bar -->
       <div style="background:#f5f3ee;border:1px solid #e0ddd5;border-radius:4px;padding:10px 12px;margin-bottom:10px;font-size:13px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
         <div><strong id="cm-id">—</strong> — <span id="cm-proto-title" style="color:#666"></span></div>
         <div id="cm-drive-link" style="display:none"></div>
       </div>
+
+      <!-- Protocol text (collapsible) -->
+      <div style="margin-bottom:12px;border:1px solid #e0ddd5;border-radius:4px;overflow:hidden">
+        <div style="background:#1a1a18;color:#f5f3ee;padding:8px 12px;display:flex;align-items:center;justify-content:space-between;cursor:pointer" onclick="toggleProtoText()">
+          <span style="font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase">📄 Protocol Text</span>
+          <span id="cm-proto-toggle" style="font-size:11px;color:#c8b86a">▼ Show</span>
+        </div>
+        <div id="cm-proto-text-wrap" style="display:none;max-height:320px;overflow-y:auto;padding:12px 14px;background:#fff;font-size:13px;line-height:1.8;color:#333;white-space:pre-wrap" id="cm-proto-text-wrap">
+          <div id="cm-proto-text">Loading…</div>
+        </div>
+      </div>
+
       <!-- AI Screening in reviewer modal -->
       <div style="margin-bottom:12px;padding:10px 12px;background:#faf9f5;border:1px solid #e8e5dd;border-radius:4px">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
@@ -1311,26 +1324,57 @@ async function openComments(id,title,driveUrl) {
   document.getElementById('cm-title').textContent='Review — '+id;
   document.getElementById('cm-text').value='';
   document.getElementById('cm-fwd-status').textContent='';
-  // Show/hide drive link in modal
+
+  // Drive link
   var driveEl=document.getElementById('cm-drive-link');
   if (driveEl) {
     if (currentCommentDriveUrl) {
       driveEl.innerHTML='<a href="'+esc(currentCommentDriveUrl)+'" target="_blank" class="btn btn-out btn-sm">📁 Open protocol documents</a>';
-      driveEl.style.display='block';
     } else {
       driveEl.innerHTML='<button class="btn btn-out btn-sm" onclick="openDriveSearch(\''+esc(id)+'\')">📁 Search documents in Drive</button>';
-      driveEl.style.display='block';
     }
+    driveEl.style.display='block';
   }
-  // Reset AI screening area
+
+  // Load protocol text
+  var protoTextEl=document.getElementById('cm-proto-text');
+  var protoWrap=document.getElementById('cm-proto-text-wrap');
+  if (protoTextEl) {
+    protoTextEl.textContent='Loading…';
+    if (protoWrap) protoWrap.style.display='none';
+    var tog=document.getElementById('cm-proto-toggle');
+    if (tog) tog.textContent='▼ Show';
+  }
+  var pr=await api({action:'getProtocol',token:S.token,protocolID:id});
+  if (pr.success&&pr.data&&protoTextEl) {
+    var p=pr.data;
+    var meta='PI: '+(p.PI||p.PrincipalInvestigator||'—')+'  |  Category: '+(p.Category||'—')+'  |  Submitted: '+(p.SubmissionDate||'—')+'\n\n';
+    protoTextEl.textContent=meta+(p.Description||'No protocol text available.');
+  }
+
+  // Reset AI area
   var aiArea=document.getElementById('cm-ai-area');
-  if (aiArea) {
-    aiArea.style.display='none';
-    document.getElementById('cm-ai-report').innerHTML='';
-  }
+  if (aiArea) { aiArea.style.display='none'; document.getElementById('cm-ai-report').innerHTML=''; }
+  var hint=document.getElementById('cm-ai-hint');
+  if (hint) hint.style.display='block';
+  var aiBtn=document.getElementById('cm-ai-screen-btn');
+  if (aiBtn) { aiBtn.innerHTML='🔍 Run AI Screening'; aiBtn.disabled=false; }
+
   await refreshComments();
   openModal('comment-modal');
 }
+
+function toggleProtoText() {
+  var wrap=document.getElementById('cm-proto-text-wrap');
+  var toggle=document.getElementById('cm-proto-toggle');
+  if (!wrap) return;
+  if (wrap.style.display==='none'||wrap.style.display==='') {
+    wrap.style.display='block'; if(toggle) toggle.textContent='▲ Hide';
+  } else {
+    wrap.style.display='none'; if(toggle) toggle.textContent='▼ Show';
+  }
+}
+
 async function refreshComments() {
   var r=await api({action:'getComments',token:S.token,protocolID:currentCommentProtoId});
   if (!r.success) return;
@@ -1532,22 +1576,75 @@ async function runAIScreeningInModal() {
   btn.innerHTML='🔍 Re-run Screening'; btn.disabled=false;
 }
 
-// Render AI report into a specific container element (for use in modal)
+// Render AI report directly into a specific container (reviewer modal)
 function renderAIReportInto(data, container) {
-  // Temporarily swap the global container, render, restore
-  var orig=document.getElementById('ai-report-container');
-  // Create a temporary hidden wrapper
-  var tmpId='__tmp_ai_'+Date.now();
-  var tmp=document.createElement('div');
-  tmp.id=tmpId;
-  tmp.style.display='none';
-  document.body.appendChild(tmp);
-  // Monkey-patch the getElementById to intercept
-  var origGet=document.getElementById.bind(document);
-  document.getElementById=function(id){ return id==='ai-report-container'?tmp:origGet(id); };
-  try { renderAIReport(data); } finally { document.getElementById=origGet; }
-  container.innerHTML=tmp.innerHTML;
-  document.body.removeChild(tmp);
+  if (!container) return;
+  // Parse if string
+  var report = data;
+  if (typeof report === 'string') {
+    var cleaned = report.replace(/```json\s*/gi,'').replace(/```\s*/g,'').trim();
+    var s2 = cleaned.indexOf('{'), e2 = cleaned.lastIndexOf('}');
+    if (s2 !== -1 && e2 !== -1) {
+      try { report = JSON.parse(cleaned.substring(s2, e2+1)); } catch(e) { report = null; }
+    } else { report = null; }
+    if (!report) {
+      container.innerHTML = '<div class="ai-raw" style="font-size:12px;white-space:pre-wrap;padding:8px;color:#555">'+esc(cleaned)+'</div>';
+      return;
+    }
+  }
+  var html = '<div class="ai-report-wrap">';
+  var reportType = report.reportType||report.type||(report.completenessScore!==undefined?'AI Screening':'AI Report');
+  html += '<div class="ai-report-header"><span>'+esc(reportType)+'</span><span class="ai-model-tag">claude-sonnet-4-6</span></div>';
+
+  // Scores
+  if (report.completenessScore!==undefined||report.completeness_score!==undefined||report.scores) {
+    var sc=report.scores||{};
+    var overall=report.completenessScore||report.completeness_score||sc.overall||0;
+    var meth=report.methodologyScore||sc.methodology||0;
+    var stats=report.statisticsScore||sc.statistics||0;
+    var ethics=report.ethicsScore||sc.ethics||0;
+    var icmr=report.icmrComplianceScore||sc.icmr||0;
+    if(overall>10) overall=overall/10;
+    if(meth>10) meth=meth/10;
+    if(stats>10) stats=stats/10;
+    if(ethics>10) ethics=ethics/10;
+    if(icmr>10) icmr=icmr/10;
+    html += '<div class="ai-score-row">';
+    html += scoreCard('Overall',overall)+scoreCard('Methodology',meth)+scoreCard('Statistics',stats)+scoreCard('Ethics',ethics)+scoreCard('ICMR',icmr);
+    html += '</div>';
+  }
+
+  // All text sections — handle both camelCase and snake_case
+  var assess = report.consolidatedAssessment||report.overall_assessment||report.overallAssessment||report.assessment||report.summary||'';
+  if (assess) html += aiSection('📋 Assessment', assess);
+  var str = report.strengths||report.keyStrengths||[];
+  if (str&&(Array.isArray(str)?str.length:str)) html += aiSection('✅ Strengths', str);
+  var con = report.concerns||report.key_concerns||report.majorConcerns||[];
+  if (con&&(Array.isArray(con)?con.length:con)) html += aiSection('⚠️ Concerns', con);
+  var miss = report.missingElements||report.missing_elements||report.gaps||[];
+  if (miss&&(Array.isArray(miss)?miss.length:miss)) html += aiSection('🔍 Missing elements', miss);
+  var mrem = report.methodologyRemarks||report.methodology||'';
+  if (mrem) html += aiSection('🔬 Methodology', mrem);
+  var srem = report.statisticsRemarks||report.statistics||'';
+  if (srem) html += aiSection('📊 Statistics', srem);
+  var erem = report.ethicsRemarks||report.ethics||'';
+  if (erem) html += aiSection('⚖️ Ethics', erem);
+  var icmrrem = report.icmrComplianceRemarks||report.icmrCompliance||'';
+  if (icmrrem) html += aiSection('📜 ICMR Compliance', icmrrem);
+
+  // Questions
+  var qs = report.questionsForCommittee||report.questions_for_reviewer||report.keyQuestions||[];
+  if (typeof qs==='string'&&qs) qs=qs.split(/\n|\d+\./).map(function(q){return q.trim();}).filter(Boolean);
+  if (qs&&Array.isArray(qs)&&qs.length) {
+    html += '<div class="ai-section"><div class="ai-section-title">❓ Questions for committee</div><div class="ai-questions">';
+    qs.forEach(function(q){html+='<div class="ai-q">'+esc(q)+'</div>';});
+    html += '</div></div>';
+  }
+
+  var ts = report.timestamp||report.generatedAt||new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'});
+  html += '<div class="ai-timestamp">Generated: '+esc(String(ts))+'</div>';
+  html += '</div>';
+  container.innerHTML = html;
 }
 
 // ── AI SUMMARY ──
