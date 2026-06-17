@@ -639,7 +639,7 @@ tbody td{padding:11px 14px;vertical-align:middle;color:#2a2a25}
 
 <!-- Comment Modal -->
 <div class="modal-wrap" id="comment-modal">
-  <div class="modal" style="width:780px">
+  <div class="modal" style="width:900px;max-height:96vh">
     <div class="modal-hdr"><h3 id="cm-title">Review comments</h3><button class="modal-close" onclick="closeModal('comment-modal')">×</button></div>
     <div class="modal-body">
       <!-- Protocol header bar -->
@@ -654,7 +654,7 @@ tbody td{padding:11px 14px;vertical-align:middle;color:#2a2a25}
           <span style="font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase">📄 Protocol Text</span>
           <span id="cm-proto-toggle" style="font-size:11px;color:#c8b86a">▼ Show</span>
         </div>
-        <div id="cm-proto-text-wrap" style="display:none;max-height:320px;overflow-y:auto;padding:12px 14px;background:#fff;font-size:13px;line-height:1.8;color:#333;white-space:pre-wrap" id="cm-proto-text-wrap">
+        <div id="cm-proto-text-wrap" style="display:block;max-height:380px;overflow-y:auto;padding:12px 14px;background:#fff;font-size:13px;line-height:1.8;color:#333;white-space:pre-wrap">
           <div id="cm-proto-text">Loading…</div>
         </div>
       </div>
@@ -1341,9 +1341,9 @@ async function openComments(id,title,driveUrl) {
   var protoWrap=document.getElementById('cm-proto-text-wrap');
   if (protoTextEl) {
     protoTextEl.textContent='Loading…';
-    if (protoWrap) protoWrap.style.display='none';
+    if (protoWrap) protoWrap.style.display='block';
     var tog=document.getElementById('cm-proto-toggle');
-    if (tog) tog.textContent='▼ Show';
+    if (tog) tog.textContent='▲ Hide';
   }
   var pr=await api({action:'getProtocol',token:S.token,protocolID:id});
   if (pr.success&&pr.data&&protoTextEl) {
@@ -1557,22 +1557,27 @@ async function runAIScreeningInModal() {
   if (!id) { toast('No protocol selected.','err'); return; }
   var btn=document.getElementById('cm-ai-screen-btn');
   var area=document.getElementById('cm-ai-area');
-  var report=document.getElementById('cm-ai-report');
+  var reportEl=document.getElementById('cm-ai-report');
   var hint=document.getElementById('cm-ai-hint');
-  btn.innerHTML='<span class="spinner"></span> Screening…'; btn.disabled=true;
+  btn.innerHTML='<span class="spinner"></span> Screening protocol…'; btn.disabled=true;
   area.style.display='block';
-  hint.style.display='none';
-  report.innerHTML='<div style="font-size:12px;color:#aaa;padding:6px">Running AI screening against ICMR 2017 guidelines…</div>';
-  // Check if we already have a stored report first
-  var cached=await api({action:'getAIReview',token:S.token,protocolID:id});
-  if (cached.success&&cached.data) {
-    renderAIReportInto(cached.data, report);
-    btn.innerHTML='🔍 Re-run Screening'; btn.disabled=false;
-    return;
-  }
+  if (hint) hint.style.display='none';
+  reportEl.innerHTML='<div style="font-size:12px;color:#aaa;padding:8px">Analysing protocol text against ICMR 2017 guidelines… (ignores reviewer comments)</div>';
+  // Always run a fresh PROTOCOL-ONLY screening — never use cached summary
   var r=await api({action:'runAIScreening',token:S.token,protocolID:id});
-  if (r.success) renderAIReportInto(r.data, report);
-  else report.innerHTML='<div style="color:#d46a4a;font-size:13px;padding:6px">Error: '+esc(r.error)+'</div>';
+  if (r.success) {
+    // Verify we got a protocol screening (not a summary)
+    var data=r.data;
+    if (data&&(data.reportType==='AI Summary'||data.consolidatedAssessment&&!data.completenessScore)) {
+      // Got a summary by mistake — show warning and the data anyway
+      reportEl.innerHTML='<div style="color:#856404;font-size:12px;padding:6px;margin-bottom:8px;background:#fff3cd;border-radius:4px">⚠ Note: showing cached summary. Re-run to get a fresh protocol screening.</div>';
+      renderAIReportInto(data, reportEl.appendChild(document.createElement('div')));
+    } else {
+      renderAIReportInto(data, reportEl);
+    }
+  } else {
+    reportEl.innerHTML='<div style="color:#d46a4a;font-size:13px;padding:6px">Error: '+esc(r.error)+'</div>';
+  }
   btn.innerHTML='🔍 Re-run Screening'; btn.disabled=false;
 }
 
