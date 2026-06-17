@@ -17,11 +17,9 @@ body{font-family:'DM Sans',sans-serif;background:#f5f3ee;color:#1a1a18;min-heigh
 #url-banner input{flex:1;min-width:200px;max-width:500px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#f5f3ee;padding:4px 8px;border-radius:4px;font-size:12px;font-family:'DM Sans',sans-serif}
 #url-banner input::placeholder{color:rgba(255,255,255,.35)}
 #url-banner button{background:#c8b86a;color:#1a1a18;border:none;padding:4px 10px;border-radius:4px;font-size:12px;font-weight:600;cursor:pointer}
-#form-url-wrap{display:flex;align-items:center;gap:6px;font-size:11px;color:rgba(255,255,255,.5)}
-#form-url-wrap input{max-width:300px}
 
 /* ── LOGIN / REGISTER ── */
-#auth-screen{display:flex;align-items:center;justify-content:center;min-height:calc(100vh - 42px);padding:20px}
+#auth-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}
 .auth-card{background:#fff;border:1px solid #e0ddd5;border-radius:8px;width:420px;max-width:100%;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,.08)}
 .auth-header{background:#1a1a18;padding:24px 28px;border-bottom:3px solid #c8b86a}
 .auth-header h1{font-family:'DM Serif Display',serif;color:#f5f3ee;font-size:22px;font-weight:400}
@@ -59,25 +57,39 @@ main{padding:20px 24px;max-width:1280px}
 .panel{display:none}.panel.active{display:block}
 
 /* ── STATUS COLOURS ── */
-.s-submitted {background:#e8f0fb;color:#1a5a9a}
-.s-forwarded {background:#eeedfe;color:#3c3489}
-.s-reviewing {background:#fdf0e0;color:#854f0b}
-.s-meeting   {background:#fbe8f5;color:#7a1a5a}
-.s-inmeeting {background:#fce8e8;color:#7a1a1a}
-.s-approved  {background:#e0f5e8;color:#1a7a3a}
-.s-revision  {background:#fff3cd;color:#856404}
-.s-rejected  {background:#f5e0e0;color:#7a1a1a}
-.s-closed    {background:#e8e5dd;color:#5a5a5a}
+.s-submitted  {background:#e8f0fb;color:#1a5a9a}
+.s-forwarded  {background:#eeedfe;color:#3c3489}
+.s-reviewing  {background:#fdf0e0;color:#854f0b}
+.s-meeting    {background:#fbe8f5;color:#7a1a5a}
+.s-inmeeting  {background:#fce8e8;color:#7a1a1a}
+.s-approved   {background:#e0f5e8;color:#1a7a3a}
+.s-revision   {background:#fff3cd;color:#856404}
+.s-rejected   {background:#f5e0e0;color:#7a1a1a}
+.s-closed     {background:#e8e5dd;color:#5a5a5a}
 
 /* ── STAT CARDS ── */
 .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:20px}
-.stat-card{background:#fff;border:1px solid #e0ddd5;border-radius:5px;padding:12px 14px;border-top:3px solid #1a1a18}
+.stat-card{background:#fff;border:1px solid #e0ddd5;border-radius:5px;padding:12px 14px;border-top:3px solid #1a1a18;cursor:default}
 .stat-card.s1{border-top-color:#1d9e75}.stat-card.s2{border-top-color:#534ab7}
 .stat-card.s3{border-top-color:#d48a2a}.stat-card.s4{border-top-color:#9a1a6a}
 .stat-card.s5{border-top-color:#6aaa6a}.stat-card.s6{border-top-color:#c8b86a}
 .stat-card.s7{border-top-color:#d46a4a}.stat-card.s8{border-top-color:#888}
 .stat-label{font-size:11px;color:#999;letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}
 .stat-value{font-family:'DM Serif Display',serif;font-size:30px;line-height:1;color:#1a1a18}
+
+/* ── CHART ── */
+.chart-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
+.chart-card{background:#fff;border:1px solid #e0ddd5;border-radius:5px;padding:16px 18px}
+.chart-title{font-size:12px;font-weight:600;color:#888;letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px}
+canvas.dash-chart{width:100%!important;max-height:200px}
+@media(max-width:700px){.chart-row{grid-template-columns:1fr}}
+
+/* ── DEADLINE BADGE ── */
+.ddl-badge{display:inline-block;padding:2px 7px;border-radius:3px;font-size:10px;font-weight:700}
+.ddl-ok{background:#e0f5e8;color:#1a7a3a}
+.ddl-warn{background:#fff3cd;color:#856404}
+.ddl-over{background:#f5e0e0;color:#7a1a1a;animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
 
 /* ── TABLE ── */
 .tbl-wrap{background:#fff;border:1px solid #e0ddd5;border-radius:5px;overflow:hidden;margin-bottom:16px}
@@ -103,6 +115,7 @@ tbody td{padding:11px 14px;vertical-align:middle;color:#2a2a25}
 .btn-out{background:transparent;border:1px solid #d0cdc5;color:#444}.btn-out:hover{background:#f5f3ee}
 .btn-green{background:#1a7a3a;color:#fff}.btn-green:hover{background:#155a2a}
 .btn-red{background:#c0392b;color:#fff}.btn-red:hover{background:#a93226}
+.btn-blue{background:#534ab7;color:#fff}.btn-blue:hover{background:#3c3489}
 .btn-sm{padding:3px 8px;font-size:11px}
 .btn:disabled{opacity:.45;cursor:not-allowed}
 
@@ -177,17 +190,51 @@ tbody td{padding:11px 14px;vertical-align:middle;color:#2a2a25}
 .rev-bar{margin-top:6px;height:3px;background:#e8e5dd;border-radius:2px}
 .rev-fill{height:100%;border-radius:2px;transition:width .5s}
 
+/* ── AI REPORT CARDS ── */
+.ai-report-wrap{background:#faf9f5;border:1px solid #e0ddd5;border-radius:6px;overflow:hidden}
+.ai-report-header{background:#1a1a18;color:#f5f3ee;padding:10px 14px;display:flex;align-items:center;justify-content:space-between}
+.ai-report-header .ai-model-tag{font-size:10px;color:#c8b86a;letter-spacing:.08em;text-transform:uppercase}
+.ai-score-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:8px;padding:12px 14px;border-bottom:1px solid #e8e5dd}
+.ai-score-item{text-align:center}
+.ai-score-label{font-size:10px;color:#888;text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px}
+.ai-score-val{font-family:'DM Serif Display',serif;font-size:22px;color:#1a1a18}
+.ai-score-bar{height:3px;border-radius:2px;margin-top:4px;background:#e8e5dd}
+.ai-score-fill{height:100%;border-radius:2px}
+.score-high{background:#6aaa6a}.score-med{background:#c8b86a}.score-low{background:#d46a4a}
+.ai-section{padding:10px 14px;border-bottom:1px solid #f0ede6}
+.ai-section:last-child{border-bottom:none}
+.ai-section-title{font-size:11px;font-weight:700;color:#666;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;display:flex;align-items:center;gap:5px}
+.ai-section-body{font-size:13px;color:#333;line-height:1.7}
+.ai-section-body ul{padding-left:16px}
+.ai-section-body li{margin-bottom:3px}
+.ai-questions{counter-reset:q}
+.ai-q{padding:5px 0;font-size:13px;color:#333;display:flex;gap:6px}
+.ai-q::before{content:counter(q) ".";counter-increment:q;color:#c8b86a;font-weight:700;min-width:16px}
+.ai-raw{padding:14px;font-size:12px;white-space:pre-wrap;color:#555;font-family:monospace;line-height:1.6}
+.ai-timestamp{font-size:10px;color:#aaa;padding:6px 14px;border-top:1px solid #f0ede6}
+
+
+/* ── MEETING MINUTES EXPORT ── */
+.minutes-preview{font-size:13px;line-height:1.8;white-space:pre-wrap;border:1px solid #e0ddd5;border-radius:4px;padding:16px 18px;background:#faf9f5;font-family:'DM Sans',sans-serif;max-height:400px;overflow-y:auto}
+
 /* ── TOAST ── */
 #toast{position:fixed;bottom:20px;right:20px;background:#1a1a18;color:#f5f3ee;padding:10px 16px;border-radius:4px;border-left:3px solid #c8b86a;font-size:13px;opacity:0;pointer-events:none;transition:opacity .3s;z-index:999;max-width:300px}
 #toast.show{opacity:1}
+#toast.toast-err{border-left-color:#d46a4a}
+#toast.toast-ok{border-left-color:#6aaa6a}
+
 .spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(200,184,106,.3);border-top-color:#c8b86a;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle}
 @keyframes spin{to{transform:rotate(360deg)}}
+
 .empty{text-align:center;padding:30px;color:#bbb;font-size:13px}
 
 @media(max-width:700px){
   .form-grid{grid-template-columns:1fr}
-  main{padding:14px}header{padding:10px 14px}nav{padding:0 10px}
+  main{padding:14px}
+  header{padding:10px 14px}
+  nav{padding:0 10px}
   .stat-grid{grid-template-columns:repeat(2,1fr)}
+  .hdr-right .user-pill{display:none}
 }
 </style>
 </head>
@@ -215,7 +262,6 @@ tbody td{padding:11px 14px;vertical-align:middle;color:#2a2a25}
       <button class="auth-tab active" onclick="switchAuth('login')">Sign In</button>
       <button class="auth-tab" onclick="switchAuth('register')">Register as Investigator</button>
     </div>
-    <!-- LOGIN -->
     <div class="auth-body" id="login-form">
       <label>Email address</label>
       <input type="email" id="l-email" placeholder="your@email.com" onkeydown="if(event.key==='Enter')login()"/>
@@ -224,7 +270,6 @@ tbody td{padding:11px 14px;vertical-align:middle;color:#2a2a25}
       <button class="auth-btn" onclick="login()" id="login-btn">Sign in</button>
       <div class="auth-err" id="login-err"></div>
     </div>
-    <!-- REGISTER -->
     <div class="auth-body" id="register-form" style="display:none">
       <label>Full name *</label>
       <input type="text" id="r-name" placeholder="Dr. / Prof. Full Name"/>
@@ -244,266 +289,285 @@ tbody td{padding:11px 14px;vertical-align:middle;color:#2a2a25}
 
 <!-- APP SHELL -->
 <div id="app">
-  <header>
-    <div class="hdr-left">
-      <h2>Scientific Committee BBCI</h2>
-      <p id="hdr-sub">Protocol Review System</p>
-    </div>
-    <div class="hdr-right">
-      <span class="user-pill" id="user-pill">—</span>
-      <button class="logout-btn" onclick="logout()">Sign out</button>
-    </div>
-  </header>
-  <nav id="main-nav"></nav>
-  <main>
+<header>
+  <div class="hdr-left">
+    <h2>Scientific Committee BBCI</h2>
+    <p id="hdr-sub">Protocol Review System</p>
+  </div>
+  <div class="hdr-right">
+    <span class="user-pill" id="user-pill">—</span>
+    <button class="logout-btn" onclick="logout()">Sign out</button>
+  </div>
+</header>
+<nav id="main-nav"></nav>
+<main>
 
-    <!-- ══ INVESTIGATOR: SUBMIT ══ -->
-    <div class="panel" id="tab-submit">
-      <div class="sec-hdr"><span class="sec-title">Submit new protocol</span></div>
-      <div class="info-box">Complete all required fields. Your Protocol ID will be shown on screen after submission — use it to upload your supporting documents via the Google Form.</div>
-      <div class="card">
-        <div class="form-grid">
-          <div class="fg fg-full"><label>Protocol title *</label><input type="text" id="f-title" placeholder="Full title of the research protocol"/></div>
-          <div class="fg"><label>Principal Investigator *</label><input type="text" id="f-pi" placeholder="Full name of PI"/></div>
-          <div class="fg"><label>PI email *</label><input type="email" id="f-piemail" placeholder="pi@institution.edu"/></div>
-          <div class="fg"><label>Department</label><input type="text" id="f-dept" placeholder="e.g. Oncology"/></div>
-          <div class="fg"><label>Institution</label><input type="text" id="f-inst" placeholder="e.g. BBCI, Guwahati"/></div>
-          <div class="fg"><label>Research category</label>
-            <select id="f-cat">
-              <option value="">Select…</option>
-              <option>Clinical Trial — Phase I</option><option>Clinical Trial — Phase II</option>
-              <option>Clinical Trial — Phase III</option><option>Observational Study</option>
-              <option>Basic Science</option><option>Retrospective Study</option>
-              <option>Survey / Questionnaire</option><option>Other</option>
-            </select>
-          </div>
-          <div class="fg fg-full">
-            <label>Full protocol text * <span style="font-weight:400;color:#888;font-size:10px;text-transform:none;letter-spacing:0">(paste your complete protocol or detailed description)</span></label>
-            <textarea id="f-desc" rows="12" placeholder="Paste your complete protocol text here including:&#10;• Background and rationale&#10;• Primary and secondary objectives&#10;• Study design and methodology&#10;• Study population — inclusion/exclusion criteria&#10;• Sample size and power calculation&#10;• Intervention details&#10;• Outcome measures&#10;• Statistical analysis plan&#10;• Ethical considerations&#10;• Data safety monitoring plan&#10;&#10;The more detail you provide, the more thorough the scientific committee review will be."></textarea>
-            <div style="font-size:11px;color:#aaa;margin-top:3px">Maximum ~8000 words. For longer protocols paste the key sections.</div>
-          </div>
-        </div>
-        <div style="margin-top:14px;display:flex;gap:8px;align-items:center">
-          <button class="btn btn-dark" onclick="submitProtocol()" id="submit-btn">Submit Protocol</button>
-          <span id="submit-st" style="font-size:12px;color:#888"></span>
-        </div>
-      </div>
-      <!-- Document upload section -->
-      <div class="card" id="doc-upload-section" style="display:none">
-        <div class="card-title">Step 2 — Upload supporting documents</div>
-        <div class="info-box blue">Your protocol has been submitted. Protocol ID: <strong id="new-proto-id"></strong><br/>Now upload your supporting documents using the form below.</div>
-        <div style="margin-bottom:10px;font-size:13px;color:#555">Upload each document separately using the Google Form:</div>
-        <div style="margin-bottom:12px">
-          <button class="btn btn-gold" style="font-size:13px;padding:8px 18px" onclick="openDocForm(document.getElementById('new-proto-id').textContent)">
-            📄 Open Document Upload Form
-          </button>
-        </div>
-        <div style="font-size:12px;color:#888;line-height:1.8">
-          The form will open in a new tab.<br/>
-          Your Protocol ID <strong id="proto-id-reminder"></strong> is shown above — copy it into the form.<br/>
-          Submit once per document (Proforma, CRF, DMC Clearance, Covering Letter).
-        </div>
-      </div>
-    </div>
-
-    <!-- ══ INVESTIGATOR: MY PROTOCOLS ══ -->
-    <div class="panel" id="tab-mystudies">
-      <div class="sec-hdr">
-        <span class="sec-title">My protocols</span>
-        <button class="btn btn-out btn-sm" onclick="loadInvestigatorData()">↻ Refresh</button>
-      </div>
-      <div class="tbl-wrap">
-        <table>
-          <thead><tr><th>Protocol ID</th><th>Title</th><th>Submitted</th><th>Status</th><th>Decision</th><th>Action</th></tr></thead>
-          <tbody id="my-tbody"><tr><td colspan="6" class="empty">Loading…</td></tr></tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- ══ ADMIN: DASHBOARD ══ -->
-    <div class="panel" id="tab-dashboard">
-      <div class="stat-grid" id="stat-grid">
-        <div class="stat-card s1"><div class="stat-label">Total</div><div class="stat-value" id="st-total">—</div></div>
-        <div class="stat-card s2"><div class="stat-label">Sent for Review</div><div class="stat-value" id="st-forwarded">—</div></div>
-        <div class="stat-card s3"><div class="stat-label">Under Review</div><div class="stat-value" id="st-reviewing">—</div></div>
-        <div class="stat-card s4"><div class="stat-label">Awaiting Meeting</div><div class="stat-value" id="st-meeting">—</div></div>
-        <div class="stat-card s5"><div class="stat-label">Approved</div><div class="stat-value" id="st-approved">—</div></div>
-        <div class="stat-card s6"><div class="stat-label">Needs Revision</div><div class="stat-value" id="st-revision">—</div></div>
-        <div class="stat-card s7"><div class="stat-label">Rejected</div><div class="stat-value" id="st-rejected">—</div></div>
-        <div class="stat-card s8"><div class="stat-label">Closed</div><div class="stat-value" id="st-closed">—</div></div>
-      </div>
-      <div class="sec-hdr">
-        <span class="sec-title">Active protocols</span>
-        <button class="btn btn-out btn-sm" onclick="loadAdminData()">↻ Refresh</button>
-      </div>
-      <div class="filter-bar">
-        <select id="f-status" onchange="renderAdminTable()">
-          <option value="">All statuses</option>
-          <option>Submitted</option><option>Sent for Review</option>
-          <option>Under Review</option><option>Awaiting Meeting</option>
-          <option>In Meeting</option><option>Approved</option>
-          <option>Needs Revision</option><option>Rejected</option>
+<!-- ══ INVESTIGATOR: SUBMIT ══ -->
+<div class="panel" id="tab-submit">
+  <div class="sec-hdr"><span class="sec-title">Submit new protocol</span></div>
+  <div class="info-box">Complete all required fields. Your Protocol ID will be shown on screen after submission — use it to upload your supporting documents via the Google Form.</div>
+  <div class="card">
+    <div class="form-grid">
+      <div class="fg fg-full"><label>Protocol title *</label><input type="text" id="f-title" placeholder="Full title of the research protocol"/></div>
+      <div class="fg"><label>Principal Investigator *</label><input type="text" id="f-pi" placeholder="Full name of PI"/></div>
+      <div class="fg"><label>PI email *</label><input type="email" id="f-piemail" placeholder="pi@institution.edu"/></div>
+      <div class="fg"><label>Department</label><input type="text" id="f-dept" placeholder="e.g. Oncology"/></div>
+      <div class="fg"><label>Institution</label><input type="text" id="f-inst" placeholder="e.g. BBCI, Guwahati"/></div>
+      <div class="fg"><label>Research category</label>
+        <select id="f-cat">
+          <option value="">Select…</option>
+          <option>Clinical Trial — Phase I</option><option>Clinical Trial — Phase II</option>
+          <option>Clinical Trial — Phase III</option><option>Observational Study</option>
+          <option>Basic Science</option><option>Retrospective Study</option>
+          <option>Survey / Questionnaire</option><option>Other</option>
         </select>
-        <input type="text" id="f-q" placeholder="Search title / PI / ID…" oninput="renderAdminTable()"/>
       </div>
-      <div class="rev-grid" id="rev-progress-grid"></div>
-      <div class="tbl-wrap">
-        <table>
-          <thead><tr><th>ID</th><th>Title</th><th>Investigator</th><th>Status</th><th>Reviewers</th><th>Pre-review</th><th>Actions</th></tr></thead>
-          <tbody id="admin-tbody"><tr><td colspan="7" class="empty">Loading…</td></tr></tbody>
-        </table>
+      <div class="fg fg-full">
+        <label>Full protocol text * <span style="font-weight:400;color:#888;font-size:10px;text-transform:none;letter-spacing:0">(paste your complete protocol or detailed description)</span></label>
+        <textarea id="f-desc" rows="12" placeholder="Paste your complete protocol text here including:&#10;• Background and rationale&#10;• Primary and secondary objectives&#10;• Study design and methodology&#10;• Study population — inclusion/exclusion criteria&#10;• Sample size and power calculation&#10;• Intervention details&#10;• Outcome measures&#10;• Statistical analysis plan&#10;• Ethical considerations&#10;• Data safety monitoring plan&#10;&#10;The more detail you provide, the more thorough the scientific committee review will be."></textarea>
+        <div style="font-size:11px;color:#aaa;margin-top:3px">Maximum ~8000 words. For longer protocols paste the key sections.</div>
       </div>
     </div>
+    <div style="margin-top:14px;display:flex;gap:8px;align-items:center">
+      <button class="btn btn-dark" onclick="submitProtocol()" id="submit-btn">Submit Protocol</button>
+      <span id="submit-st" style="font-size:12px;color:#888"></span>
+    </div>
+  </div>
+  <div class="card" id="doc-upload-section" style="display:none">
+    <div class="card-title">Step 2 — Upload supporting documents</div>
+    <div class="info-box blue">Protocol submitted! Protocol ID: <strong id="new-proto-id"></strong><br/>Upload your supporting documents using the form below.</div>
+    <button class="btn btn-gold" style="font-size:13px;padding:8px 18px" onclick="openDocForm(document.getElementById('new-proto-id').textContent)">
+      📄 Open Document Upload Form
+    </button>
+    <div style="font-size:12px;color:#888;margin-top:10px;line-height:1.8">
+      The form opens in a new tab. Copy your Protocol ID <strong id="proto-id-reminder"></strong> into the form.<br/>
+      Submit once per document (Proforma, CRF, DMC Clearance, Covering Letter).
+    </div>
+  </div>
+</div>
 
-    <!-- ══ ADMIN: ALL PROTOCOLS ══ -->
-    <div class="panel" id="tab-allprotocols">
-      <div class="sec-hdr">
-        <span class="sec-title">All protocols</span>
+<!-- ══ INVESTIGATOR: MY PROTOCOLS ══ -->
+<div class="panel" id="tab-mystudies">
+  <div class="sec-hdr">
+    <span class="sec-title">My protocols</span>
+    <button class="btn btn-out btn-sm" onclick="loadInvestigatorData()">↻ Refresh</button>
+  </div>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Protocol ID</th><th>Title</th><th>Submitted</th><th>Status</th><th>Decision</th><th>Action</th></tr></thead>
+      <tbody id="my-tbody"><tr><td colspan="6" class="empty">Loading…</td></tr></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══ ADMIN: DASHBOARD ══ -->
+<div class="panel" id="tab-dashboard">
+  <div class="stat-grid" id="stat-grid">
+    <div class="stat-card s1"><div class="stat-label">Total</div><div class="stat-value" id="st-total">—</div></div>
+    <div class="stat-card s2"><div class="stat-label">Sent for Review</div><div class="stat-value" id="st-forwarded">—</div></div>
+    <div class="stat-card s3"><div class="stat-label">Under Review</div><div class="stat-value" id="st-reviewing">—</div></div>
+    <div class="stat-card s4"><div class="stat-label">Awaiting Meeting</div><div class="stat-value" id="st-meeting">—</div></div>
+    <div class="stat-card s5"><div class="stat-label">Approved</div><div class="stat-value" id="st-approved">—</div></div>
+    <div class="stat-card s6"><div class="stat-label">Needs Revision</div><div class="stat-value" id="st-revision">—</div></div>
+    <div class="stat-card s7"><div class="stat-label">Rejected</div><div class="stat-value" id="st-rejected">—</div></div>
+    <div class="stat-card s8"><div class="stat-label">Closed</div><div class="stat-value" id="st-closed">—</div></div>
+  </div>
+
+  <!-- Analytics Charts -->
+  <div class="chart-row" id="chart-row" style="display:none">
+    <div class="chart-card">
+      <div class="chart-title">Protocol Status Distribution</div>
+      <canvas id="chart-status" class="dash-chart"></canvas>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Protocols by Category</div>
+      <canvas id="chart-category" class="dash-chart"></canvas>
+    </div>
+  </div>
+
+  <div class="sec-hdr">
+    <span class="sec-title">Active protocols</span>
+    <button class="btn btn-out btn-sm" onclick="loadAdminData()">↻ Refresh</button>
+  </div>
+  <div class="filter-bar">
+    <select id="f-status" onchange="renderAdminTable()">
+      <option value="">All statuses</option>
+      <option>Submitted</option><option>Sent for Review</option>
+      <option>Under Review</option><option>Awaiting Meeting</option>
+      <option>In Meeting</option><option>Approved</option>
+      <option>Needs Revision</option><option>Rejected</option>
+    </select>
+    <input type="text" id="f-q" placeholder="Search title / PI / ID…" oninput="renderAdminTable()"/>
+  </div>
+  <div class="rev-grid" id="rev-progress-grid"></div>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>ID</th><th>Title</th><th>Investigator</th><th>Status</th><th>Reviewers</th><th>Deadline</th><th>Actions</th></tr></thead>
+      <tbody id="admin-tbody"><tr><td colspan="7" class="empty">Loading…</td></tr></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══ ADMIN: ALL PROTOCOLS ══ -->
+<div class="panel" id="tab-allprotocols">
+  <div class="sec-hdr">
+    <span class="sec-title">All protocols</span>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-out btn-sm" id="show-closed-btn" onclick="toggleClosed()">Show closed</button>
+      <button class="btn btn-out btn-sm" onclick="loadAdminData()">↻ Refresh</button>
+    </div>
+  </div>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>ID</th><th>Title</th><th>PI</th><th>Category</th><th>Status</th><th>Submitted</th><th>Deadline</th><th>Decision</th><th>Actions</th></tr></thead>
+      <tbody id="all-tbody"><tr><td colspan="9" class="empty">Loading…</td></tr></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══ ADMIN: REVIEWERS ══ -->
+<div class="panel" id="tab-reviewers">
+  <div class="sec-hdr">
+    <span class="sec-title">Reviewer accounts</span>
+    <button class="btn btn-dark btn-sm" onclick="openModal('add-reviewer-modal')">+ Add reviewer</button>
+  </div>
+  <div class="info-box">Adding a reviewer creates their login account automatically. Default password: email prefix + <strong>@Change1</strong>. Login details are emailed to them.</div>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Name</th><th>Email</th><th>Institution</th><th>Assigned</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody id="reviewers-tbody"><tr><td colspan="6" class="empty">Loading…</td></tr></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══ ADMIN: AUDIT TRAIL ══ -->
+<div class="panel" id="tab-audit">
+  <div class="sec-hdr">
+    <span class="sec-title">Audit trail</span>
+    <button class="btn btn-out btn-sm" onclick="loadAudit()">↻ Refresh</button>
+  </div>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Timestamp</th><th>Protocol</th><th>User</th><th>Role</th><th>Action</th><th>Details</th></tr></thead>
+      <tbody id="audit-tbody"><tr><td colspan="6" class="empty">Loading…</td></tr></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══ REVIEWER: MY PROTOCOLS ══ -->
+<div class="panel" id="tab-reviewer-protos">
+  <div class="sec-hdr">
+    <span class="sec-title">My assigned protocols</span>
+    <button class="btn btn-out btn-sm" onclick="loadReviewerData()">↻ Refresh</button>
+  </div>
+  <div class="info-box">You can only see protocols assigned to you. Add at least one comment before forwarding to meeting.</div>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Protocol ID</th><th>Title</th><th>Investigator</th><th>Status</th><th>Deadline</th><th>Comments</th><th>Actions</th></tr></thead>
+      <tbody id="reviewer-tbody"><tr><td colspan="7" class="empty">Loading…</td></tr></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══ MEETING MODE ══ -->
+<div class="panel" id="tab-meeting">
+  <div class="sec-hdr"><span class="sec-title">Committee meeting mode</span>
+    <div style="display:flex;gap:8px" id="meeting-header-actions" style="display:none">
+      <button class="btn btn-out btn-sm" onclick="exportMeetingMinutes()">📋 Export minutes</button>
+    </div>
+  </div>
+  <div class="info-box blue">Only protocols forwarded by at least one reviewer appear here. All reviewers can add live comments during the meeting.</div>
+  <div class="card">
+    <div class="card-title">Select protocol for discussion</div>
+    <div class="fg" style="max-width:460px;margin-bottom:14px">
+      <label>Protocol</label>
+      <select id="meet-sel" onchange="loadMeetingProtocol()"><option value="">— Select —</option></select>
+    </div>
+    <div id="meet-detail" style="display:none">
+      <div style="background:#f5f3ee;border:1px solid #e0ddd5;border-radius:4px;padding:12px 14px;margin-bottom:14px">
+        <div style="font-weight:600;font-size:14px;margin-bottom:3px" id="meet-title">—</div>
+        <div style="font-size:12px;color:#666" id="meet-meta">—</div>
+        <div style="font-size:12px;color:#888;margin-top:4px" id="meet-desc">—</div>
+      </div>
+
+      <!-- Pre-review comments -->
+      <div class="card-title" style="font-size:14px">Pre-meeting reviewer comments</div>
+      <div id="meet-comments" class="comment-thread" style="max-height:220px"></div>
+
+      <!-- AI Review Section -->
+      <div style="margin-bottom:16px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;padding-top:12px;border-top:1px solid #f0ede6">
+          <div style="font-family:'DM Serif Display',serif;font-size:15px;color:#1a1a18">AI Analysis</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <button class="btn btn-dark btn-sm" onclick="runAIScreening()" id="ai-screen-btn">🔍 AI Screening</button>
+            <button class="btn btn-gold btn-sm" onclick="runAISummary()" id="ai-summary-btn">📊 AI Summary</button>
+          </div>
+        </div>
+        <div id="ai-report-container">
+          <div style="font-size:12px;color:#aaa;padding:8px 0">No AI review yet. Click "AI Screening" to generate one.</div>
+        </div>
+      </div>
+
+      <!-- Live meeting notes -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:14px;margin-bottom:8px">
+        <div class="card-title" style="font-size:14px;margin-bottom:0;padding-bottom:0;border-bottom:none">Live meeting notes</div>
+        <span id="notes-refresh-ts" style="font-size:10px;color:#aaa;font-style:italic">auto-refreshes every 30s</span>
+      </div>
+      <div id="meet-notes-list" class="comment-thread" style="max-height:180px"></div>
+      <div class="fg" style="margin-bottom:12px">
+        <label>Add meeting note / comment</label>
+        <textarea id="meet-note-input" rows="3" placeholder="Type meeting discussion point or recommendation…"></textarea>
+      </div>
+      <div style="display:flex;gap:8px;margin-bottom:16px">
+        <input type="date" id="meet-date" style="padding:6px 10px;border:1px solid #d0cdc5;border-radius:4px;font-size:13px;font-family:'DM Sans',sans-serif"/>
+        <button class="btn btn-out" onclick="saveMeetingNote()">Add Note</button>
+        <button class="btn btn-out btn-sm" onclick="exportMeetingMinutes()" id="export-minutes-btn" style="display:none">📋 Export Minutes</button>
+      </div>
+
+      <!-- Decision (admin only) -->
+      <div id="decision-section" style="display:none">
+        <div class="card-title" style="font-size:14px">Committee decision</div>
+        <div class="dpills">
+          <div class="dpill" onclick="pickDecision('Approved')">✓ Approved</div>
+          <div class="dpill" onclick="pickDecision('Needs Revision')">✎ Needs revision</div>
+          <div class="dpill" onclick="pickDecision('Deferred')">⏸ Deferred</div>
+          <div class="dpill" onclick="pickDecision('Rejected')">✕ Rejected</div>
+        </div>
+        <div class="fg fg-full" style="margin-bottom:12px">
+          <label>Rationale / recommendations *</label>
+          <textarea id="meet-rationale" rows="4" placeholder="Summarise the committee's decision and specific recommendations for the investigator…"></textarea>
+        </div>
         <div style="display:flex;gap:8px">
-          <button class="btn btn-out btn-sm" id="show-closed-btn" onclick="toggleClosed()">Show closed</button>
-          <button class="btn btn-out btn-sm" onclick="loadAdminData()">↻ Refresh</button>
-        </div>
-      </div>
-      <div class="tbl-wrap">
-        <table>
-          <thead><tr><th>ID</th><th>Title</th><th>PI</th><th>Category</th><th>Status</th><th>Submitted</th><th>Deadline</th><th>Decision</th><th>Actions</th></tr></thead>
-          <tbody id="all-tbody"><tr><td colspan="9" class="empty">Loading…</td></tr></tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- ══ ADMIN: REVIEWERS ══ -->
-    <div class="panel" id="tab-reviewers">
-      <div class="sec-hdr">
-        <span class="sec-title">Reviewer accounts</span>
-        <button class="btn btn-dark btn-sm" onclick="openModal('add-reviewer-modal')">+ Add reviewer</button>
-      </div>
-      <div class="info-box">Adding a reviewer creates their login account automatically. Their default password will be their email prefix followed by <strong>@Change1</strong>. Login details are emailed to them.</div>
-      <div class="tbl-wrap">
-        <table>
-          <thead><tr><th>Name</th><th>Email</th><th>Institution</th><th>Status</th><th>Actions</th></tr></thead>
-          <tbody id="reviewers-tbody"><tr><td colspan="5" class="empty">Loading…</td></tr></tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- ══ ADMIN: AUDIT TRAIL ══ -->
-    <div class="panel" id="tab-audit">
-      <div class="sec-hdr">
-        <span class="sec-title">Audit trail</span>
-        <button class="btn btn-out btn-sm" onclick="loadAudit()">↻ Refresh</button>
-      </div>
-      <div class="tbl-wrap">
-        <table>
-          <thead><tr><th>Timestamp</th><th>Protocol</th><th>User</th><th>Role</th><th>Action</th><th>Details</th></tr></thead>
-          <tbody id="audit-tbody"><tr><td colspan="6" class="empty">Loading…</td></tr></tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- ══ REVIEWER: MY PROTOCOLS ══ -->
-    <div class="panel" id="tab-reviewer-protos">
-      <div class="sec-hdr">
-        <span class="sec-title">My assigned protocols</span>
-        <button class="btn btn-out btn-sm" onclick="loadReviewerData()">↻ Refresh</button>
-      </div>
-      <div class="info-box">You can only see protocols assigned to you. Add at least one comment before forwarding to meeting.</div>
-      <div class="tbl-wrap">
-        <table>
-          <thead><tr><th>Protocol ID</th><th>Title</th><th>Investigator</th><th>Status</th><th>Deadline</th><th>Comments</th><th>Actions</th></tr></thead>
-          <tbody id="reviewer-tbody"><tr><td colspan="7" class="empty">Loading…</td></tr></tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- ══ MEETING MODE ══ -->
-    <div class="panel" id="tab-meeting">
-      <div class="sec-hdr"><span class="sec-title">Committee meeting mode</span></div>
-      <div class="info-box blue">Only protocols forwarded by at least one reviewer appear here. All reviewers can add live comments during the meeting.</div>
-      <div class="card">
-        <div class="card-title">Select protocol for discussion</div>
-        <div class="fg" style="max-width:460px;margin-bottom:14px">
-          <label>Protocol</label>
-          <select id="meet-sel" onchange="loadMeetingProtocol()"><option value="">— Select —</option></select>
-        </div>
-        <div id="meet-detail" style="display:none">
-          <div style="background:#f5f3ee;border:1px solid #e0ddd5;border-radius:4px;padding:12px 14px;margin-bottom:14px">
-            <div style="font-weight:600;font-size:14px;margin-bottom:3px" id="meet-title">—</div>
-            <div style="font-size:12px;color:#666" id="meet-meta">—</div>
-            <div style="font-size:12px;color:#888;margin-top:4px" id="meet-desc">—</div>
-          </div>
-          <!-- Pre-review comments summary -->
-          <div class="card-title" style="font-size:14px">Pre-meeting reviewer comments</div>
-          <div id="meet-comments" class="comment-thread" style="max-height:220px"></div>
-
-          <!-- AI Review Section -->
-          <div id="ai-review-section" style="display:none;margin-bottom:16px">
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;padding-top:12px;border-top:1px solid #f0ede6">
-              <div style="font-family:'DM Serif Display',serif;font-size:15px;color:#1a1a18">AI Pre-screening report</div>
-              <div style="display:flex;gap:8px">
-                <button class="btn btn-dark btn-sm" onclick="runAIScreening()" id="ai-screen-btn">AI Screening</button>
-                <button class="btn btn-gold btn-sm" onclick="runAISummary()" id="ai-summary-btn">AI Summary</button>
-              </div>
-            </div>
-            <div id="ai-report-container">
-              <div style="font-size:12px;color:#aaa;padding:8px">No AI review yet. Click "AI Screening" to generate one.</div>
-            </div>
-          </div>
-
-          <!-- Live meeting notes -->
-          <div class="card-title" style="font-size:14px;margin-top:14px">Live meeting notes</div>
-          <div id="meet-notes-list" class="comment-thread" style="max-height:180px"></div>
-          <div class="fg" style="margin-bottom:12px">
-            <label>Add meeting note / comment</label>
-            <textarea id="meet-note-input" rows="3" placeholder="Type meeting discussion point or recommendation…"></textarea>
-          </div>
-          <div style="display:flex;gap:8px;margin-bottom:16px">
-            <input type="date" id="meet-date" style="padding:6px 10px;border:1px solid #d0cdc5;border-radius:4px;font-size:13px;font-family:'DM Sans',sans-serif"/>
-            <button class="btn btn-out" onclick="saveMeetingNote()">Add Note</button>
-          </div>
-          <!-- Decision (admin only) -->
-          <div id="decision-section" style="display:none">
-            <div class="card-title" style="font-size:14px">Committee decision</div>
-            <div class="dpills">
-              <div class="dpill" onclick="pickDecision('Approved')">✓ Approved</div>
-              <div class="dpill" onclick="pickDecision('Needs Revision')">✎ Needs revision</div>
-              <div class="dpill" onclick="pickDecision('Deferred')">⏸ Deferred</div>
-              <div class="dpill" onclick="pickDecision('Rejected')">✕ Rejected</div>
-            </div>
-            <div class="fg fg-full" style="margin-bottom:12px">
-              <label>Rationale / recommendations *</label>
-              <textarea id="meet-rationale" rows="4" placeholder="Summarise the committee's decision and specific recommendations for the investigator…"></textarea>
-            </div>
-            <div style="display:flex;gap:8px">
-              <button class="btn btn-dark" onclick="saveDecision()">Save decision</button>
-              <button class="btn btn-gold" onclick="generateAndSendEmail()">Generate &amp; send decision email</button>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- Letter preview -->
-      <div class="card" id="letter-card" style="display:none">
-        <div class="card-title">Decision letter preview</div>
-        <div class="letter-box" id="letter-body"></div>
-        <div style="margin-top:10px;display:flex;gap:8px">
-          <button class="btn btn-dark" onclick="copyLetter()">Copy letter</button>
-          <button class="btn btn-out" onclick="printLetter()">Print / PDF</button>
+          <button class="btn btn-dark" onclick="saveDecision()">Save decision</button>
+          <button class="btn btn-gold" onclick="generateAndSendEmail()">Generate &amp; send decision email</button>
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- ══ SHARED: MY ACCOUNT ══ -->
-    <div class="panel" id="tab-account">
-      <div class="sec-hdr"><span class="sec-title">My account</span></div>
-      <div class="card" style="max-width:380px">
-        <div class="card-title">Change password</div>
-        <div class="fg" style="margin-bottom:10px"><label>New password</label><input type="password" id="np1" placeholder="Min. 6 characters"/></div>
-        <div class="fg" style="margin-bottom:14px"><label>Confirm password</label><input type="password" id="np2" placeholder="Repeat password"/></div>
-        <button class="btn btn-dark" onclick="changePassword()">Update password</button>
-      </div>
+  <!-- Letter preview -->
+  <div class="card" id="letter-card" style="display:none">
+    <div class="card-title">Decision letter preview</div>
+    <div class="letter-box" id="letter-body"></div>
+    <div style="margin-top:10px;display:flex;gap:8px">
+      <button class="btn btn-dark" onclick="copyLetter()">Copy letter</button>
+      <button class="btn btn-out" onclick="printLetter()">Print / PDF</button>
     </div>
+  </div>
+</div>
 
-  </main>
+<!-- ══ SHARED: MY ACCOUNT ══ -->
+<div class="panel" id="tab-account">
+  <div class="sec-hdr"><span class="sec-title">My account</span></div>
+  <div class="card" style="max-width:380px">
+    <div class="card-title">Change password</div>
+    <div class="fg" style="margin-bottom:10px"><label>New password</label><input type="password" id="np1" placeholder="Min. 6 characters"/></div>
+    <div class="fg" style="margin-bottom:14px"><label>Confirm password</label><input type="password" id="np2" placeholder="Repeat password"/></div>
+    <button class="btn btn-dark" onclick="changePassword()">Update password</button>
+  </div>
+</div>
+
+</main>
 </div>
 
 <!-- ══ MODALS ══ -->
@@ -540,6 +604,12 @@ tbody td{padding:11px 14px;vertical-align:middle;color:#2a2a25}
         <div class="fg"><label>Review deadline</label><input type="date" id="am-deadline"/></div>
         <div class="fg fg-full"><label>Admin notes</label><textarea id="am-notes" rows="2" placeholder="Internal notes for the committee file…"></textarea></div>
       </div>
+      <!-- Remind existing reviewers -->
+      <div id="remind-section" style="display:none;margin-top:12px;padding-top:12px;border-top:1px solid #f0ede6">
+        <div style="font-size:12px;color:#888;margin-bottom:6px">Already assigned — send a reminder?</div>
+        <button class="btn btn-out btn-sm" onclick="sendReviewerReminder()" id="remind-btn">📧 Send reminder email to reviewers</button>
+        <span id="remind-st" style="font-size:11px;color:#888;margin-left:8px"></span>
+      </div>
     </div>
     <div class="modal-foot">
       <button class="btn btn-out" onclick="closeModal('assign-modal')">Cancel</button>
@@ -572,8 +642,20 @@ tbody td{padding:11px 14px;vertical-align:middle;color:#2a2a25}
   <div class="modal">
     <div class="modal-hdr"><h3 id="cm-title">Review comments</h3><button class="modal-close" onclick="closeModal('comment-modal')">×</button></div>
     <div class="modal-body">
-      <div style="background:#f5f3ee;border:1px solid #e0ddd5;border-radius:4px;padding:10px 12px;margin-bottom:14px;font-size:13px">
-        <strong id="cm-id">—</strong> — <span id="cm-proto-title" style="color:#666"></span>
+      <div style="background:#f5f3ee;border:1px solid #e0ddd5;border-radius:4px;padding:10px 12px;margin-bottom:10px;font-size:13px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+        <div><strong id="cm-id">—</strong> — <span id="cm-proto-title" style="color:#666"></span></div>
+        <div id="cm-drive-link" style="display:none"></div>
+      </div>
+      <!-- AI Screening in reviewer modal -->
+      <div style="margin-bottom:12px;padding:10px 12px;background:#faf9f5;border:1px solid #e8e5dd;border-radius:4px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+          <span style="font-size:12px;font-weight:600;color:#666;letter-spacing:.06em;text-transform:uppercase">AI Pre-screening</span>
+          <button class="btn btn-dark btn-sm" onclick="runAIScreeningInModal()" id="cm-ai-screen-btn">🔍 Run AI Screening</button>
+        </div>
+        <div id="cm-ai-area" style="display:none;margin-top:8px">
+          <div id="cm-ai-report"></div>
+        </div>
+        <div id="cm-ai-hint" style="font-size:11px;color:#aaa">AI screens the protocol against ICMR 2017 guidelines to help focus your review.</div>
       </div>
       <div class="comment-thread" id="cm-thread"></div>
       <div class="card-title" style="font-size:14px">Add comment</div>
@@ -595,7 +677,7 @@ tbody td{padding:11px 14px;vertical-align:middle;color:#2a2a25}
       </div>
       <div style="margin-top:12px;display:flex;gap:8px">
         <button class="btn btn-dark" onclick="addComment(false)">Save comment</button>
-        <button class="btn btn-gold" id="forward-btn" onclick="forwardToMeeting()" title="Must have at least one comment">Forward to meeting</button>
+        <button class="btn btn-gold" id="forward-btn" onclick="forwardToMeeting()">Forward to meeting</button>
       </div>
       <div id="cm-fwd-status" style="margin-top:8px;font-size:12px;color:#888"></div>
     </div>
@@ -608,7 +690,7 @@ tbody td{padding:11px 14px;vertical-align:middle;color:#2a2a25}
   <div class="modal">
     <div class="modal-hdr"><h3>Resubmit revised protocol</h3><button class="modal-close" onclick="closeModal('resubmit-modal')">×</button></div>
     <div class="modal-body">
-      <div class="info-box red">Please address all committee recommendations before resubmitting. Upload your revised documents using the document upload form after resubmission.</div>
+      <div class="info-box red">Please address all committee recommendations before resubmitting. Upload revised documents using the document form after resubmission.</div>
       <div class="fg" style="margin-bottom:12px"><label>Protocol ID</label><input type="text" id="rs-id" readonly style="background:#f5f3ee"/></div>
       <div class="fg"><label>Updated description / changes made</label><textarea id="rs-desc" rows="4" placeholder="Briefly describe the changes made in response to committee recommendations…"></textarea></div>
     </div>
@@ -619,56 +701,74 @@ tbody td{padding:11px 14px;vertical-align:middle;color:#2a2a25}
   </div>
 </div>
 
+<!-- Meeting Minutes Modal -->
+<div class="modal-wrap" id="minutes-modal">
+  <div class="modal" style="width:800px">
+    <div class="modal-hdr"><h3>Meeting Minutes</h3><button class="modal-close" onclick="closeModal('minutes-modal')">×</button></div>
+    <div class="modal-body">
+      <div id="minutes-content" class="minutes-preview"></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-out" onclick="closeModal('minutes-modal')">Close</button>
+      <button class="btn btn-dark" onclick="copyMinutes()">Copy minutes</button>
+      <button class="btn btn-gold" onclick="printMinutes()">Print / PDF</button>
+    </div>
+  </div>
+</div>
+
 <div id="toast"></div>
+
+<!-- Chart.js CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 
 <script>
 // ═══════════════════════════════════════════════════
-//  STATE
+// STATE
 // ═══════════════════════════════════════════════════
 var S = {
-  url      : localStorage.getItem('bbci_url')||'https://script.google.com/macros/s/AKfycbz_kWPxsc4yPRBQ1iOjOy1UxUN8TsH7Nki0ReUWd3xN7yiwknVMUj_NZSsNGjrXOn_bjA/exec',
-  formUrl  : localStorage.getItem('bbci_form_url')||'https://docs.google.com/forms/d/e/1FAIpQLSd3lhMxvcB3H_XZ5FdTkoTEXFKbz-6tt-iYYcDlCAdT8HU_gg/viewform',
-  token    : localStorage.getItem('bbci_token')||'',
-  role     : localStorage.getItem('bbci_role')||'',
-  name     : localStorage.getItem('bbci_name')||'',
-  email    : localStorage.getItem('bbci_email')||'',
+  url     : localStorage.getItem('bbci_url')||'https://script.google.com/macros/s/AKfycbz_kWPxsc4yPRBQ1iOjOy1UxUN8TsH7Nki0ReUWd3xN7yiwknVMUj_NZSsNGjrXOn_bjA/exec',
+  formUrl : localStorage.getItem('bbci_form_url')||'https://docs.google.com/forms/d/e/1FAIpQLSd3lhMxvcB3H_XZ5FdTkoTEXFKbz-6tt-iYYcDlCAdT8HU_gg/viewform',
+  token   : localStorage.getItem('bbci_token')||'',
+  role    : localStorage.getItem('bbci_role')||'',
+  name    : localStorage.getItem('bbci_name')||'',
+  email   : localStorage.getItem('bbci_email')||'',
   protocols: [],
   reviewers: [],
   decision : '',
   activeProto: null,
   showClosed : false,
+  chartStatus: null,
+  chartCat: null,
+  currentMeetingProtocol: null,
+  assignModalProtoId: null,
 };
 
 var STATUS_CSS = {
-  'Submitted'      :'s-submitted',
+  'Submitted'     :'s-submitted',
   'Sent for Review':'s-forwarded',
-  'Under Review'   :'s-reviewing',
+  'Under Review'  :'s-reviewing',
   'Awaiting Meeting':'s-meeting',
-  'In Meeting'     :'s-inmeeting',
-  'Approved'       :'s-approved',
-  'Needs Revision' :'s-revision',
-  'Rejected'       :'s-rejected',
-  'Closed'         :'s-closed',
+  'In Meeting'    :'s-inmeeting',
+  'Approved'      :'s-approved',
+  'Needs Revision':'s-revision',
+  'Rejected'      :'s-rejected',
+  'Closed'        :'s-closed',
 };
 
 // ═══════════════════════════════════════════════════
-//  INIT
+// INIT
 // ═══════════════════════════════════════════════════
 window.onload = function() {
-  if (S.url)     document.getElementById('script-url').value     = S.url;
+  if (S.url) document.getElementById('script-url').value = S.url;
   if (S.formUrl) document.getElementById('form-url-input').value = S.formUrl;
   if (S.token && S.role) showApp();
   var today = new Date().toISOString().split('T')[0];
   var mDate = document.getElementById('meet-date');
   if (mDate) mDate.value = today;
-  // Auto-ping and hide banner if URLs are hardcoded
-  if (S.url && S.url.indexOf('script.google.com') >= 0) {
-    pingServer();
-  }
 };
 
 // ═══════════════════════════════════════════════════
-//  URL MANAGEMENT
+// URL MANAGEMENT
 // ═══════════════════════════════════════════════════
 function saveUrl() {
   var url = document.getElementById('script-url').value.trim();
@@ -679,7 +779,7 @@ function saveUrl() {
 function saveFormUrl() {
   var url = document.getElementById('form-url-input').value.trim();
   S.formUrl = url; localStorage.setItem('bbci_form_url', url);
-  toast('Document upload form URL saved.');
+  toast('Document upload form URL saved.', 'ok');
 }
 async function pingServer() {
   var el = document.getElementById('ping-st');
@@ -692,35 +792,51 @@ async function pingServer() {
 }
 
 // ═══════════════════════════════════════════════════
-//  AUTH
+// API
+// ═══════════════════════════════════════════════════
+async function api(payload) {
+  var url = S.url;
+  if (!url) throw new Error('No Apps Script URL configured.');
+  var body = JSON.stringify(payload);
+  var method = body.length > 2000 ? 'POST' : 'GET';
+  var resp;
+  if (method === 'GET') {
+    var params = new URLSearchParams({data: body});
+    resp = await fetch(url + '?' + params, {redirect:'follow'});
+  } else {
+    resp = await fetch(url, {method:'POST', body: body, redirect:'follow'});
+  }
+  return await resp.json();
+}
+
+// ═══════════════════════════════════════════════════
+// AUTH
 // ═══════════════════════════════════════════════════
 function switchAuth(tab) {
-  document.getElementById('login-form').style.display    = tab==='login'    ? 'block':'none';
+  document.getElementById('login-form').style.display = tab==='login' ? 'block':'none';
   document.getElementById('register-form').style.display = tab==='register' ? 'block':'none';
   document.querySelectorAll('.auth-tab').forEach(function(b,i){
     b.classList.toggle('active', (i===0&&tab==='login')||(i===1&&tab==='register'));
   });
 }
-
 async function login() {
-  var email = v('l-email'), pass = v('l-pass'), err = document.getElementById('login-err');
-  err.textContent = '';
+  var email=v('l-email'), pass=v('l-pass'), err=document.getElementById('login-err');
+  err.textContent='';
   if (!email||!pass) { err.textContent='Please enter email and password.'; return; }
   if (!S.url) { err.textContent='Please paste the Apps Script URL in the banner above.'; return; }
-  var btn = document.getElementById('login-btn');
-  btn.innerHTML = '<span class="spinner"></span> Signing in…'; btn.disabled=true;
+  var btn=document.getElementById('login-btn');
+  btn.innerHTML='<span class="spinner"></span> Signing in…'; btn.disabled=true;
   try {
     var r = await api({action:'login',email:email,password:pass});
     if (r.success) {
       S.token=r.data.token; S.role=r.data.role; S.name=r.data.name; S.email=r.data.email;
       localStorage.setItem('bbci_token',S.token); localStorage.setItem('bbci_role',S.role);
-      localStorage.setItem('bbci_name',S.name);   localStorage.setItem('bbci_email',S.email);
+      localStorage.setItem('bbci_name',S.name); localStorage.setItem('bbci_email',S.email);
       showApp();
     } else { err.textContent = r.error||'Login failed.'; }
   } catch(e) { err.textContent='Cannot reach server. Check the Apps Script URL.'; }
   btn.innerHTML='Sign in'; btn.disabled=false;
 }
-
 async function register() {
   var name=v('r-name'),email=v('r-email'),pass=v('r-pass'),pass2=v('r-pass2');
   var err=document.getElementById('reg-err'); err.textContent='';
@@ -730,19 +846,18 @@ async function register() {
   var btn=document.getElementById('reg-btn');
   btn.innerHTML='<span class="spinner"></span> Creating account…'; btn.disabled=true;
   try {
-    var r = await api({action:'register',name:name,email:email,
-      password:pass,institution:v('r-inst')});
+    var r = await api({action:'register',name:name,email:email,password:pass,institution:v('r-inst')});
     if (r.success) {
       S.token=r.data.token; S.role=r.data.role; S.name=r.data.name; S.email=r.data.email;
       localStorage.setItem('bbci_token',S.token); localStorage.setItem('bbci_role',S.role);
-      localStorage.setItem('bbci_name',S.name);   localStorage.setItem('bbci_email',S.email);
+      localStorage.setItem('bbci_name',S.name); localStorage.setItem('bbci_email',S.email);
       showApp();
     } else { err.textContent = r.error||'Registration failed.'; }
   } catch(e) { err.textContent='Cannot reach server.'; }
   btn.innerHTML='Create Account & Sign In'; btn.disabled=false;
 }
-
 function logout() {
+  stopMeetNotesRefresh();
   ['bbci_token','bbci_role','bbci_name','bbci_email'].forEach(function(k){localStorage.removeItem(k);});
   S.token=S.role=S.name=S.email='';
   document.getElementById('app').style.display='none';
@@ -751,95 +866,78 @@ function logout() {
 }
 
 // ═══════════════════════════════════════════════════
-//  SHOW APP
+// SHOW APP
 // ═══════════════════════════════════════════════════
 function showApp() {
   document.getElementById('auth-screen').style.display='none';
   document.getElementById('app').style.display='block';
-
   var roleLabel = {admin:'Admin / Chairman',reviewer:'Lead Reviewer',investigator:'Investigator'};
   document.getElementById('user-pill').textContent = (roleLabel[S.role]||S.role)+' — '+S.name;
   document.getElementById('hdr-sub').textContent = roleLabel[S.role]||S.role;
-
   var navDef = {
-    admin       : [['dashboard','Dashboard'],['allprotocols','All Protocols'],['reviewers','Reviewers'],['meeting','Meeting'],['audit','Audit Trail'],['account','My Account']],
-    reviewer    : [['reviewer-protos','My Protocols'],['meeting','Meeting'],['account','My Account']],
+    admin      : [['dashboard','Dashboard'],['allprotocols','All Protocols'],['reviewers','Reviewers'],['meeting','Meeting'],['audit','Audit Trail'],['account','My Account']],
+    reviewer   : [['reviewer-protos','My Protocols'],['meeting','Meeting'],['account','My Account']],
     investigator: [['submit','Submit Protocol'],['mystudies','My Protocols'],['account','My Account']],
   };
   var tabs = navDef[S.role]||[];
   document.getElementById('main-nav').innerHTML = tabs.map(function(t){
     return '<button class="tab-btn" onclick="showTab(\''+t[0]+'\')" data-tab="'+t[0]+'">'+t[1]+'</button>';
   }).join('');
-
   showTab(tabs[0][0]);
-  if (S.role==='admin')    loadAdminData();
+  if (S.role==='admin') loadAdminData();
   if (S.role==='reviewer') loadReviewerData();
   if (S.role==='investigator') loadInvestigatorData();
 }
 
 // ═══════════════════════════════════════════════════
-//  TABS
+// TABS
 // ═══════════════════════════════════════════════════
 function showTab(tab) {
   document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('active');});
   document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active');});
   var panel = document.getElementById('tab-'+tab);
-  var btn   = document.querySelector('[data-tab="'+tab+'"]');
+  var btn = document.querySelector('[data-tab="'+tab+'"]');
   if (panel) panel.classList.add('active');
-  if (btn)   btn.classList.add('active');
+  if (btn) btn.classList.add('active');
+  if (tab==='meeting' && S.role==='admin') loadMeetingList();
 }
 
 // ═══════════════════════════════════════════════════
-//  INVESTIGATOR
+// INVESTIGATOR
 // ═══════════════════════════════════════════════════
 async function submitProtocol() {
   var title=v('f-title'),pi=v('f-pi'),piEmail=v('f-piemail'),desc=v('f-desc');
-  if (!title||!pi||!piEmail||!desc) { toast('Please fill in all required fields.'); return; }
-  var btn=document.getElementById('submit-btn'), st=document.getElementById('submit-st');
+  if (!title||!pi||!piEmail||!desc) { toast('Please fill in all required fields.','err'); return; }
+  var btn=document.getElementById('submit-btn');
   btn.innerHTML='<span class="spinner"></span> Submitting…'; btn.disabled=true;
   var r = await api({action:'submitProtocol',token:S.token,title:title,pi:pi,piEmail:piEmail,
     department:v('f-dept'),institution:v('f-inst'),category:v('f-cat'),description:desc});
   if (r.success) {
     document.getElementById('new-proto-id').textContent = r.data.protocolID;
-    var reminder = document.getElementById('proto-id-reminder');
-    if (reminder) reminder.textContent = r.data.protocolID;
-    document.getElementById('doc-upload-section').style.display = 'block';
-    st.textContent = '✓ Submitted! Your Protocol ID: '+r.data.protocolID;
-    st.style.color = '#1a7a3a';
+    document.getElementById('proto-id-reminder').textContent = r.data.protocolID;
+    document.getElementById('doc-upload-section').style.display='block';
+    document.getElementById('submit-st').textContent = '✓ Submitted! ID: '+r.data.protocolID;
+    document.getElementById('submit-st').style.color = '#1a7a3a';
     ['f-title','f-pi','f-piemail','f-dept','f-inst','f-desc'].forEach(function(id){document.getElementById(id).value='';});
     document.getElementById('f-cat').value='';
-    toast('Protocol submitted! Reference: '+r.data.protocolID);
+    toast('Protocol submitted! Reference: '+r.data.protocolID,'ok');
     loadInvestigatorData();
-  } else { toast('Error: '+r.error); }
+  } else { toast('Error: '+r.error,'err'); }
   btn.innerHTML='Submit Protocol'; btn.disabled=false;
 }
-
 function openDocForm(protoId) {
-  if (!S.formUrl) { toast('Document upload form URL not configured. Contact the committee.'); return; }
-  // Pre-fill Protocol ID in Google Form URL using entry parameter
-  // Google Forms pre-fill: append ?usp=pp_url&entry.XXXXX=VALUE
-  // Since we don't know the entry ID, just open with a helpful message
-  var url = S.formUrl;
-  if (protoId) {
-    // Try to pre-fill - works if form has entry parameters set up
-    url = S.formUrl + (S.formUrl.indexOf('?')>=0?'&':'?') + 'usp=pp_url';
-  }
-  window.open(url,'_blank');
-  if (protoId) {
-    toast('Form opened. Your Protocol ID is: '+protoId+' — copy it into the form.');
-  }
+  if (!S.formUrl) { toast('Document upload form URL not configured.','err'); return; }
+  window.open(S.formUrl,'_blank');
+  if (protoId) toast('Form opened. Your Protocol ID: '+protoId,'ok');
 }
-
 async function loadInvestigatorData() {
   var r = await api({action:'getMyProtocols',token:S.token});
   if (r.success) { S.protocols=r.data; renderMyStudies(); }
 }
-
 function renderMyStudies() {
   var tbody = document.getElementById('my-tbody');
   if (!S.protocols.length) { tbody.innerHTML='<tr><td colspan="6" class="empty">No protocols submitted yet.</td></tr>'; return; }
   tbody.innerHTML = S.protocols.map(function(p){
-    var canResubmit = p.Status==='Needs Revision';
     return '<tr>'+
       '<td style="font-size:11px;font-weight:600;color:#888">'+esc(p.ProtocolID)+'</td>'+
       '<td style="font-weight:500">'+esc(p.Title)+'</td>'+
@@ -847,18 +945,17 @@ function renderMyStudies() {
       '<td><span class="badge '+statusCss(p.Status)+'">'+esc(p.Status)+'</span></td>'+
       '<td style="font-size:12px">'+esc(p.Decision||'—')+'</td>'+
       '<td>'+
-        (canResubmit ? '<button class="btn btn-gold btn-sm" onclick="openResubmit(\''+esc(p.ProtocolID)+'\')">Resubmit</button>' : '')+
-        ' <button class="btn btn-out btn-sm" onclick="viewProtoTimeline(\''+esc(p.ProtocolID)+'\')">Track</button>'+
+        (p.Status==='Needs Revision' ? '<button class="btn btn-gold btn-sm" onclick="openResubmit(\''+esc(p.ProtocolID)+'\')">Resubmit</button> ' : '')+
+        '<button class="btn btn-out btn-sm" onclick="viewProtoTimeline(\''+esc(p.ProtocolID)+'\')">Track</button>'+
       '</td></tr>';
   }).join('');
 }
-
 async function viewProtoTimeline(id) {
   var r = await api({action:'getProtocol',token:S.token,protocolID:id});
-  if (!r.success) { toast('Error: '+r.error); return; }
+  if (!r.success) { toast('Error: '+r.error,'err'); return; }
   var p = r.data;
   document.getElementById('pm-title').textContent = p.ProtocolID+' — '+p.Title;
-  document.getElementById('pm-desc').textContent  = p.Description||'—';
+  document.getElementById('pm-desc').textContent = p.Description||'—';
   document.getElementById('pm-admin-actions').innerHTML = '';
   var meta = [
     ['Status',badgeHtml(p.Status)],['Submitted',p.SubmissionDate],
@@ -867,7 +964,7 @@ async function viewProtoTimeline(id) {
   ];
   document.getElementById('pm-meta').innerHTML = meta.map(function(m){
     return '<div><div style="font-size:10px;color:#aaa;letter-spacing:.08em;text-transform:uppercase;margin-bottom:3px">'+esc(m[0])+'</div>'+
-           '<div style="font-size:13px;color:#222">'+m[1]+'</div></div>';
+      '<div style="font-size:13px;color:#222">'+m[1]+'</div></div>';
   }).join('');
   var events = buildTimeline(p);
   document.getElementById('pm-timeline').innerHTML = events.map(function(e){
@@ -875,801 +972,966 @@ async function viewProtoTimeline(id) {
   }).join('');
   openModal('proto-modal');
 }
-
 function buildTimeline(p) {
-  var events = [];
-  if (p.SubmissionDate) events.push({date:p.SubmissionDate,text:'Protocol submitted'});
-  if (p.AssignedReviewers) events.push({date:p.ReviewDeadline||'—',text:'Assigned to reviewers: '+p.AssignedReviewers});
-  if (p.ForwardedDate) events.push({date:p.ForwardedDate,text:'Forwarded to committee meeting by '+p.ForwardedBy});
-  if (p.MeetingDate) events.push({date:p.MeetingDate,text:'Reviewed at committee meeting'});
-  if (p.Decision) events.push({date:p.MeetingDate||'—',text:'Decision: '+p.Decision});
-  if (p.LetterSentDate) events.push({date:p.LetterSentDate,text:'Decision letter sent'});
-  if (!events.length) events.push({date:'—',text:'No activity recorded yet'});
-  return events;
+  var ev=[];
+  if (p.SubmissionDate) ev.push({date:p.SubmissionDate,text:'Protocol submitted'});
+  if (p.AssignedReviewers) ev.push({date:p.ReviewDeadline||'',text:'Assigned to reviewers: '+p.AssignedReviewers});
+  if (p.ForwardedDate) ev.push({date:p.ForwardedDate,text:'Forwarded to committee meeting'});
+  if (p.MeetingDate) ev.push({date:p.MeetingDate,text:'Reviewed at committee meeting'});
+  if (p.Decision) ev.push({date:p.MeetingDate||'',text:'Decision: '+p.Decision});
+  if (p.LetterSentDate) ev.push({date:p.LetterSentDate,text:'Decision letter sent'});
+  if (!ev.length) ev.push({date:'—',text:'No activity recorded yet'});
+  return ev;
 }
-
 function openResubmit(id) {
   document.getElementById('rs-id').value = id;
   document.getElementById('rs-desc').value = '';
   openModal('resubmit-modal');
 }
-
 async function resubmitProtocol() {
-  var id = v('rs-id'), desc = v('rs-desc');
+  var id=v('rs-id'),desc=v('rs-desc');
   var r = await api({action:'resubmitProtocol',token:S.token,protocolID:id,description:desc});
   if (r.success) {
     closeModal('resubmit-modal');
-    toast('Protocol resubmitted. Upload your revised documents using the document form.');
+    toast('Protocol resubmitted. Upload your revised documents.','ok');
     loadInvestigatorData();
     document.getElementById('doc-upload-section').style.display='block';
     document.getElementById('new-proto-id').textContent = id;
-  } else toast('Error: '+r.error);
+  } else toast('Error: '+r.error,'err');
 }
 
 // ═══════════════════════════════════════════════════
-//  ADMIN DATA
+// ADMIN DATA
 // ═══════════════════════════════════════════════════
 async function loadAdminData() {
-  var [pr, rv, st] = await Promise.all([
+  var [pr,rv,st] = await Promise.all([
     api({action:'getAllProtocols',token:S.token}),
     api({action:'getReviewers',token:S.token}),
     api({action:'getStats',token:S.token}),
   ]);
-  if (pr.success) S.protocols = pr.data;
-  if (rv.success) S.reviewers = rv.data;
+  if (pr.success) S.protocols=pr.data;
+  if (rv.success) S.reviewers=rv.data;
   if (st.success) updateStats(st.data);
   renderAdminTable();
   renderAllTable();
   renderReviewersTable();
   populateMeetingSelect();
   renderReviewerProgress();
+  renderCharts();
 }
-
 function updateStats(s) {
-  var map = {total:'st-total',forwarded:'st-forwarded',reviewing:'st-reviewing',
+  var map={total:'st-total',forwarded:'st-forwarded',reviewing:'st-reviewing',
     meeting:'st-meeting',approved:'st-approved',revision:'st-revision',
     rejected:'st-rejected',closed:'st-closed'};
   for (var k in map) { setEl(map[k], s[k]!==undefined?s[k]:'0'); }
 }
 
+// ── DASHBOARD CHARTS ──
+function renderCharts() {
+  if (!S.protocols.length) return;
+  document.getElementById('chart-row').style.display='grid';
+
+  // Status distribution
+  var statusCounts={};
+  S.protocols.forEach(function(p){
+    var st=p.Status||'Unknown';
+    statusCounts[st]=(statusCounts[st]||0)+1;
+  });
+  var statusColors={
+    'Submitted':'#1a5a9a','Sent for Review':'#3c3489','Under Review':'#854f0b',
+    'Awaiting Meeting':'#7a1a5a','In Meeting':'#7a1a1a','Approved':'#1a7a3a',
+    'Needs Revision':'#856404','Rejected':'#c0392b','Closed':'#888'
+  };
+  var sLabels=Object.keys(statusCounts);
+  var sData=sLabels.map(function(l){return statusCounts[l];});
+  var sColors=sLabels.map(function(l){return statusColors[l]||'#ccc';});
+
+  var ctx1=document.getElementById('chart-status').getContext('2d');
+  if (S.chartStatus) S.chartStatus.destroy();
+  S.chartStatus=new Chart(ctx1,{
+    type:'doughnut',
+    data:{labels:sLabels,datasets:[{data:sData,backgroundColor:sColors,borderWidth:2,borderColor:'#fff'}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{font:{size:11},padding:10}}}}
+  });
+
+  // Category distribution
+  var catCounts={};
+  S.protocols.forEach(function(p){
+    var cat=p.Category||'Uncategorised';
+    catCounts[cat]=(catCounts[cat]||0)+1;
+  });
+  var cLabels=Object.keys(catCounts);
+  var cData=cLabels.map(function(l){return catCounts[l];});
+  var cColors=['#1d9e75','#534ab7','#d48a2a','#9a1a6a','#6aaa6a','#c8b86a','#d46a4a','#888'];
+
+  var ctx2=document.getElementById('chart-category').getContext('2d');
+  if (S.chartCat) S.chartCat.destroy();
+  S.chartCat=new Chart(ctx2,{
+    type:'bar',
+    data:{labels:cLabels,datasets:[{label:'Protocols',data:cData,backgroundColor:cColors,borderRadius:3}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+      scales:{x:{ticks:{font:{size:10}}},y:{ticks:{stepSize:1},beginAtZero:true}}}
+  });
+}
+
+// ── ADMIN TABLE ──
 function renderAdminTable() {
-  var status = document.getElementById('f-status') ? document.getElementById('f-status').value : '';
-  var q      = (document.getElementById('f-q') ? document.getElementById('f-q').value : '').toLowerCase();
-  var data   = S.protocols.filter(function(p){
+  var status=document.getElementById('f-status')?document.getElementById('f-status').value:'';
+  var q=(document.getElementById('f-q')?document.getElementById('f-q').value:'').toLowerCase();
+  var data=S.protocols.filter(function(p){
     if (p.TrackClosed===true||p.TrackClosed==='TRUE') return false;
     if (status && p.Status!==status) return false;
-    if (q && !(p.Title||'').toLowerCase().includes(q) && !(p.PrincipalInvestigator||'').toLowerCase().includes(q) && !(p.PI||'').toLowerCase().includes(q)) return false;
+    if (q && !(p.Title||'').toLowerCase().includes(q) &&
+        !(p.PrincipalInvestigator||'').toLowerCase().includes(q) &&
+        !(p.PI||'').toLowerCase().includes(q) &&
+        !(p.ProtocolID||'').toLowerCase().includes(q)) return false;
     return true;
   });
-  var tbody = document.getElementById('admin-tbody');
+  var tbody=document.getElementById('admin-tbody');
   if (!data.length) { tbody.innerHTML='<tr><td colspan="7" class="empty">No protocols match.</td></tr>'; return; }
-  tbody.innerHTML = data.map(function(p){
-    var revStatus = p.ReviewerStatus==='Submitted'
-      ? '<span style="color:#1a7a3a;font-size:11px">✓ Ready</span>'
-      : (p.AssignedReviewers ? '<span style="color:#c8b86a;font-size:11px">Pending</span>' : '<span style="color:#bbb;font-size:11px">—</span>');
+  tbody.innerHTML=data.map(function(p){
     return '<tr>'+
       '<td style="font-size:11px;font-weight:600;color:#888">'+esc(p.ProtocolID)+'</td>'+
-      '<td style="font-weight:500;max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="'+esc(p.Title)+'">'+esc(p.Title)+'</td>'+
-      '<td style="font-size:12px;color:#666">'+esc(p.Investigator||p.PrincipalInvestigator)+'</td>'+
+      '<td style="font-weight:500;max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="'+esc(p.Title)+'">'+esc(p.Title)+'</td>'+
+      '<td style="font-size:12px;color:#666">'+esc(p.Investigator||p.PrincipalInvestigator||'—')+'</td>'+
       '<td>'+badgeHtml(p.Status)+'</td>'+
       '<td style="font-size:12px">'+esc(p.AssignedReviewers||'—')+'</td>'+
-      '<td>'+revStatus+'</td>'+
+      '<td>'+ddlBadge(p.ReviewDeadline)+'</td>'+
       '<td style="white-space:nowrap">'+
         '<button class="btn btn-out btn-sm" style="margin-right:3px" onclick="openAssign(\''+esc(p.ProtocolID)+'\',\''+esc(p.Title)+'\')">Assign</button>'+
-        '<button class="btn btn-gold btn-sm" onclick="openMeetingFor(\''+esc(p.ProtocolID)+'\')">Meeting</button>'+
-        ' <button class="btn btn-out btn-sm" onclick="viewProtoAdmin(\''+esc(p.ProtocolID)+'\')">View</button>'+
+        '<button class="btn btn-gold btn-sm" style="margin-right:3px" onclick="openMeetingFor(\''+esc(p.ProtocolID)+'\')">Meeting</button>'+
+        '<button class="btn btn-out btn-sm" onclick="viewProtoAdmin(\''+esc(p.ProtocolID)+'\')">View</button>'+
       '</td></tr>';
   }).join('');
 }
-
 function renderAllTable() {
-  var data = S.showClosed
-    ? S.protocols
-    : S.protocols.filter(function(p){ return p.TrackClosed!==true&&p.TrackClosed!=='TRUE'; });
-  var tbody = document.getElementById('all-tbody');
+  var data=S.showClosed?S.protocols:S.protocols.filter(function(p){return p.TrackClosed!==true&&p.TrackClosed!=='TRUE';});
+  var tbody=document.getElementById('all-tbody');
   if (!data.length) { tbody.innerHTML='<tr><td colspan="9" class="empty">No protocols.</td></tr>'; return; }
-  tbody.innerHTML = data.map(function(p){
-    var isClosed = (p.TrackClosed===true||p.TrackClosed==='TRUE');
+  tbody.innerHTML=data.map(function(p){
+    var isClosed=(p.TrackClosed===true||p.TrackClosed==='TRUE');
     return '<tr style="'+(isClosed?'opacity:.55':'')+'">'+
       '<td style="font-size:11px;font-weight:600;color:#888">'+esc(p.ProtocolID)+'</td>'+
       '<td style="font-weight:500">'+esc(p.Title)+'</td>'+
       '<td style="font-size:12px">'+esc(p.PI)+'</td>'+
       '<td style="font-size:12px;color:#888">'+esc(p.Category||'—')+'</td>'+
       '<td>'+badgeHtml(p.Status)+'</td>'+
-      '<td style="font-size:12px;color:#888">'+esc(p.SubmissionDate)+'</td>'+
-      '<td style="font-size:12px;color:'+(isOverdue(p.ReviewDeadline)?'#d46a4a':'#888')+'">'+esc(p.ReviewDeadline||'—')+'</td>'+
+      '<td style="font-size:12px;color:#888">'+esc(fmtDate(p.SubmissionDate))+'</td>'+
+      '<td>'+ddlBadge(p.ReviewDeadline)+'</td>'+
       '<td style="font-size:12px">'+esc(p.Decision||'—')+'</td>'+
-      '<td style="white-space:nowrap">'+
-        (!isClosed && p.Status==='Approved'
-          ? '<button class="btn btn-green btn-sm" onclick="closeTrack(\''+esc(p.ProtocolID)+'\')">Close track</button>'
-          : (isClosed ? '<span style="font-size:11px;color:#888">Closed</span>' : ''))+
+      '<td>'+
+        (!isClosed&&p.Status==='Approved'
+          ?'<button class="btn btn-green btn-sm" onclick="closeTrack(\''+esc(p.ProtocolID)+'\')">Close track</button>'
+          :(isClosed?'<span style="font-size:11px;color:#888">Closed</span>':''))+
       '</td></tr>';
   }).join('');
 }
-
 function toggleClosed() {
-  S.showClosed = !S.showClosed;
-  document.getElementById('show-closed-btn').textContent = S.showClosed ? 'Hide closed' : 'Show closed';
+  S.showClosed=!S.showClosed;
+  document.getElementById('show-closed-btn').textContent=S.showClosed?'Hide closed':'Show closed';
   renderAllTable();
 }
-
 function renderReviewerProgress() {
-  var map = {};
+  var map={};
   S.protocols.filter(function(p){return p.TrackClosed!=='TRUE';}).forEach(function(p){
     if (!p.AssignedReviewers) return;
     p.AssignedReviewers.split(',').forEach(function(n){
-      n = n.trim();
-      if (!n) return;
-      if (!map[n]) map[n]={total:0,fwd:0};
-      map[n].total++;
-      if (p.ForwardedToMeeting===true||p.ForwardedToMeeting==='TRUE') map[n].fwd++;
+      n=n.trim(); if (!n) return;
+      if (!map[n]) map[n]={name:n,assigned:0,done:0};
+      map[n].assigned++;
+      if (p.Status==='Awaiting Meeting'||p.Status==='In Meeting'||p.Status==='Approved'||p.Status==='Rejected'||p.Status==='Needs Revision') map[n].done++;
     });
   });
-  var names=Object.keys(map);
   var grid=document.getElementById('rev-progress-grid');
-  if (!names.length) { grid.innerHTML=''; return; }
-  grid.innerHTML = names.map(function(n){
-    var r=map[n], pct=r.total?Math.round(r.fwd/r.total*100):0;
-    var col=pct===100?'#6aaa6a':pct>=50?'#c8b86a':'#d46a4a';
-    return '<div class="rev-card"><div class="rev-name">'+esc(n)+'</div>'+
-      '<div class="rev-sub">'+r.fwd+'/'+r.total+' forwarded to meeting</div>'+
+  var items=Object.values(map);
+  if (!items.length) { grid.innerHTML=''; return; }
+  grid.innerHTML=items.map(function(r){
+    var pct=r.assigned?Math.round(r.done/r.assigned*100):0;
+    var col=pct>=80?'#6aaa6a':pct>=40?'#c8b86a':'#d46a4a';
+    return '<div class="rev-card"><div class="rev-name">'+esc(r.name)+'</div>'+
+      '<div class="rev-sub">'+r.done+'/'+r.assigned+' reviewed</div>'+
       '<div class="rev-bar"><div class="rev-fill" style="width:'+pct+'%;background:'+col+'"></div></div></div>';
   }).join('');
 }
-
 function renderReviewersTable() {
-  var tbody = document.getElementById('reviewers-tbody');
-  if (!S.reviewers.length) { tbody.innerHTML='<tr><td colspan="5" class="empty">No reviewers added yet.</td></tr>'; return; }
-  tbody.innerHTML = S.reviewers.map(function(r){
-    var active=(r.Active===true||r.Active==='TRUE'||r.Active==='true');
+  var tbody=document.getElementById('reviewers-tbody');
+  if (!S.reviewers.length) { tbody.innerHTML='<tr><td colspan="6" class="empty">No reviewers yet.</td></tr>'; return; }
+  // Count assignments per reviewer
+  var assignMap={};
+  S.protocols.forEach(function(p){
+    if (!p.AssignedReviewers) return;
+    p.AssignedReviewers.split(',').forEach(function(n){
+      n=n.trim(); assignMap[n]=(assignMap[n]||0)+1;
+    });
+  });
+  tbody.innerHTML=S.reviewers.map(function(r){
+    var cnt=assignMap[r.Name]||0;
     return '<tr>'+
       '<td style="font-weight:500">'+esc(r.Name)+'</td>'+
-      '<td style="font-size:12px;color:#666">'+esc(r.Email)+'</td>'+
-      '<td style="font-size:12px;color:#888">'+esc(r.Institution||r.Specialty||'—')+'</td>'+
-      '<td><span class="badge '+(active?'s-approved':'s-rejected')+'">'+(active?'Active':'Inactive')+'</span></td>'+
-      '<td><button class="btn btn-out btn-sm" onclick="toggleReviewer(\''+esc(r.Email)+'\','+!active+')">'+
-        (active?'Deactivate':'Activate')+'</button></td></tr>';
+      '<td style="font-size:12px;color:#888">'+esc(r.Email)+'</td>'+
+      '<td style="font-size:12px;color:#888">'+esc(r.Institution||'—')+'</td>'+
+      '<td style="font-size:12px"><span class="badge s-forwarded">'+cnt+' assigned</span></td>'+
+      '<td><span class="badge '+(r.Active===false||r.Active==='FALSE'?'s-closed':'s-approved')+'">'+
+        (r.Active===false||r.Active==='FALSE'?'Inactive':'Active')+'</span></td>'+
+      '<td><button class="btn btn-out btn-sm" onclick="sendReminderToReviewer(\''+esc(r.Email)+'\',\''+esc(r.Name)+'\')">📧 Remind</button></td>'+
+      '</tr>';
   }).join('');
 }
 
-async function viewProtoAdmin(id) {
-  var r = await api({action:'getProtocol',token:S.token,protocolID:id});
-  if (!r.success) { toast(r.error); return; }
-  var p = r.data;
-  document.getElementById('pm-title').textContent = p.ProtocolID+' — '+p.Title;
-  document.getElementById('pm-desc').textContent  = p.Description||'—';
-  var meta = [
-    ['Status',badgeHtml(p.Status)],['Priority',p.Priority||'—'],
-    ['Investigator',p.Investigator],['PI',p.PI],
-    ['PI Email',p.PIEmail],['Department',p.Department],
-    ['Submitted',p.SubmissionDate],['Reviewers',p.AssignedReviewers||'None assigned'],
-    ['Decision',p.Decision||'—'],['Rationale',p.Rationale||'—'],
-  ];
-  document.getElementById('pm-meta').innerHTML = meta.map(function(m){
-    return '<div><div style="font-size:10px;color:#aaa;text-transform:uppercase;letter-spacing:.07em;margin-bottom:3px">'+esc(m[0])+'</div>'+
-           '<div style="font-size:13px;color:#222">'+m[1]+'</div></div>';
-  }).join('');
-  document.getElementById('pm-timeline').innerHTML = buildTimeline(p).map(function(e){
-    return '<div class="tl-item"><div class="tl-dot"></div><div class="tl-date">'+esc(e.date)+'</div><div class="tl-text">'+esc(e.text)+'</div></div>';
-  }).join('');
-  // Admin actions
-  var actions = '';
-  if (p.Status!=='Closed' && (p.Status==='Awaiting Meeting'||p.Status==='In Meeting'||p.Status==='Under Review'||p.Status==='Sent for Review')) {
-    actions += '<button class="btn btn-red btn-sm" onclick="adminForward(\''+esc(id)+'\');closeModal(\'proto-modal\')" style="margin-right:6px">Force-forward to meeting</button>';
-  }
-  if (p.Status==='Approved' && p.TrackClosed!==true && p.TrackClosed!=='TRUE') {
-    actions += '<button class="btn btn-green btn-sm" onclick="closeTrack(\''+esc(id)+'\');closeModal(\'proto-modal\')">Close track</button>';
-  }
-  if (p.DrivefolderURL) {
-    actions += ' <a href="'+esc(p.DrivefolderURL)+'" target="_blank" class="btn btn-out btn-sm">Open Drive folder</a>';
-  }
-  document.getElementById('pm-admin-actions').innerHTML = actions
-    ? '<div style="margin-top:14px;padding-top:12px;border-top:1px solid #f0ede6;display:flex;gap:8px;flex-wrap:wrap">'+actions+'</div>'
-    : '';
-  openModal('proto-modal');
+// ── ADMIN: REVIEWER REMINDER ──
+async function sendReminderToReviewer(email,name) {
+  var r=await api({action:'sendReviewerReminder',token:S.token,reviewerEmail:email,reviewerName:name});
+  if (r.success) toast('Reminder sent to '+name,'ok');
+  else toast('Failed: '+r.error,'err');
+}
+async function sendReviewerReminder() {
+  var btn=document.getElementById('remind-btn'),st=document.getElementById('remind-st');
+  if (!S.assignModalProtoId) return;
+  btn.disabled=true; btn.textContent='Sending…';
+  var r=await api({action:'sendReviewerReminderForProtocol',token:S.token,protocolID:S.assignModalProtoId});
+  if (r.success) { st.textContent='✓ Sent!'; st.style.color='#1a7a3a'; toast('Reminder emails sent.','ok'); }
+  else { st.textContent='Error: '+r.error; st.style.color='#d46a4a'; }
+  btn.disabled=false; btn.innerHTML='📧 Send reminder email to reviewers';
 }
 
-// ═══════════════════════════════════════════════════
-//  ASSIGN REVIEWERS
-// ═══════════════════════════════════════════════════
-function openAssign(id, title) {
-  S.activeProto = id;
-  document.getElementById('am-id').textContent    = id;
-  document.getElementById('am-title').textContent = title;
-  document.getElementById('am-notes').value = '';
-  var cbs = document.getElementById('reviewer-checkboxes');
-  var active = S.reviewers.filter(function(r){return r.Active===true||r.Active==='TRUE'||r.Active==='true';});
-  if (!active.length) {
-    cbs.innerHTML = '<div style="color:#888;font-size:13px;padding:8px">No reviewers added yet. Add reviewers first.</div>';
-  } else {
-    cbs.innerHTML = active.map(function(r){
-      return '<label style="display:flex;align-items:center;gap:8px;padding:6px 0;font-size:13px;cursor:pointer;border-bottom:1px solid #f5f3ee">'+
-        '<input type="checkbox" value="'+esc(r.Email)+'" data-name="'+esc(r.Name)+'"/>'+
-        '<span><strong>'+esc(r.Name)+'</strong> <span style="color:#888;font-size:11px">'+esc(r.Email)+'</span></span></label>';
+// ── ADMIN: ASSIGN ──
+function openAssign(id,title) {
+  S.assignModalProtoId=id;
+  document.getElementById('am-id').textContent=id;
+  document.getElementById('am-title').textContent=title;
+  // Set default deadline 14 days from today
+  var d=new Date(); d.setDate(d.getDate()+14);
+  document.getElementById('am-deadline').value=d.toISOString().split('T')[0];
+  // Check if already assigned
+  var proto=S.protocols.find(function(p){return p.ProtocolID===id;});
+  var hasAssigned=proto&&proto.AssignedReviewers&&proto.AssignedReviewers.trim();
+  document.getElementById('remind-section').style.display=hasAssigned?'block':'none';
+  document.getElementById('am-notes').value=proto&&proto.AdminNotes?proto.AdminNotes:'';
+  // Populate reviewer checkboxes
+  var box=document.getElementById('reviewer-checkboxes');
+  if (!S.reviewers.length) { box.innerHTML='<div style="font-size:13px;color:#aaa">No reviewers added yet.</div>'; }
+  else {
+    var current=(proto&&proto.AssignedReviewers)?proto.AssignedReviewers.split(',').map(function(n){return n.trim();}):[];
+    box.innerHTML=S.reviewers.filter(function(r){return r.Active!==false&&r.Active!=='FALSE';}).map(function(r){
+      var checked=current.includes(r.Name)?'checked':'';
+      return '<label style="display:flex;align-items:center;gap:8px;padding:5px 0;cursor:pointer;font-size:13px">'+
+        '<input type="checkbox" value="'+esc(r.Name)+'" '+checked+' style="width:auto"> '+
+        esc(r.Name)+' <span style="color:#aaa;font-size:11px">'+esc(r.Email)+'</span></label>';
     }).join('');
   }
   openModal('assign-modal');
 }
-
 async function saveAssignment() {
-  var checkboxes = document.querySelectorAll('#reviewer-checkboxes input[type=checkbox]:checked');
-  if (!checkboxes.length) { toast('Please select at least one reviewer.'); return; }
-  var reviewers = Array.from(checkboxes).map(function(cb){
-    return {email:cb.value, name:cb.getAttribute('data-name')};
-  });
-  var r = await api({action:'assignReviewers',token:S.token,
-    protocolID:S.activeProto, reviewers:reviewers,
-    deadline:v('am-deadline'), priority:v('am-prio'), notes:v('am-notes')});
-  if (r.success) {
-    closeModal('assign-modal');
-    toast('Reviewers assigned and notified by email.');
-    loadAdminData();
-  } else toast('Error: '+r.error);
+  var checks=document.querySelectorAll('#reviewer-checkboxes input:checked');
+  var names=Array.from(checks).map(function(c){return c.value;});
+  if (!names.length) { toast('Please select at least one reviewer.','err'); return; }
+  var r=await api({action:'assignReviewers',token:S.token,protocolID:S.assignModalProtoId,
+    reviewers:names,priority:v('am-prio'),deadline:v('am-deadline'),notes:v('am-notes')});
+  if (r.success) { closeModal('assign-modal'); toast('Reviewers assigned and notified by email.','ok'); loadAdminData(); }
+  else toast('Error: '+r.error,'err');
 }
-
-async function saveNewReviewer() {
-  var name=v('ar-name'), email=v('ar-email');
-  if (!name||!email) { toast('Name and email are required.'); return; }
-  var r = await api({action:'addReviewerUser',token:S.token,
-    name:name,email:email,institution:v('ar-inst')});
-  if (r.success) {
-    closeModal('add-reviewer-modal');
-    toast(r.data.message);
-    loadAdminData();
-  } else toast('Error: '+r.error);
+async function viewProtoAdmin(id) {
+  var r=await api({action:'getProtocol',token:S.token,protocolID:id});
+  if (!r.success) { toast('Error: '+r.error,'err'); return; }
+  var p=r.data;
+  document.getElementById('pm-title').textContent=p.ProtocolID+' — '+p.Title;
+  document.getElementById('pm-desc').textContent=p.Description||'—';
+  var meta=[
+    ['Status',badgeHtml(p.Status)],['Submitted',fmtDate(p.SubmissionDate)],
+    ['PI',p.PI||p.PrincipalInvestigator],['Category',p.Category||'—'],
+    ['Reviewers',p.AssignedReviewers||'—'],['Deadline',p.ReviewDeadline||'—'],
+    ['Decision',p.Decision||'—'],['Letter sent',p.LetterSentDate||'—'],
+  ];
+  document.getElementById('pm-meta').innerHTML=meta.map(function(m){
+    return '<div><div style="font-size:10px;color:#aaa;letter-spacing:.08em;text-transform:uppercase;margin-bottom:3px">'+esc(m[0])+'</div>'+
+      '<div style="font-size:13px;color:#222">'+m[1]+'</div></div>';
+  }).join('');
+  document.getElementById('pm-timeline').innerHTML=buildTimeline(p).map(function(e){
+    return '<div class="tl-item"><div class="tl-dot"></div><div class="tl-date">'+esc(fmtDate(e.date))+'</div><div class="tl-text">'+esc(e.text)+'</div></div>';
+  }).join('');
+  document.getElementById('pm-admin-actions').innerHTML=
+    '<div style="display:flex;gap:8px;margin-top:12px">'+
+    '<button class="btn btn-out btn-sm" onclick="openAssign(\''+esc(p.ProtocolID)+'\',\''+esc(p.Title)+'\');closeModal(\'proto-modal\')">Re-assign reviewers</button>'+
+    '<button class="btn btn-gold btn-sm" onclick="openMeetingFor(\''+esc(p.ProtocolID)+'\');closeModal(\'proto-modal\')">Go to meeting</button>'+
+    '</div>';
+  openModal('proto-modal');
 }
-
-async function toggleReviewer(email, makeActive) {
-  var r = await api({action:'toggleUser',token:S.token,email:email,active:makeActive});
-  if (r.success) { toast('Reviewer updated.'); loadAdminData(); }
-  else toast('Error: '+r.error);
-}
-
-async function adminForward(id) {
-  var r = await api({action:'adminForward',token:S.token,protocolID:id});
-  if (r.success) { toast('Protocol force-forwarded to meeting.'); loadAdminData(); }
-  else toast('Error: '+r.error);
-}
-
 async function closeTrack(id) {
-  if (!confirm('Close track for '+id+'? It will be removed from the active list.')) return;
-  var r = await api({action:'closeTrack',token:S.token,protocolID:id});
-  if (r.success) { toast('Track closed.'); loadAdminData(); }
-  else toast('Error: '+r.error);
+  if (!confirm('Close track for '+id+'? This removes it from active lists.')) return;
+  var r=await api({action:'closeTrack',token:S.token,protocolID:id});
+  if (r.success) { toast('Track closed.','ok'); loadAdminData(); }
+  else toast('Error: '+r.error,'err');
 }
 
 // ═══════════════════════════════════════════════════
-//  REVIEWER
+// REVIEWER
 // ═══════════════════════════════════════════════════
 async function loadReviewerData() {
-  var r = await api({action:'getMyProtocols',token:S.token});
+  var r=await api({action:'getAssignedProtocols',token:S.token});
   if (r.success) { S.protocols=r.data; renderReviewerTable(); populateMeetingSelect(); }
 }
-
 function renderReviewerTable() {
-  var tbody = document.getElementById('reviewer-tbody');
+  var tbody=document.getElementById('reviewer-tbody');
   if (!S.protocols.length) { tbody.innerHTML='<tr><td colspan="7" class="empty">No protocols assigned to you yet.</td></tr>'; return; }
-  tbody.innerHTML = S.protocols.map(function(p){
-    var fwdStatus = (p.ForwardedToMeeting===true||p.ForwardedToMeeting==='TRUE')
-      ? '<span style="color:#1a7a3a;font-size:11px">✓ Forwarded</span>'
-      : '<span style="color:#c8b86a;font-size:11px">Not yet</span>';
+  tbody.innerHTML=S.protocols.map(function(p){
+    var driveBtn='';
+    if (p.DriveFolderUrl||p.DriveFolder||p.DocumentsUrl) {
+      var url=p.DriveFolderUrl||p.DriveFolder||p.DocumentsUrl;
+      driveBtn='<a href="'+esc(url)+'" target="_blank" class="btn btn-out btn-sm" style="margin-right:3px;text-decoration:none">📁 Docs</a>';
+    } else {
+      // Link to the shared Drive folder search (admin sets folder per protocol)
+      driveBtn='<button class="btn btn-out btn-sm" style="margin-right:3px" onclick="openDriveSearch(\''+esc(p.ProtocolID)+'\')" title="Search documents for this protocol">📁 Docs</button>';
+    }
     return '<tr>'+
       '<td style="font-size:11px;font-weight:600;color:#888">'+esc(p.ProtocolID)+'</td>'+
       '<td style="font-weight:500">'+esc(p.Title)+'</td>'+
-      '<td style="font-size:12px;color:#666">'+esc(p.Investigator||p.PrincipalInvestigator)+'</td>'+
+      '<td style="font-size:12px;color:#666">'+esc(p.Investigator||p.PrincipalInvestigator||'—')+'</td>'+
       '<td>'+badgeHtml(p.Status)+'</td>'+
-      '<td style="font-size:12px;color:'+(isOverdue(p.ReviewDeadline)?'#d46a4a':'#888')+'">'+esc(p.ReviewDeadline||'—')+'</td>'+
-      '<td>'+fwdStatus+'</td>'+
-      '<td><button class="btn btn-gold btn-sm" onclick="openCommentModal(\''+esc(p.ProtocolID)+'\',\''+esc(p.Title)+'\')">Review</button></td></tr>';
+      '<td>'+ddlBadge(p.ReviewDeadline)+'</td>'+
+      '<td style="font-size:12px;text-align:center">'+esc(p.CommentCount||'0')+'</td>'+
+      '<td style="white-space:nowrap">'+driveBtn+
+        '<button class="btn btn-dark btn-sm" onclick="openComments(\''+esc(p.ProtocolID)+'\',\''+esc(p.Title)+'\',\''+esc(p.DriveFolderUrl||p.DriveFolder||p.DocumentsUrl||'')+'\')">Review</button>'+
+      '</td></tr>';
   }).join('');
+}
+function openDriveSearch(protoId) {
+  // Open Google Drive filtered to protocol ID — works if files are named with the protocol ID
+  var url='https://drive.google.com/drive/search?q='+encodeURIComponent(protoId);
+  window.open(url,'_blank');
 }
 
 // ═══════════════════════════════════════════════════
-//  COMMENTS
+// COMMENTS
 // ═══════════════════════════════════════════════════
-async function openCommentModal(id, title) {
-  S.activeProto = id;
-  document.getElementById('cm-id').textContent          = id;
-  document.getElementById('cm-proto-title').textContent = title;
-  document.getElementById('cm-title').textContent       = 'Review — '+id;
+var currentCommentProtoId='',currentCommentProtoTitle='',currentCommentDriveUrl='';
+async function openComments(id,title,driveUrl) {
+  currentCommentProtoId=id; currentCommentProtoTitle=title; currentCommentDriveUrl=driveUrl||'';
+  document.getElementById('cm-id').textContent=id;
+  document.getElementById('cm-proto-title').textContent=title;
+  document.getElementById('cm-title').textContent='Review — '+id;
   document.getElementById('cm-text').value='';
   document.getElementById('cm-fwd-status').textContent='';
+  // Show/hide drive link in modal
+  var driveEl=document.getElementById('cm-drive-link');
+  if (driveEl) {
+    if (currentCommentDriveUrl) {
+      driveEl.innerHTML='<a href="'+esc(currentCommentDriveUrl)+'" target="_blank" class="btn btn-out btn-sm">📁 Open protocol documents</a>';
+      driveEl.style.display='block';
+    } else {
+      driveEl.innerHTML='<button class="btn btn-out btn-sm" onclick="openDriveSearch(\''+esc(id)+'\')">📁 Search documents in Drive</button>';
+      driveEl.style.display='block';
+    }
+  }
+  // Reset AI screening area
+  var aiArea=document.getElementById('cm-ai-area');
+  if (aiArea) {
+    aiArea.style.display='none';
+    document.getElementById('cm-ai-report').innerHTML='';
+  }
+  await refreshComments();
   openModal('comment-modal');
-  await loadComments(id);
 }
-
-async function loadComments(id) {
-  var r = await api({action:'getComments',token:S.token,protocolID:id});
+async function refreshComments() {
+  var r=await api({action:'getComments',token:S.token,protocolID:currentCommentProtoId});
   if (!r.success) return;
-  var thread = document.getElementById('cm-thread');
-  if (!r.data.length) {
-    thread.innerHTML='<div class="empty" style="padding:16px">No comments yet. Be the first to review.</div>';
-    document.getElementById('forward-btn').disabled = true;
-    return;
-  }
-  thread.innerHTML = r.data.map(function(c){
-    return '<div class="comment-item'+(c.MeetingComment==='TRUE'?' meeting-comment':'')+'">'+
+  var thread=document.getElementById('cm-thread');
+  var comments=r.data||[];
+  if (!comments.length) { thread.innerHTML='<div class="empty" style="padding:16px">No comments yet.</div>'; return; }
+  thread.innerHTML=comments.map(function(c){
+    return '<div class="comment-item">'+
       '<div class="comment-meta">'+
-        '<strong>'+esc(c.ReviewerName)+'</strong>'+
-        '<span class="badge s-reviewing">'+esc(c.CommentType)+'</span>'+
-        ((c.MeetingComment===true||c.MeetingComment==='TRUE')?'<span class="badge s-inmeeting">Meeting</span>':'')+
-        '<span>'+esc(c.CommentDate)+'</span>'+
+        '<span style="font-weight:600;color:#333">'+esc(c.ReviewerName)+'</span>'+
+        '<span class="badge s-forwarded" style="font-size:9px">'+esc(c.CommentType)+'</span>'+
+        '<span>'+esc(fmtDate(c.Timestamp))+'</span>'+
       '</div>'+
-      '<div class="comment-text">'+esc(c.CommentText)+'</div></div>';
+      '<div class="comment-text">'+esc(c.Comment)+'</div>'+
+    '</div>';
   }).join('');
-  // Enable forward button only if reviewer has own comment
-  var myComments = r.data.filter(function(c){return c.ReviewerEmail===S.email;});
-  document.getElementById('forward-btn').disabled = myComments.length===0;
-  if (myComments.length===0) {
-    document.getElementById('cm-fwd-status').textContent = 'Add at least one comment to enable forwarding to meeting.';
-  }
+  // Check if user has commented
+  var mine=comments.filter(function(c){return c.ReviewerEmail===S.email;});
+  var fwdBtn=document.getElementById('forward-btn');
+  if (mine.length>0) { fwdBtn.style.display='inline-flex'; }
+  else { fwdBtn.style.display='none'; }
 }
-
-async function addComment(isMeeting) {
-  var text = v('cm-text');
-  if (!text.trim()) { toast('Please enter a comment.'); return; }
-  var r = await api({action:'addComment',token:S.token,
-    protocolID:S.activeProto, commentText:text,
-    commentType:v('cm-type'), meetingComment:isMeeting});
+async function addComment(forward) {
+  var text=v('cm-text'),type=v('cm-type');
+  if (!text.trim()) { toast('Please enter a comment.','err'); return; }
+  var r=await api({action:'addComment',token:S.token,protocolID:currentCommentProtoId,
+    comment:text,commentType:type});
   if (r.success) {
     document.getElementById('cm-text').value='';
-    toast('Comment saved.');
-    loadComments(S.activeProto);
-    if (S.role==='admin') loadAdminData(); else loadReviewerData();
-  } else toast('Error: '+r.error);
+    toast('Comment saved.','ok');
+    await refreshComments();
+    if (forward) doForward();
+  } else toast('Error: '+r.error,'err');
 }
-
 async function forwardToMeeting() {
-  var r = await api({action:'forwardToMeeting',token:S.token,protocolID:S.activeProto});
+  var text=v('cm-text');
+  if (text.trim()) { await addComment(true); return; }
+  doForward();
+}
+async function doForward() {
+  var r=await api({action:'forwardToMeeting',token:S.token,protocolID:currentCommentProtoId});
   if (r.success) {
-    closeModal('comment-modal');
-    toast('Protocol forwarded to meeting!');
+    document.getElementById('cm-fwd-status').textContent='✓ Forwarded to meeting.';
+    document.getElementById('cm-fwd-status').style.color='#1a7a3a';
+    toast('Protocol forwarded to meeting.','ok');
     if (S.role==='admin') loadAdminData(); else loadReviewerData();
-  } else toast('Error: '+r.error);
+  } else toast('Error: '+r.error,'err');
 }
 
 // ═══════════════════════════════════════════════════
-//  MEETING MODE
+// MEETING
 // ═══════════════════════════════════════════════════
-async function populateMeetingSelect() {
-  var r = await api({action:'getMeetingProtos',token:S.token});
-  var sel = document.getElementById('meet-sel');
-  if (!r.success||!r.data.length) {
-    sel.innerHTML='<option value="">No protocols awaiting meeting</option>';
-    return;
-  }
-  sel.innerHTML='<option value="">— Select protocol —</option>'+
-    r.data.map(function(p){
-      return '<option value="'+esc(p.ProtocolID)+'">'+esc(p.ProtocolID)+' — '+esc(p.Title)+'</option>';
-    }).join('');
-}
+var _meetNotesTimer = null;
 
+function startMeetNotesRefresh() {
+  stopMeetNotesRefresh();
+  _meetNotesTimer = setInterval(function(){ refreshMeetingNotes(true); }, 30000);
+}
+function stopMeetNotesRefresh() {
+  if (_meetNotesTimer) { clearInterval(_meetNotesTimer); _meetNotesTimer = null; }
+}
+async function loadMeetingList() {
+  var r=await api({action:'getMeetingProtocols',token:S.token});
+  if (r.success) populateMeetingSelect(r.data);
+}
+function populateMeetingSelect(data) {
+  var protos=data||S.protocols.filter(function(p){
+    return p.Status==='Awaiting Meeting'||p.Status==='In Meeting';
+  });
+  var sel=document.getElementById('meet-sel');
+  var cur=sel.value;
+  sel.innerHTML='<option value="">— Select —</option>'+protos.map(function(p){
+    return '<option value="'+esc(p.ProtocolID)+'">'+esc(p.ProtocolID)+' — '+esc(p.Title)+'</option>';
+  }).join('');
+  if (cur) sel.value=cur;
+}
 function openMeetingFor(id) {
   showTab('meeting');
-  populateMeetingSelect().then(function(){
-    document.getElementById('meet-sel').value = id;
+  setTimeout(function(){
+    var sel=document.getElementById('meet-sel');
+    sel.value=id;
     loadMeetingProtocol();
-  });
+  },100);
 }
-
 async function loadMeetingProtocol() {
-  var id = v('meet-sel');
-  var detail = document.getElementById('meet-detail');
-  if (!id) { detail.style.display='none'; document.getElementById('letter-card').style.display='none'; return; }
-  var r = await api({action:'getProtocol',token:S.token,protocolID:id});
-  if (!r.success) return;
-  var p = r.data;
-  document.getElementById('meet-title').textContent = p.Title;
-  document.getElementById('meet-meta').textContent  = 'Investigator: '+p.Investigator+' | PI: '+p.PI+' | Submitted: '+fmtDate(p.SubmissionDate)+' | Reviewers: '+(p.AssignedReviewers||'—');
-  document.getElementById('meet-desc').textContent  = p.Description||'';
-  document.getElementById('meet-rationale').value   = p.Rationale||'';
-  S.decision = p.Decision||''; updateDecisionPills();
-  if (p.MeetingDate) document.getElementById('meet-date').value = p.MeetingDate;
+  var id=document.getElementById('meet-sel').value;
+  var detail=document.getElementById('meet-detail');
+  if (!id) { detail.style.display='none'; stopMeetNotesRefresh(); return; }
+  var r=await api({action:'getProtocol',token:S.token,protocolID:id});
+  if (!r.success) { toast('Error loading protocol.','err'); return; }
+  var p=r.data; S.currentMeetingProtocol=p;
+  document.getElementById('meet-title').textContent=p.ProtocolID+' — '+p.Title;
+  document.getElementById('meet-meta').textContent='PI: '+p.PI+' | '+p.Category;
+  document.getElementById('meet-desc').textContent=(p.Description||'').substring(0,200)+(p.Description&&p.Description.length>200?'…':'');
   detail.style.display='block';
-  document.getElementById('letter-card').style.display='none';
-  document.getElementById('decision-section').style.display = S.role==='admin'?'block':'none';
-  document.getElementById('ai-review-section').style.display = S.role==='admin'?'block':'none';
-  if (S.role==='admin') loadExistingAIReview(id);
+  // Show export minutes button
+  document.getElementById('export-minutes-btn').style.display='inline-flex';
   // Load pre-review comments
-  var cr = await api({action:'getComments',token:S.token,protocolID:id});
-  var preMeetingComments = cr.success ? cr.data.filter(function(c){return c.MeetingComment!==true&&c.MeetingComment!=='TRUE';}) : [];
-  var meetCmnts          = cr.success ? cr.data.filter(function(c){return c.MeetingComment==='TRUE';}) : [];
-  document.getElementById('meet-comments').innerHTML = preMeetingComments.length
-    ? preMeetingComments.map(commentHtml).join('')
-    : '<div class="empty" style="padding:12px">No pre-meeting comments.</div>';
-  // Load meeting notes
-  var nr = await api({action:'getMeetingNotes',token:S.token,protocolID:id});
-  var notes = nr.success ? nr.data : [];
-  document.getElementById('meet-notes-list').innerHTML = (notes.length||meetCmnts.length)
-    ? [...notes.map(function(n){
-        return '<div class="comment-item meeting-comment"><div class="comment-meta"><strong>'+esc(n.ReviewerName)+'</strong><span>'+esc(n.Timestamp)+'</span></div><div class="comment-text">'+esc(n.NoteText)+'</div></div>';
-      }), ...meetCmnts.map(commentHtml)].join('')
-    : '<div class="empty" style="padding:12px">No meeting notes yet.</div>';
+  var cr=await api({action:'getComments',token:S.token,protocolID:id});
+  var meetComments=document.getElementById('meet-comments');
+  if (cr.success&&cr.data.length) {
+    meetComments.innerHTML=cr.data.filter(function(c){return !c.IsMeetingNote;}).map(function(c){
+      return '<div class="comment-item">'+
+        '<div class="comment-meta"><strong>'+esc(c.ReviewerName)+'</strong>'+
+          '<span class="badge s-forwarded" style="font-size:9px">'+esc(c.CommentType)+'</span>'+
+          '<span>'+esc(fmtDate(c.Timestamp))+'</span></div>'+
+        '<div class="comment-text">'+esc(c.Comment)+'</div></div>';
+    }).join('');
+  } else {
+    meetComments.innerHTML='<div class="empty" style="padding:12px">No pre-meeting comments.</div>';
+  }
+  // Load existing AI report
+  var air=await api({action:'getAIReview',token:S.token,protocolID:id});
+  if (air.success&&air.data) renderAIReport(air.data);
+  else document.getElementById('ai-report-container').innerHTML='<div style="font-size:12px;color:#aaa;padding:8px 0">No AI review yet. Click "AI Screening" to generate one.</div>';
+  // Load meeting notes and start auto-refresh
+  await refreshMeetingNotes();
+  startMeetNotesRefresh();
+  // Decision section (admin only)
+  document.getElementById('decision-section').style.display=S.role==='admin'?'block':'none';
+  // Pre-fill rationale if exists
+  if (p.Rationale) document.getElementById('meet-rationale').value=p.Rationale;
+  if (p.Decision) {
+    document.querySelectorAll('.dpill').forEach(function(el){el.classList.remove('dp-approved','dp-revision','dp-deferred','dp-rejected');});
+    S.decision=p.Decision;
+    pickDecision(p.Decision,true);
+  }
 }
-
-function commentHtml(c) {
-  return '<div class="comment-item'+(c.MeetingComment==='TRUE'?' meeting-comment':'')+'">'+
-    '<div class="comment-meta"><strong>'+esc(c.ReviewerName)+'</strong>'+
-    '<span class="badge s-reviewing">'+esc(c.CommentType)+'</span>'+
-    '<span>'+esc(c.CommentDate)+'</span></div>'+
-    '<div class="comment-text">'+esc(c.CommentText)+'</div></div>';
+async function refreshMeetingNotes(silent) {
+  var id=document.getElementById('meet-sel').value;
+  if (!id) return;
+  var r=await api({action:'getMeetingNotes',token:S.token,protocolID:id});
+  var list=document.getElementById('meet-notes-list');
+  if (r.success&&r.data&&r.data.length) {
+    var wasAtBottom=(list.scrollHeight-list.scrollTop-list.clientHeight)<40;
+    list.innerHTML=r.data.map(function(n){
+      return '<div class="comment-item meeting-comment">'+
+        '<div class="comment-meta"><strong>'+esc(n.AddedBy||n.ReviewerName)+'</strong>'+
+          '<span>'+esc(fmtDate(n.MeetingDate||n.Timestamp))+'</span></div>'+
+        '<div class="comment-text">'+esc(n.Note||n.Comment)+'</div></div>';
+    }).join('');
+    if (wasAtBottom||!silent) list.scrollTop=list.scrollHeight;
+  } else {
+    list.innerHTML='<div class="empty" style="padding:12px">No meeting notes yet.</div>';
+  }
+  // Show last-refreshed timestamp on auto-refresh
+  var indicator=document.getElementById('notes-refresh-ts');
+  if (indicator&&silent) indicator.textContent='Updated '+new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
 }
-
 async function saveMeetingNote() {
-  var text = v('meet-note-input');
-  if (!text.trim()) { toast('Please enter a note.'); return; }
-  var id = v('meet-sel');
-  var r = await api({action:'addMeetingNote',token:S.token,
-    protocolID:id, noteText:text, meetingDate:v('meet-date')});
+  var id=document.getElementById('meet-sel').value;
+  var note=v('meet-note-input');
+  if (!id) { toast('Please select a protocol first.','err'); return; }
+  if (!note.trim()) { toast('Please enter a note.','err'); return; }
+  var meetDate=v('meet-date');
+  var r=await api({action:'addMeetingNote',token:S.token,protocolID:id,note:note,meetingDate:meetDate});
   if (r.success) {
     document.getElementById('meet-note-input').value='';
-    toast('Note saved.');
-    loadMeetingProtocol();
-  } else toast('Error: '+r.error);
+    toast('Note saved.','ok');
+    await refreshMeetingNotes();
+  } else toast('Error: '+r.error,'err');
 }
 
-function pickDecision(d) { S.decision=d; updateDecisionPills(); }
-function updateDecisionPills() {
-  var map={'Approved':'dp-approved','Needs Revision':'dp-revision','Deferred':'dp-deferred','Rejected':'dp-rejected'};
-  document.querySelectorAll('.dpill').forEach(function(el){
-    el.className='dpill';
-    var t=el.textContent.replace(/^[✓✎⏸✕] /,'').trim();
-    if (t===S.decision && map[S.decision]) el.classList.add(map[S.decision]);
-  });
-}
-
-async function saveDecision() {
-  var id = v('meet-sel');
-  if (!id||!S.decision) { toast('Select a protocol and a decision.'); return; }
-  var r = await api({action:'saveDecision',token:S.token,
-    protocolID:id, decision:S.decision,
-    rationale:v('meet-rationale'), meetingDate:v('meet-date')});
-  if (r.success) { toast('Decision saved: '+S.decision); loadAdminData(); }
-  else toast('Error: '+r.error);
-}
-
-async function generateAndSendEmail() {
-  var id = v('meet-sel');
-  if (!id||!S.decision) { toast('Please save a decision first.'); return; }
-  // Save decision first
-  await api({action:'saveDecision',token:S.token,protocolID:id,
-    decision:S.decision,rationale:v('meet-rationale'),meetingDate:v('meet-date')});
-  // Then send email
-  var r = await api({action:'sendDecisionEmail',token:S.token,protocolID:id});
-  if (r.success) {
-    document.getElementById('letter-body').textContent = r.data.letter||'';
-    document.getElementById('letter-card').style.display='block';
-    var sentTo = (r.data.sentTo||[]).join(', ');
-    toast('✓ Decision email sent to: '+sentTo);
-    // Also show a visible alert so it cannot be missed
-    var alertDiv = document.getElementById('email-sent-alert');
-    if (!alertDiv) {
-      alertDiv = document.createElement('div');
-      alertDiv.id = 'email-sent-alert';
-      alertDiv.style.cssText = 'background:#e0f5e8;border:1px solid #6aaa6a;border-left:4px solid #1a7a3a;border-radius:4px;padding:12px 16px;margin-top:14px;font-size:13px;color:#1a7a3a;font-weight:500';
-      document.getElementById('letter-card').insertAdjacentElement('afterend', alertDiv);
-    }
-    alertDiv.innerHTML = '✓ Decision email sent successfully to: <strong>'+sentTo+'</strong>';
-    loadAdminData();
-  } else toast('✗ Error sending email: '+r.error);
-}
-
-function copyLetter() {
-  navigator.clipboard.writeText(document.getElementById('letter-body').textContent)
-    .then(function(){toast('Letter copied!');});
-}
-function printLetter() {
-  var w=window.open('','_blank');
-  w.document.write('<html><head><title>Decision Letter</title><style>body{font-family:Georgia,serif;font-size:14px;line-height:1.8;max-width:680px;margin:48px auto;color:#111;white-space:pre-wrap}</style></head><body>'+
-    document.getElementById('letter-body').textContent.replace(/</g,'&lt;')+'</body></html>');
-  w.document.close(); w.print();
-}
-
-// ═══════════════════════════════════════════════════
-//  AUDIT
-// ═══════════════════════════════════════════════════
-async function loadAudit() {
-  var r = await api({action:'getAudit',token:S.token});
-  if (!r.success) return;
-  var tbody = document.getElementById('audit-tbody');
-  if (!r.data.length) { tbody.innerHTML='<tr><td colspan="6" class="empty">No audit records.</td></tr>'; return; }
-  tbody.innerHTML = r.data.map(function(a){
-    return '<tr>'+
-      '<td style="font-size:11px;color:#888;white-space:nowrap">'+esc(a.Timestamp.replace('T',' ').replace('.000Z',''))+'</td>'+
-      '<td style="font-size:11px;font-weight:600;color:#888">'+esc(a.ProtocolID||'—')+'</td>'+
-      '<td style="font-size:12px">'+esc(a.UserEmail)+'</td>'+
-      '<td><span class="badge s-reviewing">'+esc(a.UserRole)+'</span></td>'+
-      '<td style="font-size:12px;font-weight:600">'+esc(a.Action)+'</td>'+
-      '<td style="font-size:12px;color:#666">'+esc(a.Details)+'</td></tr>';
-  }).join('');
-}
-
-// ═══════════════════════════════════════════════════
-//  AI REVIEW FUNCTIONS
-// ═══════════════════════════════════════════════════
+// ── AI SCREENING ──
 async function runAIScreening() {
-  var id = v('meet-sel');
-  if (!id) { toast('Please select a protocol first.'); return; }
-  var btn = document.getElementById('ai-screen-btn');
-  btn.innerHTML = '<span class="spinner"></span> Analysing…';
-  btn.disabled = true;
-  document.getElementById('ai-report-container').innerHTML =
-    '<div style="padding:20px;text-align:center;color:#888;font-size:13px">'+
-    '<span class="spinner"></span> AI is reviewing the protocol… this may take 20-30 seconds</div>';
-  var r = await api({action:'runAIScreening',token:S.token,protocolID:id});
-  if (r.success) {
-    renderAIScreeningReport(r.data.report);
-    toast('✓ AI screening complete!');
-  } else {
-    document.getElementById('ai-report-container').innerHTML =
-      '<div class="info-box red">AI screening failed: '+esc(r.error)+'</div>';
-    toast('Error: '+r.error);
-  }
-  btn.innerHTML = 'AI Screening';
-  btn.disabled = false;
+  var id=document.getElementById('meet-sel').value;
+  if (!id) { toast('Please select a protocol first.','err'); return; }
+  var btn=document.getElementById('ai-screen-btn');
+  btn.innerHTML='<span class="spinner"></span> Screening…'; btn.disabled=true;
+  document.getElementById('ai-report-container').innerHTML='<div style="font-size:12px;color:#aaa;padding:8px">Running AI screening against ICMR 2017 guidelines…</div>';
+  var r=await api({action:'runAIScreening',token:S.token,protocolID:id});
+  if (r.success) renderAIReport(r.data);
+  else { document.getElementById('ai-report-container').innerHTML='<div style="color:#d46a4a;padding:8px;font-size:13px">Error: '+esc(r.error)+'</div>'; }
+  btn.innerHTML='🔍 AI Screening'; btn.disabled=false;
 }
 
-function renderAIScreeningReport(report) {
-  // Try to parse JSON from full_report if structured fields are missing
-  if (!report.methodology || report.methodology === 'See full report below') {
-    var rawText = report.full_report || '';
-    // Try multiple parsing strategies
-    try {
-      var clean = rawText.replace(/```json|```/g,'').trim();
-      var start = clean.indexOf('{');
-      var end   = clean.lastIndexOf('}');
-      if (start >= 0 && end >= 0) {
-        var parsed = JSON.parse(clean.substring(start, end+1));
-        if (parsed.methodology) report = parsed;
-      }
-    } catch(e1) {
-      // If JSON parsing fails, display raw text nicely
-      document.getElementById('ai-report-container').innerHTML =
-        '<div class="ai-report">' +
-        '<div style="font-size:14px;font-weight:600;margin-bottom:12px;color:#534ab7">AI Pre-screening Report</div>' +
-        '<div style="font-size:13px;line-height:1.8;color:#333;white-space:pre-wrap;background:#fff;border:1px solid #e0ddd5;border-radius:4px;padding:16px">' +
-        esc(rawText.replace(/\\n/g,'\n')) + '</div></div>';
+// ── AI SCREENING IN REVIEWER COMMENT MODAL ──
+async function runAIScreeningInModal() {
+  var id=currentCommentProtoId;
+  if (!id) { toast('No protocol selected.','err'); return; }
+  var btn=document.getElementById('cm-ai-screen-btn');
+  var area=document.getElementById('cm-ai-area');
+  var report=document.getElementById('cm-ai-report');
+  var hint=document.getElementById('cm-ai-hint');
+  btn.innerHTML='<span class="spinner"></span> Screening…'; btn.disabled=true;
+  area.style.display='block';
+  hint.style.display='none';
+  report.innerHTML='<div style="font-size:12px;color:#aaa;padding:6px">Running AI screening against ICMR 2017 guidelines…</div>';
+  // Check if we already have a stored report first
+  var cached=await api({action:'getAIReview',token:S.token,protocolID:id});
+  if (cached.success&&cached.data) {
+    renderAIReportInto(cached.data, report);
+    btn.innerHTML='🔍 Re-run Screening'; btn.disabled=false;
+    return;
+  }
+  var r=await api({action:'runAIScreening',token:S.token,protocolID:id});
+  if (r.success) renderAIReportInto(r.data, report);
+  else report.innerHTML='<div style="color:#d46a4a;font-size:13px;padding:6px">Error: '+esc(r.error)+'</div>';
+  btn.innerHTML='🔍 Re-run Screening'; btn.disabled=false;
+}
+
+// Render AI report into a specific container element (for use in modal)
+function renderAIReportInto(data, container) {
+  // Temporarily swap the global container, render, restore
+  var orig=document.getElementById('ai-report-container');
+  // Create a temporary hidden wrapper
+  var tmpId='__tmp_ai_'+Date.now();
+  var tmp=document.createElement('div');
+  tmp.id=tmpId;
+  tmp.style.display='none';
+  document.body.appendChild(tmp);
+  // Monkey-patch the getElementById to intercept
+  var origGet=document.getElementById.bind(document);
+  document.getElementById=function(id){ return id==='ai-report-container'?tmp:origGet(id); };
+  try { renderAIReport(data); } finally { document.getElementById=origGet; }
+  container.innerHTML=tmp.innerHTML;
+  document.body.removeChild(tmp);
+}
+
+// ── AI SUMMARY ──
+async function runAISummary() {
+  var id=document.getElementById('meet-sel').value;
+  if (!id) { toast('Please select a protocol first.','err'); return; }
+  var btn=document.getElementById('ai-summary-btn');
+  btn.innerHTML='<span class="spinner"></span> Summarising…'; btn.disabled=true;
+  var r=await api({action:'runAISummary',token:S.token,protocolID:id});
+  if (r.success) renderAIReport(r.data);
+  else { document.getElementById('ai-report-container').innerHTML='<div style="color:#d46a4a;padding:8px;font-size:13px">Error: '+esc(r.error)+'</div>'; }
+  btn.innerHTML='📊 AI Summary'; btn.disabled=false;
+}
+
+// ── AI REPORT RENDERER ── (fixed structured cards)
+function renderAIReport(data) {
+  var container=document.getElementById('ai-report-container');
+  var report=data;
+  // Parse if string
+  if (typeof report==='string') {
+    var cleaned=report.replace(/```json\s*/gi,'').replace(/```\s*/g,'').trim();
+    var start=cleaned.indexOf('{');
+    var end=cleaned.lastIndexOf('}');
+    if (start!==-1&&end!==-1) {
+      try { report=JSON.parse(cleaned.substring(start,end+1)); }
+      catch(e) { report=null; }
+    } else { report=null; }
+    if (!report) {
+      container.innerHTML='<div class="ai-report-wrap">'+
+        '<div class="ai-report-header"><span>AI Report</span><span class="ai-model-tag">claude-sonnet-4-6</span></div>'+
+        '<div class="ai-raw">'+esc(cleaned)+'</div></div>';
       return;
     }
   }
+  // Structured render
+  var html='<div class="ai-report-wrap">';
+  // Header
+  var reportType=report.reportType||report.type||(report.overallScore!==undefined?'AI Screening':'AI Summary');
+  html+='<div class="ai-report-header"><span>'+esc(reportType)+'</span>'+
+    '<span class="ai-model-tag">claude-sonnet-4-6</span></div>';
 
-  var score = parseInt(report.completeness_score)||0;
-  var scoreClass = score>=75?'high':score>=50?'mid':'low';
-  var rec = report.ai_recommendation||'—';
-  var recClass = rec.indexOf('Proceed')>=0 ? 'ai-rec-proceed' :
-                 rec.indexOf('clarification')>=0 ? 'ai-rec-clarify' : 'ai-rec-major';
+  // Scores (screening report)
+  if (report.scores||report.completenessScore!==undefined) {
+    var sc=report.scores||{};
+    var overall=report.completenessScore||report.overallScore||sc.overall||0;
+    var meth=report.methodologyScore||sc.methodology||0;
+    var stats=report.statisticsScore||sc.statistics||0;
+    var ethics=report.ethicsScore||sc.ethics||0;
+    var icmr=report.icmrComplianceScore||sc.icmr||0;
+    html+='<div class="ai-score-row">';
+    html+=scoreCard('Overall',overall);
+    html+=scoreCard('Methodology',meth);
+    html+=scoreCard('Statistics',stats);
+    html+=scoreCard('Ethics',ethics);
+    html+=scoreCard('ICMR',icmr);
+    html+='</div>';
+  }
 
-  var html = '<div class="ai-report">'+
-    '<div class="ai-report-title" style="display:flex;align-items:center;gap:12px;margin-bottom:14px">'+
-      '<span class="ai-score '+scoreClass+'">'+score+'</span>'+
-      '<div style="flex:1">'+
-        '<div style="font-size:15px;font-weight:600;color:#1a1a18">AI Pre-screening Report</div>'+
-        '<div style="font-size:11px;color:#888;margin-top:2px">Completeness score: '+score+'/100 &nbsp;|&nbsp; Study: '+esc(report.study_design||'—')+'</div>'+
-      '</div>'+
-      '<span class="ai-recommendation '+recClass+'" style="text-align:right;max-width:200px;font-size:11px">'+esc(rec)+'</span>'+
-    '</div>'+
-    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">'+
-      miniSection('Primary objective', report.primary_objective)+
-      miniSection('Sample size', report.sample_size)+
-    '</div>'+
-    aiSection('Methodology assessment', report.methodology)+
-    aiSection('Statistical considerations', report.statistics)+
-    aiSection('Ethical considerations', report.ethics)+
-    aiSection('ICMR 2017 compliance', report.icmr_compliance)+
-    aiSection('Strengths', report.strengths)+
-    aiSection('Areas of concern', report.concerns)+
-    aiSection('Missing elements', report.missing_elements)+
-    aiSection('Questions for the committee', report.questions_for_reviewer)+
-    (report.full_report && report.full_report.indexOf('"completeness_score"')<0 ?
-      '<div class="ai-section"><div class="ai-section-label">Full narrative report</div>'+
-      '<div class="ai-section-text" style="background:#fff;border:1px solid #e8e5dd;border-radius:4px;padding:10px 12px;line-height:1.7">'+esc(report.full_report)+'</div></div>'
-      : '')+
+  // Summary / assessment
+  var assess=report.consolidatedAssessment||report.summary||report.assessment||report.overallAssessment||'';
+  if (assess) html+=aiSection('📋 Assessment',assess);
+
+  // Strengths
+  var str=report.strengths||report.keyStrengths||[];
+  if (str&&(Array.isArray(str)?str.length:str)) html+=aiSection('✅ Strengths',str);
+
+  // Concerns
+  var con=report.concerns||report.majorConcerns||report.ethicalConcerns||[];
+  if (con&&(Array.isArray(con)?con.length:con)) html+=aiSection('⚠️ Concerns',con);
+
+  // Missing elements
+  var miss=report.missingElements||report.gaps||[];
+  if (miss&&(Array.isArray(miss)?miss.length:miss)) html+=aiSection('🔍 Missing elements',miss);
+
+  // Methodology remarks
+  var mrem=report.methodologyRemarks||report.methodology||'';
+  if (mrem) html+=aiSection('🔬 Methodology',mrem);
+
+  // Statistics remarks
+  var srem=report.statisticsRemarks||report.statistics||'';
+  if (srem) html+=aiSection('📊 Statistics',srem);
+
+  // Ethics remarks
+  var erem=report.ethicsRemarks||report.ethics||'';
+  if (erem) html+=aiSection('⚖️ Ethics',erem);
+
+  // ICMR compliance
+  var icmrrem=report.icmrComplianceRemarks||report.icmrCompliance||'';
+  if (icmrrem) html+=aiSection('📜 ICMR Compliance',icmrrem);
+
+  // Reviewer comment synthesis (summary report)
+  var synth=report.reviewerCommentSynthesis||report.commentSummary||'';
+  if (synth) html+=aiSection('💬 Reviewer comment synthesis',synth);
+
+  // Draft rationale
+  var draft=report.draftRationale||report.recommendedRationale||'';
+  if (draft) {
+    html+='<div class="ai-section" style="background:#fff8e8;border-top:2px solid #c8b86a">';
+    html+='<div class="ai-section-title" style="color:#856404">📝 Draft rationale for decision letter</div>';
+    html+='<div class="ai-section-body">'+esc(draft)+'</div>';
+    // Copy to rationale button (admin only)
+    if (S.role==='admin') {
+      html+='<button class="btn btn-gold btn-sm" style="margin-top:8px" onclick="copyToRationale(this)">Use as rationale</button>';
+    }
+    html+='</div>';
+  }
+
+  // Questions for committee
+  var qs=report.questionsForCommittee||report.keyQuestions||[];
+  if (qs&&Array.isArray(qs)&&qs.length) {
+    html+='<div class="ai-section"><div class="ai-section-title">❓ Questions for committee discussion</div>';
+    html+='<div class="ai-questions">';
+    qs.forEach(function(q){ html+='<div class="ai-q">'+esc(q)+'</div>'; });
+    html+='</div></div>';
+  }
+
+  // Timestamp
+  var ts=data.timestamp||data.generatedAt||new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'});
+  html+='<div class="ai-timestamp">Generated: '+esc(String(ts))+'</div>';
+  html+='</div>';
+  container.innerHTML=html;
+}
+
+function scoreCard(label,val) {
+  var num=parseFloat(val)||0;
+  var col=num>=7?'score-high':num>=4?'score-med':'score-low';
+  return '<div class="ai-score-item">'+
+    '<div class="ai-score-label">'+esc(label)+'</div>'+
+    '<div class="ai-score-val">'+num.toFixed(1)+'</div>'+
+    '<div class="ai-score-bar"><div class="ai-score-fill '+col+'" style="width:'+Math.min(num*10,100)+'%"></div></div>'+
     '</div>';
-  document.getElementById('ai-report-container').innerHTML = html;
+}
+function aiSection(title,content) {
+  var body='';
+  if (Array.isArray(content)) {
+    body='<ul>'+content.map(function(i){return '<li>'+esc(i)+'</li>';}).join('')+'</ul>';
+  } else {
+    body=esc(String(content)).replace(/\n/g,'<br>');
+  }
+  return '<div class="ai-section"><div class="ai-section-title">'+esc(title)+'</div>'+
+    '<div class="ai-section-body">'+body+'</div></div>';
+}
+function copyToRationale(btn) {
+  // Get draft rationale text from sibling
+  var text=btn.previousElementSibling.textContent;
+  document.getElementById('meet-rationale').value=text;
+  toast('Draft rationale copied to decision box.','ok');
 }
 
-function miniSection(label, text) {
-  if (!text) return '<div></div>';
-  return '<div style="background:#f5f3ee;border:1px solid #e8e5dd;border-radius:4px;padding:8px 10px">'+
-    '<div style="font-size:10px;font-weight:700;color:#534ab7;letter-spacing:.08em;text-transform:uppercase;margin-bottom:3px">'+esc(label)+'</div>'+
-    '<div style="font-size:12px;color:#333;line-height:1.5">'+esc(text)+'</div></div>';
+// ── DECISION ──
+function pickDecision(decision, silent) {
+  S.decision=decision;
+  document.querySelectorAll('.dpill').forEach(function(el){
+    el.classList.remove('dp-approved','dp-revision','dp-deferred','dp-rejected');
+  });
+  var map={'Approved':'dp-approved','Needs Revision':'dp-revision','Deferred':'dp-deferred','Rejected':'dp-rejected'};
+  var pills=document.querySelectorAll('.dpill');
+  var decisions=['Approved','Needs Revision','Deferred','Rejected'];
+  decisions.forEach(function(d,i){
+    if (d===decision&&pills[i]) pills[i].classList.add(map[d]);
+  });
+  if (!silent) toast('Decision selected: '+decision,'ok');
 }
-
-function aiSection(label, text) {
-  if (!text) return '';
-  return '<div class="ai-section">'+
-    '<div class="ai-section-label">'+esc(label)+'</div>'+
-    '<div class="ai-section-text">'+esc(text)+'</div></div>';
+async function saveDecision() {
+  var id=document.getElementById('meet-sel').value;
+  var rationale=v('meet-rationale');
+  if (!id) { toast('No protocol selected.','err'); return; }
+  if (!S.decision) { toast('Please select a decision.','err'); return; }
+  if (!rationale.trim()) { toast('Please enter rationale.','err'); return; }
+  var r=await api({action:'saveDecision',token:S.token,protocolID:id,decision:S.decision,rationale:rationale,meetingDate:v('meet-date')});
+  if (r.success) { toast('Decision saved.','ok'); if (S.role==='admin') loadAdminData(); }
+  else toast('Error: '+r.error,'err');
 }
-
-async function runAISummary() {
-  var id = v('meet-sel');
-  if (!id) { toast('Please select a protocol first.'); return; }
-  var btn = document.getElementById('ai-summary-btn');
-  btn.innerHTML = '<span class="spinner"></span> Generating…';
-  btn.disabled = true;
-  var r = await api({action:'runAISummary',token:S.token,protocolID:id});
+async function generateAndSendEmail() {
+  var id=document.getElementById('meet-sel').value;
+  var rationale=v('meet-rationale');
+  if (!id||!S.decision||!rationale.trim()) { toast('Please save decision first.','err'); return; }
+  var btn=document.querySelector('[onclick="generateAndSendEmail()"]');
+  if(btn){btn.innerHTML='<span class="spinner"></span> Generating…';btn.disabled=true;}
+  var r=await api({action:'generateDecisionLetter',token:S.token,protocolID:id,decision:S.decision,rationale:rationale});
   if (r.success) {
-    renderAISummary(r.data.summary);
-    toast('✓ AI summary generated!');
-  } else {
-    toast('Error: '+r.error);
-  }
-  btn.innerHTML = 'AI Summary';
-  btn.disabled = false;
+    document.getElementById('letter-body').textContent=r.data.letter;
+    document.getElementById('letter-card').style.display='block';
+    document.getElementById('letter-card').scrollIntoView({behavior:'smooth'});
+    if (r.data.sent) toast('Decision letter sent by email.','ok');
+    else toast('Letter generated. Send manually via email.','ok');
+  } else toast('Error: '+r.error,'err');
+  if(btn){btn.innerHTML='Generate &amp; send decision email';btn.disabled=false;}
+}
+function copyLetter() {
+  var text=document.getElementById('letter-body').textContent;
+  navigator.clipboard.writeText(text).then(function(){toast('Letter copied to clipboard.','ok');});
+}
+function printLetter() {
+  var w=window.open('','_blank');
+  w.document.write('<html><head><title>Decision Letter</title>'+
+    '<style>body{font-family:Arial,sans-serif;font-size:13px;line-height:1.8;padding:40px;max-width:700px;margin:0 auto}</style></head>'+
+    '<body><pre style="white-space:pre-wrap;font-family:Arial,sans-serif">'+
+    document.getElementById('letter-body').textContent+'</pre></body></html>');
+  w.document.close(); w.focus(); w.print();
 }
 
-function renderAISummary(summary) {
-  var existing = document.getElementById('ai-report-container').innerHTML;
-  var html = '<div class="ai-summary-box">'+
-    '<div style="font-family:serif;font-size:15px;margin-bottom:10px;color:#1a1a18">'+
-      'AI Consolidated Committee Summary</div>'+
-    aiSection('Overall assessment', summary.overall_assessment)+
-    aiSection('Key concerns raised by reviewers', summary.key_concerns)+
-    aiSection('AI committee recommendation', summary.committee_recommendation)+
-    aiSection('Follow-up required', summary.follow_up_required)+
-    aiSection('Suggested conditions', summary.suggested_conditions)+
-    '<div class="ai-section"><div class="ai-section-label">Draft rationale for decision letter</div>'+
-    '<div class="ai-draft-letter">'+esc(summary.suggested_rationale||'—')+'</div></div>'+
-    '<div class="ai-section"><div class="ai-section-label">Ready-to-use letter paragraph</div>'+
-    '<div class="ai-draft-letter">'+esc(summary.draft_letter_paragraph||'—')+'</div>'+
-    '<button class="btn btn-out btn-sm" style="margin-top:8px" onclick="copyAIDraft()">Copy to rationale field</button></div>'+
-    '</div>';
-  document.getElementById('ai-report-container').innerHTML = existing + html;
-  // Store draft for copy
-  window._aiDraft = summary.suggested_rationale || summary.draft_letter_paragraph || '';
+// ── MEETING MINUTES EXPORT ──
+async function exportMeetingMinutes() {
+  var id=document.getElementById('meet-sel').value;
+  if (!id) { toast('Please select a protocol first.','err'); return; }
+  var p=S.currentMeetingProtocol;
+  if (!p) { toast('Please load a protocol first.','err'); return; }
+  // Gather data
+  var cr=await api({action:'getComments',token:S.token,protocolID:id});
+  var nr=await api({action:'getMeetingNotes',token:S.token,protocolID:id});
+  var comments=cr.success?cr.data:[];
+  var notes=nr.success?nr.data:[];
+  var meetDate=v('meet-date')||new Date().toISOString().split('T')[0];
+  var minutes=generateMinutesText(p,comments,notes,meetDate);
+  document.getElementById('minutes-content').textContent=minutes;
+  openModal('minutes-modal');
 }
-
-function copyAIDraft() {
-  if (window._aiDraft) {
-    document.getElementById('meet-rationale').value = window._aiDraft;
-    toast('✓ AI draft copied to rationale field!');
+function generateMinutesText(p,comments,notes,meetDate) {
+  var lines=[];
+  lines.push('BASAVATARAKAM INDO-AMERICAN CANCER HOSPITAL & RESEARCH INSTITUTE');
+  lines.push('Scientific Committee — Protocol Review Meeting');
+  lines.push('Meeting Date: '+meetDate);
+  lines.push('Generated: '+new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'}));
+  lines.push('');
+  lines.push('═══════════════════════════════════════════════════════');
+  lines.push('PROTOCOL UNDER REVIEW');
+  lines.push('═══════════════════════════════════════════════════════');
+  lines.push('Protocol ID : '+p.ProtocolID);
+  lines.push('Title       : '+p.Title);
+  lines.push('PI          : '+p.PI);
+  lines.push('Category    : '+(p.Category||'—'));
+  lines.push('Status      : '+p.Status);
+  if (p.AssignedReviewers) lines.push('Reviewers   : '+p.AssignedReviewers);
+  lines.push('');
+  if (comments.length) {
+    lines.push('───────────────────────────────────────────────────────');
+    lines.push('PRE-MEETING REVIEWER COMMENTS');
+    lines.push('───────────────────────────────────────────────────────');
+    comments.filter(function(c){return !c.IsMeetingNote;}).forEach(function(c,i){
+      lines.push('['+(i+1)+'] '+c.ReviewerName+' ('+c.CommentType+') — '+fmtDate(c.Timestamp));
+      lines.push(c.Comment);
+      lines.push('');
+    });
   }
+  if (notes.length) {
+    lines.push('───────────────────────────────────────────────────────');
+    lines.push('LIVE MEETING NOTES');
+    lines.push('───────────────────────────────────────────────────────');
+    notes.forEach(function(n,i){
+      lines.push('['+(i+1)+'] '+(n.AddedBy||n.ReviewerName)+' — '+(n.MeetingDate||meetDate));
+      lines.push(n.Note||n.Comment);
+      lines.push('');
+    });
+  }
+  var rationale=document.getElementById('meet-rationale')?v('meet-rationale'):'';
+  if (S.decision||rationale) {
+    lines.push('───────────────────────────────────────────────────────');
+    lines.push('COMMITTEE DECISION');
+    lines.push('───────────────────────────────────────────────────────');
+    if (S.decision) lines.push('Decision : '+S.decision);
+    if (rationale) { lines.push('Rationale:'); lines.push(rationale); }
+    lines.push('');
+  }
+  lines.push('═══════════════════════════════════════════════════════');
+  lines.push('Chairman, Scientific Committee BBCI');
+  lines.push('Dr Anupam Das, MD (Medicine), DM (Medical Oncology)');
+  return lines.join('\n');
 }
-
-async function loadExistingAIReview(protocolId) {
-  var r = await api({action:'getAIReview',token:S.token,protocolID:protocolId});
-  if (!r.success||!r.data.length) {
-    document.getElementById('ai-report-container').innerHTML =
-      '<div style="font-size:12px;color:#aaa;padding:8px">No AI review yet. Click "Run AI screening" to generate one.</div>';
-    return;
-  }
-  // Show most recent screening report
-  var screenings = r.data.filter(function(x){return x.ReviewType==='Screening';});
-  var summaries  = r.data.filter(function(x){return x.ReviewType==='Summary';});
-  if (screenings.length) {
-    try {
-      var rep = {
-        completeness_score: screenings[screenings.length-1].CompletenessScore,
-        methodology: screenings[screenings.length-1].Methodology,
-        statistics: screenings[screenings.length-1].Statistics,
-        ethics: screenings[screenings.length-1].Ethics,
-        strengths: screenings[screenings.length-1].Strengths,
-        concerns: screenings[screenings.length-1].Concerns,
-        questions_for_reviewer: screenings[screenings.length-1].QuestionsForReviewer,
-        ai_recommendation: screenings[screenings.length-1].AIRecommendation,
-        icmr_compliance: '',
-        full_report: screenings[screenings.length-1].FullReport
-      };
-      renderAIScreeningReport(rep);
-    } catch(e) {}
-  }
-  if (summaries.length) {
-    try {
-      var sum = JSON.parse(summaries[summaries.length-1].FullReport||'{}');
-      if (sum.overall_assessment) renderAISummary(sum);
-    } catch(e) {}
-  }
+function copyMinutes() {
+  var text=document.getElementById('minutes-content').textContent;
+  navigator.clipboard.writeText(text).then(function(){toast('Minutes copied to clipboard.','ok');});
+}
+function printMinutes() {
+  var w=window.open('','_blank');
+  w.document.write('<html><head><title>Meeting Minutes</title>'+
+    '<style>body{font-family:"Courier New",monospace;font-size:12px;line-height:1.6;padding:40px}</style></head>'+
+    '<body><pre>'+document.getElementById('minutes-content').textContent+'</pre></body></html>');
+  w.document.close(); w.focus(); w.print();
 }
 
 // ═══════════════════════════════════════════════════
-//  FULL PROTOCOL VIEW
+// ADD REVIEWER
 // ═══════════════════════════════════════════════════
-async function openFullView(id) {
-  var r = await api({action:'getProtocol',token:S.token,protocolID:id});
-  if (!r.success) { toast('Error: '+r.error); return; }
-  var p = r.data;
-  document.getElementById('fv-title').textContent = p.ProtocolID+' — '+p.Title;
-  // Meta info
-  var meta = [
-    ['Investigator', p.Investigator||'—'],
-    ['PI', p.PI||'—'],
-    ['PI Email', p.PIEmail||'—'],
-    ['Department', p.Department||'—'],
-    ['Institution', p.Institution||'—'],
-    ['Category', p.Category||'—'],
-    ['Status', '<span class="badge '+statusCss(p.Status)+'">'+esc(p.Status)+'</span>'],
-    ['Submitted', fmtDate(p.SubmissionDate)||'—'],
-    ['Reviewer(s)', p.AssignedReviewers||'Not assigned'],
-  ];
-  document.getElementById('fv-meta').innerHTML = meta.map(function(m){
-    return '<div style="background:#f5f3ee;border:1px solid #e8e5dd;border-radius:4px;padding:8px 12px">'+
-      '<div style="font-size:10px;color:#aaa;text-transform:uppercase;letter-spacing:.07em;margin-bottom:3px">'+esc(m[0])+'</div>'+
-      '<div style="font-size:13px;color:#222;font-weight:500">'+m[1]+'</div></div>';
+async function saveNewReviewer() {
+  var name=v('ar-name'),email=v('ar-email'),inst=v('ar-inst');
+  if (!name||!email) { toast('Name and email are required.','err'); return; }
+  var r=await api({action:'addReviewer',token:S.token,name:name,email:email,institution:inst});
+  if (r.success) {
+    closeModal('add-reviewer-modal');
+    toast('Reviewer added. Login credentials emailed.','ok');
+    document.getElementById('ar-name').value='';
+    document.getElementById('ar-email').value='';
+    document.getElementById('ar-inst').value='';
+    loadAdminData();
+  } else toast('Error: '+r.error,'err');
+}
+
+// ═══════════════════════════════════════════════════
+// AUDIT
+// ═══════════════════════════════════════════════════
+async function loadAudit() {
+  var r=await api({action:'getAuditTrail',token:S.token});
+  var tbody=document.getElementById('audit-tbody');
+  if (!r.success||!r.data.length) { tbody.innerHTML='<tr><td colspan="6" class="empty">No audit entries.</td></tr>'; return; }
+  tbody.innerHTML=r.data.slice(0,200).reverse().map(function(a){
+    return '<tr>'+
+      '<td style="font-size:11px;color:#888;white-space:nowrap">'+esc(fmtDate(a.Timestamp))+'</td>'+
+      '<td style="font-size:11px;font-weight:600;color:#888">'+esc(a.ProtocolID||'—')+'</td>'+
+      '<td style="font-size:12px">'+esc(a.UserName||a.User||'—')+'</td>'+
+      '<td><span class="badge s-forwarded" style="font-size:9px">'+esc(a.Role||'—')+'</span></td>'+
+      '<td style="font-size:12px;font-weight:500">'+esc(a.Action||'—')+'</td>'+
+      '<td style="font-size:12px;color:#888;max-width:250px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(a.Details||'—')+'</td>'+
+    '</tr>';
   }).join('');
-  // Drive folder link
-  var driveHtml = '';
-  if (p.DrivefolderURL && p.DrivefolderURL.indexOf('http') >= 0) {
-    driveHtml = '<a href="'+esc(p.DrivefolderURL)+'" target="_blank" class="btn btn-out btn-sm" style="display:inline-flex;align-items:center;gap:6px">'+
-      '<span style="color:#4285f4">📁</span> Open Google Drive folder (Proforma, CRF, DMC Clearance, Covering Letter)</a>';
-  } else {
-    driveHtml = '<span style="font-size:13px;color:#aaa">No documents uploaded yet or Drive link not available.</span>';
-  }
-  document.getElementById('fv-drive-link').innerHTML = driveHtml;
-  // Full protocol text
-  document.getElementById('fv-text').textContent = p.Description || 'No protocol text available.';
-  openModal('fullview-modal');
 }
 
 // ═══════════════════════════════════════════════════
-//  CHANGE PASSWORD
+// ACCOUNT
 // ═══════════════════════════════════════════════════
 async function changePassword() {
   var p1=v('np1'),p2=v('np2');
-  if (!p1||p1.length<6) { toast('Minimum 6 characters.'); return; }
-  if (p1!==p2) { toast('Passwords do not match.'); return; }
-  var r = await api({action:'changePassword',token:S.token,newPassword:p1});
-  if (r.success) { toast('Password changed successfully!'); document.getElementById('np1').value=''; document.getElementById('np2').value=''; }
-  else toast('Error: '+r.error);
+  if (!p1||!p2) { toast('Please fill both fields.','err'); return; }
+  if (p1!==p2) { toast('Passwords do not match.','err'); return; }
+  if (p1.length<6) { toast('Password must be at least 6 characters.','err'); return; }
+  var r=await api({action:'changePassword',token:S.token,newPassword:p1});
+  if (r.success) { toast('Password updated successfully.','ok'); document.getElementById('np1').value=''; document.getElementById('np2').value=''; }
+  else toast('Error: '+r.error,'err');
 }
 
 // ═══════════════════════════════════════════════════
-//  DATE FORMATTER
+// MODALS
 // ═══════════════════════════════════════════════════
-function fmtDate(d) {
-  if (!d) return '—';
-  var months = ['January','February','March','April','May','June',
-    'July','August','September','October','November','December'];
-  var dt = new Date(d);
-  if (isNaN(dt.getTime())) return d;
-  return dt.getDate()+' '+months[dt.getMonth()]+' '+dt.getFullYear();
+function openModal(id) {
+  document.getElementById(id).classList.add('open');
+  document.body.style.overflow='hidden';
 }
-
-// ═══════════════════════════════════════════════════
-//  API — uses GET for small requests, POST for large
-// ═══════════════════════════════════════════════════
-async function api(params) {
-  if (!S.url) return {success:false,error:'No Apps Script URL configured.'};
-  var payload = JSON.stringify(params);
-  try {
-    var resp;
-    if (payload.length > 2000) {
-      // Large payload — use POST via form submission to avoid URL length limit
-      var formData = new FormData();
-      formData.append('payload', payload);
-      resp = await fetch(S.url, {
-        method: 'POST',
-        body: formData,
-        redirect: 'follow'
-      });
-    } else {
-      // Small payload — use GET
-      var url = S.url+'?payload='+encodeURIComponent(payload);
-      resp = await fetch(url,{method:'GET',redirect:'follow'});
-    }
-    return resp.json();
-  } catch(e) { return {success:false,error:e.toString()}; }
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+  document.body.style.overflow='';
 }
-
-// ═══════════════════════════════════════════════════
-//  HELPERS
-// ═══════════════════════════════════════════════════
-function v(id){ return (document.getElementById(id)||{}).value||''; }
-function setEl(id,val){ var el=document.getElementById(id); if(el) el.textContent=val; }
-function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-function statusCss(st){ return STATUS_CSS[st]||'s-submitted'; }
-function badgeHtml(st){ return '<span class="badge '+statusCss(st)+'">'+esc(st||'—')+'</span>'; }
-function isOverdue(d){ return d && new Date(d)<new Date(); }
-function openModal(id){ document.getElementById(id).classList.add('open'); }
-function closeModal(id){ document.getElementById(id).classList.remove('open'); }
-document.querySelectorAll('.modal-wrap').forEach(function(el){
-  el.addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');});
+// Close on backdrop click
+document.querySelectorAll('.modal-wrap').forEach(function(wrap){
+  wrap.addEventListener('click',function(e){if(e.target===wrap) closeModal(wrap.id);});
 });
-var _tt;
-function toast(msg, duration){
+
+// ═══════════════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════════════
+function v(id){var el=document.getElementById(id);return el?el.value.trim():'';}
+function setEl(id,val){var el=document.getElementById(id);if(el)el.textContent=val;}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function fmtDate(d){
+  if (!d||d==='—') return d||'—';
+  try{var dt=new Date(d);if(isNaN(dt.getTime()))return String(d);
+    return dt.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});}
+  catch(e){return String(d);}
+}
+function statusCss(s){return STATUS_CSS[s]||'s-closed';}
+function badgeHtml(s){return '<span class="badge '+statusCss(s)+'">'+esc(s||'—')+'</span>';}
+function isOverdue(d){
+  if (!d) return false;
+  try{return new Date(d)<new Date()&&new Date(d).getTime()!==0;}
+  catch(e){return false;}
+}
+function ddlBadge(d){
+  if (!d) return '<span style="color:#ccc;font-size:11px">—</span>';
+  try{
+    var now=new Date(); var ddl=new Date(d);
+    if (isNaN(ddl.getTime())) return esc(d);
+    var diff=Math.ceil((ddl-now)/(1000*60*60*24));
+    var label=fmtDate(d);
+    if (diff<0) return '<span class="ddl-badge ddl-over">'+label+' ('+Math.abs(diff)+'d overdue)</span>';
+    if (diff<=3) return '<span class="ddl-badge ddl-warn">'+label+' ('+diff+'d left)</span>';
+    return '<span class="ddl-badge ddl-ok">'+label+'</span>';
+  } catch(e){return esc(d);}
+}
+var _toastTimer=null;
+function toast(msg,type){
   var el=document.getElementById('toast');
-  el.textContent=msg; el.classList.add('show');
-  clearTimeout(_tt); _tt=setTimeout(function(){el.classList.remove('show');},duration||3500);
+  el.textContent=msg;
+  el.className='show'+(type==='err'?' toast-err':type==='ok'?' toast-ok':'');
+  if (_toastTimer) clearTimeout(_toastTimer);
+  _toastTimer=setTimeout(function(){el.className='';},3200);
 }
 </script>
 </body>
