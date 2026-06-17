@@ -1590,13 +1590,19 @@ function renderAIReport(data) {
     '<span class="ai-model-tag">claude-sonnet-4-6</span></div>';
 
   // Scores (screening report)
-  if (report.scores||report.completenessScore!==undefined) {
+  if (report.scores||report.completenessScore!==undefined||report.completeness_score!==undefined) {
     var sc=report.scores||{};
-    var overall=report.completenessScore||report.overallScore||sc.overall||0;
+    var overall=report.completenessScore||report.overallScore||sc.overall||report.completeness_score||0;
     var meth=report.methodologyScore||sc.methodology||0;
     var stats=report.statisticsScore||sc.statistics||0;
     var ethics=report.ethicsScore||sc.ethics||0;
     var icmr=report.icmrComplianceScore||sc.icmr||0;
+    // Old format stores scores as 0-100; normalise to 0-10
+    if (overall>10) overall=overall/10;
+    if (meth>10) meth=meth/10;
+    if (stats>10) stats=stats/10;
+    if (ethics>10) ethics=ethics/10;
+    if (icmr>10) icmr=icmr/10;
     html+='<div class="ai-score-row">';
     html+=scoreCard('Overall',overall);
     html+=scoreCard('Methodology',meth);
@@ -1606,8 +1612,8 @@ function renderAIReport(data) {
     html+='</div>';
   }
 
-  // Summary / assessment
-  var assess=report.consolidatedAssessment||report.summary||report.assessment||report.overallAssessment||'';
+  // Summary / assessment — handle both camelCase (new) and snake_case (old stored reports)
+  var assess=report.consolidatedAssessment||report.overall_assessment||report.summary||report.assessment||report.overallAssessment||'';
   if (assess) html+=aiSection('📋 Assessment',assess);
 
   // Strengths
@@ -1615,11 +1621,11 @@ function renderAIReport(data) {
   if (str&&(Array.isArray(str)?str.length:str)) html+=aiSection('✅ Strengths',str);
 
   // Concerns
-  var con=report.concerns||report.majorConcerns||report.ethicalConcerns||[];
+  var con=report.concerns||report.key_concerns||report.majorConcerns||report.ethicalConcerns||[];
   if (con&&(Array.isArray(con)?con.length:con)) html+=aiSection('⚠️ Concerns',con);
 
   // Missing elements
-  var miss=report.missingElements||report.gaps||[];
+  var miss=report.missingElements||report.missing_elements||report.gaps||[];
   if (miss&&(Array.isArray(miss)?miss.length:miss)) html+=aiSection('🔍 Missing elements',miss);
 
   // Methodology remarks
@@ -1642,8 +1648,12 @@ function renderAIReport(data) {
   var synth=report.reviewerCommentSynthesis||report.commentSummary||'';
   if (synth) html+=aiSection('💬 Reviewer comment synthesis',synth);
 
-  // Draft rationale
-  var draft=report.draftRationale||report.recommendedRationale||'';
+  // Committee recommendation (old format)
+  var rec=report.committee_recommendation||report.suggested_conditions||'';
+  if (rec) html+=aiSection('🏛️ Committee recommendation',rec);
+
+  // Draft rationale — old keys: suggested_rationale / draft_letter_paragraph
+  var draft=report.draftRationale||report.recommendedRationale||report.suggested_rationale||report.draft_letter_paragraph||'';
   if (draft) {
     html+='<div class="ai-section" style="background:#fff8e8;border-top:2px solid #c8b86a">';
     html+='<div class="ai-section-title" style="color:#856404">📝 Draft rationale for decision letter</div>';
@@ -1656,7 +1666,9 @@ function renderAIReport(data) {
   }
 
   // Questions for committee
-  var qs=report.questionsForCommittee||report.keyQuestions||[];
+  var qs=report.questionsForCommittee||report.keyQuestions||report.questions_for_reviewer||[];
+  // questions_for_reviewer may be a string (old format) — split into array
+  if (typeof qs==='string'&&qs) qs=qs.split(/\n|\d+\./).map(function(q){return q.trim();}).filter(Boolean);
   if (qs&&Array.isArray(qs)&&qs.length) {
     html+='<div class="ai-section"><div class="ai-section-title">❓ Questions for committee discussion</div>';
     html+='<div class="ai-questions">';
