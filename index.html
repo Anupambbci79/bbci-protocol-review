@@ -1546,8 +1546,19 @@ async function runAIScreening() {
   btn.innerHTML='<span class="spinner"></span> Screening…'; btn.disabled=true;
   document.getElementById('ai-report-container').innerHTML='<div style="font-size:12px;color:#aaa;padding:8px">Running AI screening against ICMR 2017 guidelines…</div>';
   var r=await api({action:'runAIScreening',token:S.token,protocolID:id});
-  if (r.success) renderAIReport(r.data);
-  else { document.getElementById('ai-report-container').innerHTML='<div style="color:#d46a4a;padding:8px;font-size:13px">Error: '+esc(r.error)+'</div>'; }
+  if (r.success) {
+    renderAIReport(r.data);
+    // Warn if all scores are 0 (empty protocol text)
+    var d=r.data;
+    if (d&&!d.completenessScore&&!d.methodologyScore&&!d.statisticsScore) {
+      var warn=document.createElement('div');
+      warn.style.cssText='margin:8px 0;padding:8px 12px;background:#fff3cd;border-radius:4px;font-size:12px;color:#856404';
+      warn.innerHTML='⚠ All scores are 0 — the protocol text field (col 22 "Description") may be empty for this protocol. Ask the investigator to resubmit with the full protocol text.';
+      document.getElementById('ai-report-container').insertBefore(warn, document.getElementById('ai-report-container').firstChild);
+    }
+  } else {
+    document.getElementById('ai-report-container').innerHTML='<div style="color:#d46a4a;padding:8px;font-size:13px">Error: '+esc(r.error)+'</div>';
+  }
   btn.innerHTML='🔍 AI Screening'; btn.disabled=false;
 }
 
@@ -1567,15 +1578,17 @@ async function runAIScreeningInModal() {
   var r=await api({action:'runAIScreening',token:S.token,protocolID:id});
   if (r.success) {
     var data=r.data;
-    if (data&&(data.reportType==='AI Summary'||data.consolidatedAssessment&&!data.completenessScore)) {
-      // Got a summary by mistake — show warning and the data anyway
-      reportEl.innerHTML='<div style="color:#856404;font-size:12px;padding:6px;margin-bottom:8px;background:#fff3cd;border-radius:4px">⚠ Note: showing cached summary. Re-run to get a fresh protocol screening.</div>';
-      renderAIReportInto(data, reportEl.appendChild(document.createElement('div')));
-    } else {
-      renderAIReportInto(data, reportEl);
+    renderAIReportInto(data, reportEl);
+    // Warn if all scores are 0
+    if (data&&!data.completenessScore&&!data.methodologyScore&&!data.statisticsScore) {
+      var w=document.createElement('div');
+      w.style.cssText='margin-bottom:8px;padding:8px 12px;background:#fff3cd;border-radius:4px;font-size:12px;color:#856404';
+      w.innerHTML='⚠ All scores are 0 — the protocol text (Description field) appears empty for this protocol.';
+      reportEl.parentNode.insertBefore(w, reportEl);
     }
   } else {
-    reportEl.innerHTML='<div style="color:#d46a4a;font-size:13px;padding:6px">Error: '+esc(r.error)+'</div>';
+    reportEl.innerHTML='<div style="color:#d46a4a;font-size:13px;padding:10px;background:#fef0f0;border-radius:4px;line-height:1.6">'+
+      '<strong>AI Screening error:</strong><br>'+esc(r.error)+'</div>';
   }
   btn.innerHTML='🔍 Re-run Screening'; btn.disabled=false;
 }
