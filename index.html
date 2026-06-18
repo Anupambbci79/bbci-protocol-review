@@ -1673,6 +1673,8 @@ async function runAISummary() {
 // ── SHARED AI REPORT PARSER ──
 function parseAIReport(data) {
   if (!data) return null;
+  // Unwrap if accidentally passed {success:true, data:{...}} wrapper
+  if (data.success !== undefined && data.data) data = data.data;
   // Already a plain object with expected keys
   if (typeof data === 'object' && !Array.isArray(data)) {
     // Check it's not just wrapping a string
@@ -1680,6 +1682,8 @@ function parseAIReport(data) {
         data.overallAssessment || data.strengths || data.concerns) {
       return data;
     }
+    // Check if it has a nested 'report' key (old format)
+    if (data.report && typeof data.report === 'object') return data.report;
   }
   // It's a string (or stringified object) — parse it
   var raw = typeof data === 'string' ? data : JSON.stringify(data);
@@ -1703,8 +1707,13 @@ function parseAIReport(data) {
 
 // ── AI REPORT RENDERER ── (fixed structured cards)
 function renderAIReport(data) {
+  console.log('renderAIReport called, data type:', typeof data);
+  console.log('data keys:', data ? Object.keys(data).join(',') : 'null');
+  console.log('completenessScore:', data ? data.completenessScore : 'N/A');
+  console.log('reportType:', data ? data.reportType : 'N/A');
   var container=document.getElementById('ai-report-container');
   var report = parseAIReport(data);
+  console.log('After parseAIReport, report:', report ? 'object with keys: '+Object.keys(report).join(',') : 'NULL');
   if (!report) {
     var raw = typeof data==='string' ? data : JSON.stringify(data||'');
     var cleaned = raw.replace(/```json\s*/gi,'').replace(/```\s*/g,'').trim();
@@ -1816,6 +1825,8 @@ function renderAIReport(data) {
 
 function scoreCard(label,val) {
   var num=parseFloat(val)||0;
+  // Normalise 0-100 scale to 0-10
+  if (num>10) num=num/10;
   var col=num>=7?'score-high':num>=4?'score-med':'score-low';
   return '<div class="ai-score-item">'+
     '<div class="ai-score-label">'+esc(label)+'</div>'+
