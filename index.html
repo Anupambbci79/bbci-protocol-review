@@ -1962,7 +1962,7 @@ async function showChairmanApprovalScreen(protoID, approvalToken) {
         '<div style="background:#f5f3ee;border:1px solid #e0ddd5;border-radius:4px;padding:12px 14px">'+
         '<div style="font-weight:600;font-size:14px;margin-bottom:6px">'+esc(p.ProtocolID)+' — '+esc(p.Title)+'</div>'+
         '<div style="font-size:12px;color:#666">PI: '+esc(p.PI)+'  |  Category: '+esc(p.Category||'—')+'</div>'+
-        '<div style="font-size:12px;color:#666;margin-top:4px">Reviewer's recommendation: Approve minor resubmission</div>'+
+        '<div style="font-size:12px;color:#666;margin-top:4px">Reviewer recommendation: Approve minor resubmission</div>'+
         (p.ReviewerApprovalNote?'<div style="margin-top:8px;font-size:13px;color:#333">Reviewer note: '+esc(p.ReviewerApprovalNote)+'</div>':'')+
         '</div>';
       document.getElementById('tab-chairmapproval').style.display='block';
