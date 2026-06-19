@@ -1730,27 +1730,21 @@ function renderAIReport(data) {
     '<span class="ai-model-tag">claude-sonnet-4-6</span></div>';
 
   // Scores (screening report)
-  if (report.scores||report.completenessScore!==undefined||report.completeness_score!==undefined) {
-    var sc=report.scores||{};
-    var overall=report.completenessScore||report.overallScore||sc.overall||report.completeness_score||0;
-    var meth=report.methodologyScore||sc.methodology||0;
-    var stats=report.statisticsScore||sc.statistics||0;
-    var ethics=report.ethicsScore||sc.ethics||0;
-    var icmr=report.icmrComplianceScore||sc.icmr||0;
-    // Old format stores scores as 0-100; normalise to 0-10
-    if (overall>10) overall=overall/10;
-    if (meth>10) meth=meth/10;
-    if (stats>10) stats=stats/10;
-    if (ethics>10) ethics=ethics/10;
-    if (icmr>10) icmr=icmr/10;
-    html+='<div class="ai-score-row">';
-    html+=scoreCard('Overall',overall);
-    html+=scoreCard('Methodology',meth);
-    html+=scoreCard('Statistics',stats);
-    html+=scoreCard('Ethics',ethics);
-    html+=scoreCard('ICMR',icmr);
-    html+='</div>';
-  }
+  console.log('Scores check: completenessScore='+report.completenessScore+' type='+typeof report.completenessScore);
+  var sc=report.scores||{};
+  var overall=parseFloat(report.completenessScore||report.overallScore||sc.overall||report.completeness_score||0);
+  var meth=parseFloat(report.methodologyScore||sc.methodology||0);
+  var stats=parseFloat(report.statisticsScore||sc.statistics||0);
+  var ethics=parseFloat(report.ethicsScore||sc.ethics||0);
+  var icmr=parseFloat(report.icmrComplianceScore||sc.icmr||0);
+  console.log('Scores: overall='+overall+' meth='+meth+' stats='+stats+' ethics='+ethics+' icmr='+icmr);
+  html+='<div class="ai-score-row">';
+  html+=scoreCard('Overall',overall);
+  html+=scoreCard('Methodology',meth);
+  html+=scoreCard('Statistics',stats);
+  html+=scoreCard('Ethics',ethics);
+  html+=scoreCard('ICMR',icmr);
+  html+='</div>';
 
   // Summary / assessment — handle both camelCase and snake_case; skip if it looks like raw JSON
   var assess=report.consolidatedAssessment||report.overall_assessment||report.summary||report.assessment||report.overallAssessment||'';
@@ -1817,10 +1811,13 @@ function renderAIReport(data) {
   }
 
   // Timestamp
-  var ts=data.timestamp||data.generatedAt||new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'});
+  var ts=report.timestamp||data.generatedAt||new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'});
   html+='<div class="ai-timestamp">Generated: '+esc(String(ts))+'</div>';
   html+='</div>';
-  container.innerHTML=html;
+  console.log('container element:', container ? 'found' : 'NULL - THIS IS THE BUG');
+  console.log('html length:', html.length, 'first 200:', html.substring(0,200));
+  if (container) container.innerHTML=html;
+  else console.error('CONTAINER IS NULL - ai-report-container not found in DOM');
 }
 
 function scoreCard(label,val) {
