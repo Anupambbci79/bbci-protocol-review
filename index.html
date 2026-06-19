@@ -1476,7 +1476,7 @@ async function loadMeetingProtocol() {
   var cr=await api({action:'getComments',token:S.token,protocolID:id});
   var meetComments=document.getElementById('meet-comments');
   if (cr.success&&cr.data.length) {
-    meetComments.innerHTML=cr.data.filter(function(c){return !c.IsMeetingNote;}).map(function(c){
+    meetComments.innerHTML=cr.data.filter(function(c){return c.IsMeetingNote!==true&&c.IsMeetingNote!=="TRUE";}).map(function(c){
       return '<div class="comment-item">'+
         '<div class="comment-meta"><strong>'+esc(c.ReviewerName)+'</strong>'+
           '<span class="badge s-forwarded" style="font-size:9px">'+esc(c.CommentType)+'</span>'+
@@ -1607,19 +1607,19 @@ function renderAIReportInto(data, container) {
   var reportType = report.reportType||report.type||(report.completenessScore!==undefined?'AI Screening':'AI Report');
   html += '<div class="ai-report-header"><span>'+esc(reportType)+'</span><span class="ai-model-tag">claude-sonnet-4-6</span></div>';
 
-  // Scores
-  if (report.completenessScore!==undefined||report.completeness_score!==undefined||report.scores) {
-    var sc=report.scores||{};
-    var overall=report.completenessScore||report.completeness_score||sc.overall||0;
-    var meth=report.methodologyScore||sc.methodology||0;
-    var stats=report.statisticsScore||sc.statistics||0;
-    var ethics=report.ethicsScore||sc.ethics||0;
-    var icmr=report.icmrComplianceScore||sc.icmr||0;
-    if(overall>10) overall=overall/10;
-    if(meth>10) meth=meth/10;
-    if(stats>10) stats=stats/10;
-    if(ethics>10) ethics=ethics/10;
-    if(icmr>10) icmr=icmr/10;
+  // Scores — always show for screening reports
+  var sc=report.scores||{};
+  var overall=parseFloat(report.completenessScore||report.completeness_score||sc.overall||0);
+  var meth=parseFloat(report.methodologyScore||sc.methodology||0);
+  var stats=parseFloat(report.statisticsScore||sc.statistics||0);
+  var ethics=parseFloat(report.ethicsScore||sc.ethics||0);
+  var icmr=parseFloat(report.icmrComplianceScore||sc.icmr||0);
+  if(overall>10) overall=overall/10;
+  if(meth>10) meth=meth/10;
+  if(stats>10) stats=stats/10;
+  if(ethics>10) ethics=ethics/10;
+  if(icmr>10) icmr=icmr/10;
+  if(report.reportType==='AI Screening'||overall||meth||stats||ethics||icmr) {
     html += '<div class="ai-score-row">';
     html += scoreCard('Overall',overall)+scoreCard('Methodology',meth)+scoreCard('Statistics',stats)+scoreCard('Ethics',ethics)+scoreCard('ICMR',icmr);
     html += '</div>';
@@ -1707,13 +1707,8 @@ function parseAIReport(data) {
 
 // ── AI REPORT RENDERER ── (fixed structured cards)
 function renderAIReport(data) {
-  console.log('renderAIReport called, data type:', typeof data);
-  console.log('data keys:', data ? Object.keys(data).join(',') : 'null');
-  console.log('completenessScore:', data ? data.completenessScore : 'N/A');
-  console.log('reportType:', data ? data.reportType : 'N/A');
   var container=document.getElementById('ai-report-container');
   var report = parseAIReport(data);
-  console.log('After parseAIReport, report:', report ? 'object with keys: '+Object.keys(report).join(',') : 'NULL');
   if (!report) {
     var raw = typeof data==='string' ? data : JSON.stringify(data||'');
     var cleaned = raw.replace(/```json\s*/gi,'').replace(/```\s*/g,'').trim();
@@ -1730,14 +1725,17 @@ function renderAIReport(data) {
     '<span class="ai-model-tag">claude-sonnet-4-6</span></div>';
 
   // Scores (screening report)
-  console.log('Scores check: completenessScore='+report.completenessScore+' type='+typeof report.completenessScore);
   var sc=report.scores||{};
   var overall=parseFloat(report.completenessScore||report.overallScore||sc.overall||report.completeness_score||0);
   var meth=parseFloat(report.methodologyScore||sc.methodology||0);
   var stats=parseFloat(report.statisticsScore||sc.statistics||0);
   var ethics=parseFloat(report.ethicsScore||sc.ethics||0);
   var icmr=parseFloat(report.icmrComplianceScore||sc.icmr||0);
-  console.log('Scores: overall='+overall+' meth='+meth+' stats='+stats+' ethics='+ethics+' icmr='+icmr);
+  if(overall>10) overall=overall/10;
+  if(meth>10) meth=meth/10;
+  if(stats>10) stats=stats/10;
+  if(ethics>10) ethics=ethics/10;
+  if(icmr>10) icmr=icmr/10;
   html+='<div class="ai-score-row">';
   html+=scoreCard('Overall',overall);
   html+=scoreCard('Methodology',meth);
@@ -1814,10 +1812,7 @@ function renderAIReport(data) {
   var ts=report.timestamp||data.generatedAt||new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'});
   html+='<div class="ai-timestamp">Generated: '+esc(String(ts))+'</div>';
   html+='</div>';
-  console.log('container element:', container ? 'found' : 'NULL - THIS IS THE BUG');
-  console.log('html length:', html.length, 'first 200:', html.substring(0,200));
   if (container) container.innerHTML=html;
-  else console.error('CONTAINER IS NULL - ai-report-container not found in DOM');
 }
 
 function scoreCard(label,val) {
