@@ -533,6 +533,20 @@ tbody td{padding:11px 14px;vertical-align:middle;color:#2a2a25}
           <div class="dpill" onclick="pickDecision('Deferred')">⏸ Deferred</div>
           <div class="dpill" onclick="pickDecision('Rejected')">✕ Rejected</div>
         </div>
+        <!-- Revision type — shown only when Needs Revision is selected -->
+        <div id="revision-type-row" style="display:none;margin-bottom:12px;padding:10px 14px;background:#fff3cd;border:1px solid #e8d88a;border-radius:4px">
+          <div style="font-size:12px;font-weight:600;color:#856404;letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px">Revision type</div>
+          <div style="display:flex;gap:10px">
+            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;font-weight:500">
+              <input type="radio" name="rev-type" value="Minor" checked style="width:auto"> 
+              <span><strong>Minor revision</strong> — reviewer can approve directly (no meeting needed)</span>
+            </label>
+            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;font-weight:500">
+              <input type="radio" name="rev-type" value="Major" style="width:auto">
+              <span><strong>Major revision</strong> — must return to full committee meeting</span>
+            </label>
+          </div>
+        </div>
         <div class="fg fg-full" style="margin-bottom:12px">
           <label>Rationale / recommendations *</label>
           <textarea id="meet-rationale" rows="4" placeholder="Summarise the committee's decision and specific recommendations for the investigator…"></textarea>
@@ -553,6 +567,24 @@ tbody td{padding:11px 14px;vertical-align:middle;color:#2a2a25}
       <button class="btn btn-dark" onclick="copyLetter()">Copy letter</button>
       <button class="btn btn-out" onclick="printLetter()">Print / PDF</button>
     </div>
+  </div>
+</div>
+
+<!-- ══ CHAIRMAN APPROVAL (minor resubmission) ══ -->
+<div class="panel" id="tab-chairmapproval" style="display:none">
+  <div class="sec-hdr"><span class="sec-title">Resubmission approval</span></div>
+  <div class="card" id="chairman-approval-card">
+    <div class="info-box blue">A reviewer has approved this minor resubmission and requests your confirmation.</div>
+    <div style="margin-bottom:16px" id="chairman-proto-detail"></div>
+    <div class="fg" style="margin-bottom:14px">
+      <label>Chairman's notes (optional)</label>
+      <textarea id="chairman-notes" rows="3" placeholder="Any additional notes for the decision letter…"></textarea>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-green" onclick="chairmanConfirmApproval()">✓ Confirm approval &amp; send letter</button>
+      <button class="btn btn-red" onclick="chairmanRejectApproval()">✕ Return to meeting</button>
+    </div>
+    <div id="chairman-approval-status" style="margin-top:10px;font-size:13px"></div>
   </div>
 </div>
 
@@ -900,6 +932,7 @@ function showApp() {
   if (S.role==='admin') loadAdminData();
   if (S.role==='reviewer') loadReviewerData();
   if (S.role==='investigator') loadInvestigatorData();
+  checkApprovalLink();
 }
 
 // ═══════════════════════════════════════════════════
@@ -1303,6 +1336,9 @@ function renderReviewerTable() {
       '<td>'+ddlBadge(p.ReviewDeadline)+'</td>'+
       '<td style="font-size:12px;text-align:center">'+esc(p.CommentCount||'0')+'</td>'+
       '<td style="white-space:nowrap">'+driveBtn+
+        (p.RevisionType==='Minor'&&p.Status==='Submitted'&&p.Decision==='Needs Revision'
+          ? '<button class="btn btn-green btn-sm" style="margin-right:3px" onclick="approveResubmission(\''+esc(p.ProtocolID)+'\')" title="Approve minor resubmission — notifies Chairman">✓ Approve resubmission</button>'
+          : '')+
         '<button class="btn btn-dark btn-sm" onclick="openComments(\''+esc(p.ProtocolID)+'\',\''+esc(p.Title)+'\',\''+esc(p.DriveFolderURL||p.DriveFolderUrl||p.DriveFolder||'')+'\')">Review</button>'+
       '</td></tr>';
   }).join('');
@@ -1855,7 +1891,84 @@ function pickDecision(decision, silent) {
   decisions.forEach(function(d,i){
     if (d===decision&&pills[i]) pills[i].classList.add(map[d]);
   });
+  // Show revision type selector only for Needs Revision
+  var revRow=document.getElementById('revision-type-row');
+  if (revRow) revRow.style.display=(decision==='Needs Revision')?'block':'none';
   if (!silent) toast('Decision selected: '+decision,'ok');
+}
+
+// ── APPROVE RESUBMISSION (reviewer) ──
+async function approveResubmission(protocolID) {
+  if (!confirm('Confirm: You are approving the resubmission of '+protocolID+'. The Chairman will be notified by email to give final sign-off.')) return;
+  var r=await api({action:'reviewerApproveResubmission',token:S.token,protocolID:protocolID});
+  if (r.success) {
+    toast('Approval sent to Chairman for confirmation.','ok');
+    loadReviewerData();
+  } else toast('Error: '+r.error,'err');
+}
+
+// ── CHAIRMAN CONFIRM / REJECT (from email link or approval tab) ──
+async function chairmanConfirmApproval() {
+  var protoID=S.chairmanApprovalProtoId;
+  if (!protoID) return;
+  var notes=v('chairman-notes');
+  var btn=document.querySelector('[onclick="chairmanConfirmApproval()"]');
+  if (btn) { btn.innerHTML='<span class="spinner"></span> Approving…'; btn.disabled=true; }
+  var r=await api({action:'chairmanConfirmApproval',token:S.token,protocolID:protoID,notes:notes});
+  if (r.success) {
+    document.getElementById('chairman-approval-status').innerHTML=
+      '<div class="info-box green">✓ Protocol approved. Decision letter sent to investigator.</div>';
+    if (r.data&&r.data.letter) {
+      document.getElementById('chairman-approval-status').innerHTML+=
+        '<div class="letter-box" style="margin-top:10px">'+esc(r.data.letter)+'</div>';
+    }
+    if (btn) { btn.disabled=true; btn.innerHTML='✓ Approved'; }
+  } else {
+    document.getElementById('chairman-approval-status').textContent='Error: '+r.error;
+    if (btn) { btn.innerHTML='✓ Confirm approval & send letter'; btn.disabled=false; }
+  }
+}
+async function chairmanRejectApproval() {
+  var protoID=S.chairmanApprovalProtoId;
+  if (!confirm('Return this protocol to the full committee meeting?')) return;
+  var r=await api({action:'chairmanReturnToMeeting',token:S.token,protocolID:protoID});
+  if (r.success) {
+    toast('Protocol returned to meeting queue.','ok');
+    document.getElementById('chairman-approval-status').innerHTML=
+      '<div class="info-box red">Protocol returned to committee meeting queue.</div>';
+  } else toast('Error: '+r.error,'err');
+}
+
+// ── CHECK URL FOR CHAIRMAN APPROVAL LINK ──
+function checkApprovalLink() {
+  var params=new URLSearchParams(window.location.search);
+  var action=params.get('action');
+  var protoID=params.get('proto');
+  var approvalToken=params.get('atoken');
+  if (action==='chairmapprove'&&protoID&&approvalToken) {
+    S.chairmanApprovalProtoId=protoID;
+    S.chairmanApprovalToken=approvalToken;
+    // Show a simplified approval screen even before login
+    showChairmanApprovalScreen(protoID, approvalToken);
+  }
+}
+async function showChairmanApprovalScreen(protoID, approvalToken) {
+  // If already logged in as admin, show the approval tab
+  if (S.token&&S.role==='admin') {
+    var r=await api({action:'getProtocol',token:S.token,protocolID:protoID});
+    if (r.success) {
+      var p=r.data;
+      document.getElementById('chairman-proto-detail').innerHTML=
+        '<div style="background:#f5f3ee;border:1px solid #e0ddd5;border-radius:4px;padding:12px 14px">'+
+        '<div style="font-weight:600;font-size:14px;margin-bottom:6px">'+esc(p.ProtocolID)+' — '+esc(p.Title)+'</div>'+
+        '<div style="font-size:12px;color:#666">PI: '+esc(p.PI)+'  |  Category: '+esc(p.Category||'—')+'</div>'+
+        '<div style="font-size:12px;color:#666;margin-top:4px">Reviewer's recommendation: Approve minor resubmission</div>'+
+        (p.ReviewerApprovalNote?'<div style="margin-top:8px;font-size:13px;color:#333">Reviewer note: '+esc(p.ReviewerApprovalNote)+'</div>':'')+
+        '</div>';
+      document.getElementById('tab-chairmapproval').style.display='block';
+      showTab('chairmapproval');
+    }
+  }
 }
 async function saveDecision() {
   var id=document.getElementById('meet-sel').value;
@@ -1863,9 +1976,18 @@ async function saveDecision() {
   if (!id) { toast('No protocol selected.','err'); return; }
   if (!S.decision) { toast('Please select a decision.','err'); return; }
   if (!rationale.trim()) { toast('Please enter rationale.','err'); return; }
-  var r=await api({action:'saveDecision',token:S.token,protocolID:id,decision:S.decision,rationale:rationale,meetingDate:v('meet-date')});
-  if (r.success) { toast('Decision saved.','ok'); if (S.role==='admin') loadAdminData(); }
-  else toast('Error: '+r.error,'err');
+  // Get revision type if Needs Revision selected
+  var revType='';
+  if (S.decision==='Needs Revision') {
+    var revRadio=document.querySelector('input[name="rev-type"]:checked');
+    revType=revRadio?revRadio.value:'Minor';
+  }
+  var r=await api({action:'saveDecision',token:S.token,protocolID:id,decision:S.decision,
+    rationale:rationale,meetingDate:v('meet-date'),revisionType:revType});
+  if (r.success) {
+    toast('Decision saved'+(revType?' ('+revType+' revision)':'')+'.' ,'ok');
+    if (S.role==='admin') loadAdminData();
+  } else toast('Error: '+r.error,'err');
 }
 async function generateAndSendEmail() {
   var id=document.getElementById('meet-sel').value;
